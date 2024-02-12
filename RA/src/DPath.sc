@@ -12,7 +12,7 @@
 	)
 
 	(method (init theClient thePoints &tmp i)
-		(= points (or points (List new:)))
+		(= points (if points else (List new:)))
 		(if argc
 			(= client theClient)
 			(for ((= i 0)) (<= i (- argc 3)) ((++ i))
@@ -22,7 +22,7 @@
 				(= caller [thePoints i])
 			)
 		)
-		(or (points contains: -32768) (points add: -32768))
+		(if (points contains: -32768) else (points add: -32768))
 		(self setTarget:)
 		(super init:)
 		(if (not argc)
