@@ -336,7 +336,7 @@
 		(= gNewRoomNum newRoomNumber)
 		(FlushResources newRoomNumber)
 		(self startRoom: gCurRoomNum checkAni:)
-		(Empty gRegions)
+		;(Empty gRegions)
 		(while ((= temp5 (Event new: 3)) type:)
 			(temp5 dispose:)
 		)
