@@ -3,7 +3,7 @@
 (script# 10)
 (include sci.sh)
 (use Main)
-(use invCode)
+(use dInvD)
 (use Interface)
 (use Print)
 ;(use PolyEdit)
@@ -172,7 +172,7 @@
 						(Prints @temp0)
 					)
 					(KEY_ALT_i
-						((ScriptID 25 0) doit:) ; Inventory
+						((ScriptID 25 0) doit:) ; dInvD
 					)
 ;;;					(KEY_ALT_j
 ;;;						(JustifyText init:)
