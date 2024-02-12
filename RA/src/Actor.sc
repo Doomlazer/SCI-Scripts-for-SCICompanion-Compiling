@@ -35,10 +35,10 @@
 
 	(method (init &tmp temp0)
 		(= temp0 (if (& signal $0020) gAddToPics else gCast))
-		(&= signal $7fff)
+		(= signal (& signal $7fff))
 		(if (not (temp0 contains: self))
 			(= lsRight (= lsBottom (= lsLeft (= lsTop 0))))
-			(&= signal $ff77)
+			(= signal (& signal $ff77))
 		)
 		(BaseSetter self)
 		(temp0 add: self)
@@ -68,24 +68,24 @@
 
 	(method (dispose)
 		(self startUpd: hide:)
-		(|= signal $8000)
+		(= signal (| signal $8000))
 	)
 
 	(method (hide)
-		(|= signal $0008)
+		(= signal (| signal $0008))
 	)
 
 	(method (show)
-		(&= signal $fff7)
+		(= signal (& signal $fff7))
 	)
 
 	(method (delete)
 		(if (& signal $8000)
-			(&= signal $7fff)
+			(= signal (& signal $7fff))
 			(cond
 				((gAddToPics contains: self)
 					(gAddToPics delete: self)
-					(&= signal $ffdf)
+					(= signal (& signal $ffdf))
 				)
 				((& signal $0020)
 					(gCast delete: self)
@@ -109,30 +109,30 @@
 	)
 
 	(method (stopUpd)
-		(|= signal $0001)
-		(&= signal $fffd)
+		(= signal (| signal $0001))
+		(= signal (& signal $fffd))
 	)
 
 	(method (forceUpd)
-		(|= signal $0040)
+		(= signal (| signal $0040))
 	)
 
 	(method (startUpd)
-		(|= signal $0002)
-		(&= signal $fffe)
+		(= signal (| signal $0002))
+		(= signal (& signal $fffe))
 	)
 
 	(method (setPri newPri)
 		(cond
 			((== argc 0)
-				(|= signal $0010)
+				(= signal (| signal $0010))
 			)
 			((== newPri -1)
-				(&= signal $ffef)
+				(= signal (& signal $ffef))
 			)
 			(else
 				(= priority newPri)
-				(|= signal $0010)
+				(= signal (| signal $0010))
 			)
 		)
 		(self forceUpd:)
@@ -141,14 +141,14 @@
 	(method (setLoop newLoop)
 		(cond
 			((== argc 0)
-				(|= signal $0800)
+				(= signal (| signal $0800))
 			)
 			((== newLoop -1)
-				(&= signal $f7ff)
+				(= signal (& signal $f7ff))
 			)
 			(else
 				(= loop newLoop)
-				(|= signal $0800)
+				(= signal (| signal $0800))
 			)
 		)
 		(self forceUpd:)
@@ -173,17 +173,17 @@
 
 	(method (ignoreActors arg)
 		(if (or (== 0 argc) arg)
-			(|= signal $4000)
+			(= signal (| signal $4000))
 		else
-			(&= signal $bfff)
+			(= signal (& signal $bfff))
 		)
 	)
 
 	(method (addToPic)
 		(if (gCast contains: self)
-			(|= signal $8021)
+			(= signal (| signal $8021))
 		else
-			(|= signal $0020)
+			(= signal (| signal $0020))
 			(self init:)
 		)
 	)
@@ -200,9 +200,9 @@
 		(= ret (& signal $0200))
 		(if argc
 			(if value
-				(|= signal $0200)
+				(= signal (| signal $0200))
 			else
-				(&= signal $fdff)
+				(= signal (& signal $fdff))
 			)
 		)
 		(return ret)
@@ -272,7 +272,7 @@
 			(else
 				(= deltaY1 (- theY (gCurRoom vanishingY:)))
 				(= pctInc (+ (/ (* (= deltaY2 (- 190 theY)) 100) deltaY1) 100))
-				(|= scaleSignal $0003)
+				(= scaleSignal (| scaleSignal $0003))
 				(= maxScale (/ (* pctInc 128) 100))
 			)
 		)
@@ -605,21 +605,21 @@
 
 	(method (ignoreHorizon arg)
 		(if (or (not argc) arg)
-			(|= signal $2000)
+			(= signal (| signal $2000))
 		else
-			(&= signal $dfff)
+			(= signal (& signal $dfff))
 		)
 	)
 
 	(method (observeControl ctrl &tmp i)
 		(for ((= i 0)) (< i argc) ((++ i))
-			(|= illegalBits [ctrl i])
+			(= illegalBits (| illegalBits [ctrl i]))
 		)
 	)
 
 	(method (ignoreControl ctrl &tmp i)
 		(for ((= i 0)) (< i argc) ((++ i))
-			(&= illegalBits (~ [ctrl i]))
+			(= illegalBits (& illegalBits (~ [ctrl i])))
 		)
 	)
 

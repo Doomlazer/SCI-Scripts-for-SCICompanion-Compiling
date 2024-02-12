@@ -18,7 +18,7 @@
 		(if (and gPMouse (gPMouse respondsTo: #stop))
 			(gPMouse stop:)
 		)
-		(|= state $0020)
+		(= state (| state $0020))
 		(if (IsObject window)
 			(window open:)
 		else
@@ -183,7 +183,7 @@
 		)
 		(if (& state $0020)
 			(gSounds pause: 0)
-			(&= state $ffdf)
+			(= state (& state $ffdf))
 		)
 	)
 )

@@ -23,7 +23,7 @@
 (procedure (proc27_2 &tmp temp0 temp1)
 	(= temp0 48)
 	(for ((= temp1 0)) (< temp1 72) ((++ temp1))
-		(&= [global296 temp1] temp0)
+		(= [global296 temp1] (& [global296 temp1] temp0))
 	)
 )
 

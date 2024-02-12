@@ -32,7 +32,7 @@
 	)
 
 	(method (show iX iY &tmp [temp0 7])
-		(|= signal $0020)
+		(= signal (| signal $0020))
 		(if argc
 			(= nsRight (+ (= nsLeft iX) (CelWide view loop cel)))
 			(= nsBottom (+ (= nsTop iY) (CelHigh view loop cel)))
@@ -391,7 +391,7 @@
 				)
 			)
 		else
-			(|= state $0004)
+			(= state (| state $0004))
 		)
 	)
 
@@ -408,13 +408,13 @@
 				(thisIcon signal: (& (thisIcon signal:) $fffb))
 			)
 		else
-			(&= state $fffb)
+			(= state (& state $fffb))
 		)
 	)
 
 	(method (show &tmp theIcon pnv i theX theY node nextNode obj)
 		(gSounds pause:)
-		(|= state $0020)
+		(= state (| state $0020))
 		(gGame setCursor: 999 1)
 		(= height
 			(CelHigh ((= theIcon (self at: 0)) view:) (theIcon loop:) (theIcon cel:))
@@ -496,7 +496,7 @@
 	(method (hide &tmp node nextNode obj)
 		(if (& state $0020)
 			(gSounds pause: 0)
-			(&= state $ffdf)
+			(= state (& state $ffdf))
 			(for ((= node (FirstNode elements))) node ((= node nextNode))
 				(= nextNode (NextNode node))
 				(if (not (IsObject (= obj (NodeValue node))))

@@ -57,17 +57,17 @@
 
 	(method (enable bool)
 		(if bool
-			(|= state $0001)
+			(= state (| state $0001))
 		else
-			(&= state $fffe)
+			(= state (& state $fffe))
 		)
 	)
 
 	(method (select bool)
 		(if bool
-			(|= state $0008)
+			(= state (| state $0008))
 		else
-			(&= state $fff7)
+			(= state (& state $fff7))
 		)
 		(self draw:)
 	)

@@ -122,7 +122,7 @@
 							addEdit: @temp162 5 100 20 {$}
 							init:
 						)
-						(|= gMustDos (ReadNumber @temp162))
+						(= gMustDos (| gMustDos (ReadNumber @temp162)))
 					)
 					(KEY_ALT_e
 						(Print
@@ -130,7 +130,7 @@
 							addEdit: @temp162 5 100 20 {$}
 							init:
 						)
-						(&= gMustDos (~ (ReadNumber @temp162)))
+						(= gMustDos (& gMustDos (~ (ReadNumber @temp162))))
 					)
 ;;;					(KEY_ALT_f
 ;;;						(gFeatures eachElementDo: #perform (ScriptID 25 2) 0) ; showFeatureCode

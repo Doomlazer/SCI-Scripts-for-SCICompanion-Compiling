@@ -49,7 +49,7 @@
 				)
 			)
 			(gCurRoom setInset: clockInset (if (> argc 1) param2 else 0))
-			(&= param1 $00ff)
+			(= param1 (& param1 $00ff))
 		)
 		(= gMustDos (+ gMustDos param1))
 	)

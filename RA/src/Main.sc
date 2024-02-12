@@ -726,7 +726,7 @@
 )
 
 (procedure (TimeCheck param1 param2)
-	(&= param1 $00ff)
+	(= param1 (& param1 $00ff))
 	(return
 		(if (and (> argc 1) param2)
 			(== (- param1 1) (& gMustDos (- param1 1)))
@@ -1760,7 +1760,7 @@
 
 	(method (doit param1)
 		(if (and (param1 isKindOf: IconI) (& (param1 signal:) $0004))
-			(|= global116 (>> $8000 (gTheIconBar indexOf: param1)))
+			(= global116 (| global116 (>> $8000 (gTheIconBar indexOf: param1))))
 		)
 	)
 )

@@ -310,7 +310,7 @@
 		)
 		(= pnv (PicNotValid))
 		(PicNotValid 0)
-		(|= state $0020)
+		(= state (| state $0020))
 		(if
 			(not
 				(= diw
@@ -321,7 +321,7 @@
 					)
 				)
 			)
-			(&= state $ffdf)
+			(= state (& state $ffdf))
 		)
 		(PicNotValid pnv)
 		(return diw)
@@ -641,7 +641,7 @@
 	(method (hide &tmp theCurs)
 		(if (& state $0020)
 			(gSounds pause: 0)
-			(&= state $ffdf)
+			(= state (& state $ffdf))
 		)
 		(if window
 			(window dispose:)
