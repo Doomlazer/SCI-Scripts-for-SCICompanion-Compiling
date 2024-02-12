@@ -8,7 +8,7 @@
 )
 
 (procedure (LoadMany what which &tmp i theRes)
-	(-= argc 2)
+	(= argc (- argc 2))
 	(for ((= i 0)) (<= i argc) ((++ i))
 		(= theRes [which i])
 		(if what

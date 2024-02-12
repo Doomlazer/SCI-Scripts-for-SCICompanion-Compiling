@@ -736,7 +736,7 @@
 			)
 			(else
 				(if (< 180 (= ang (GetAngle x y vx vy)))
-					(-= ang 360)
+					(= ang (- ang 360))
 				)
 				(= ang (+ (/ (+ ang 90) 2) (* 45 (- dir 2))))
 				(= xIncr (SinMult ang 100))

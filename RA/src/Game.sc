@@ -375,7 +375,7 @@
 	)
 
 	(method (changeScore delta)
-		(+= gScore delta)
+		(= gScore (+ gScore delta))
 		(SL doit:)
 	)
 

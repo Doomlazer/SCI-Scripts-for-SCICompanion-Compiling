@@ -37,8 +37,8 @@
 
 	(method (setSize &tmp [r 4])
 		(TextSize @[r 0] text font 0 0)
-		(+= [r 2] 2)
-		(+= [r 3] 2)
+		(= [r 2] (+ [r 2] 2))
+		(= [r 3] (+ [r 3] 2))
 		(= nsBottom (+ nsTop [r 2]))
 		(= [r 3] (* (/ (+ [r 3] 15) 16) 16))
 		(= nsRight (+ [r 3] nsLeft))
@@ -90,7 +90,7 @@
 			(if (not (StrCmp what ptr))
 				(return i)
 			)
-			(+= ptr x)
+			(= ptr (+ ptr x))
 		)
 	)
 
@@ -111,11 +111,11 @@
 		(while lines
 			(if (!= cursor text)
 				(= redraw 1)
-				(-= cursor x)
+				(= cursor (- cursor x))
 				(if mark
 					(-- mark)
 				else
-					(-= topString x)
+					(= topString (- topString x))
 				)
 			else
 				(break)
@@ -138,11 +138,11 @@
 		(while lines
 			(if (StrAt cursor x)
 				(= redraw 1)
-				(+= cursor x)
+				(= cursor (+ cursor x))
 				(if (< (+ mark 1) y)
 					(++ mark)
 				else
-					(+= topString x)
+					(= topString (+ topString x))
 				)
 			else
 				(break)

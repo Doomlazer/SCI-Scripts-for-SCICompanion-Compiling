@@ -153,7 +153,7 @@
 			(= local9 1)
 		)
 		(if local0
-			(Palette palSET_INTENSITY 0 255 (+= local2 2))
+			(Palette palSET_INTENSITY 0 255 (= local2 (+ local2 2)))
 			(if (>= local2 100)
 				(= local0 0)
 				(if (!= (gCurRoom script:) sEnterSouthLight)
@@ -169,7 +169,7 @@
 			)
 		)
 		(if local1
-			(Palette palSET_INTENSITY 0 255 (Max 0 (-= local2 3)))
+			(Palette palSET_INTENSITY 0 255 (Max 0 (= local2 (- local2 3))))
 			(if (== local2 0)
 				(= local1 0)
 			)

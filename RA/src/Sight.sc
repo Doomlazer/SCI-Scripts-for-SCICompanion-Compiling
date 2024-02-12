@@ -63,7 +63,7 @@
 
 (procedure (AngleDiff ang h)
 	(if (>= argc 2)
-		(-= ang h)
+		(= ang (- ang h))
 	)
 	(return
 		(cond

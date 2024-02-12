@@ -236,7 +236,7 @@
 					(10
 						(if (!= local1 6)
 							(= local5 0)
-							(+= local0 2)
+							(= local0 (+ local0 2))
 						else
 							(++ local0)
 						)

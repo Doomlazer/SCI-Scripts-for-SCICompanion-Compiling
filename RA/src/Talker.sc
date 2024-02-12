@@ -154,7 +154,7 @@
 				((= gFastCast (EventHandler new:)) name: {fastCast} add: self)
 			)
 		)
-		(+= ticks (+ 60 gGameTime))
+		(= ticks (+ ticks (+ 60 gGameTime)))
 		(return 1)
 	)
 

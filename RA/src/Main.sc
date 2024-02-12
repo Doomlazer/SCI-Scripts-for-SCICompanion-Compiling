@@ -800,7 +800,7 @@
 					)
 				)
 				(if (> (= temp1 (self at: currentSound)) 1000)
-					(-= temp1 1000)
+					(= temp1 (- temp1 1000))
 					(= temp2 1)
 				else
 					(= temp2 0)

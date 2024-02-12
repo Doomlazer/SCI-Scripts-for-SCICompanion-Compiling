@@ -147,7 +147,7 @@
 				([local3 local1] addToPic:)
 				(++ local1)
 				(if (== local0 6)
-					(+= local12 40)
+					(= local12 (+ local12 40))
 				else
 					(= local12
 						(switch local0
@@ -278,7 +278,7 @@
 			(4
 				([local3 local1] addToPic:)
 				(++ local1)
-				(+= local12 30)
+				(= local12 (+ local12 30))
 				(= state 1)
 				(self cue:)
 			)

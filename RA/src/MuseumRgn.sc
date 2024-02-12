@@ -796,7 +796,7 @@
 							)
 						)
 						(if (> (MuseumRgn crowdInRoom: room) 1)
-							(-= temp6 15) ; UNINIT
+							(= temp6 (- temp6 15)) ; UNINIT
 						)
 						(self wander: originalDest self)
 					)
@@ -2427,7 +2427,7 @@
 				)
 				(client posn: temp4 temp5)
 				(if (>= temp4 1000)
-					(-= temp4 1000)
+					(= temp4 (- temp4 1000))
 					(= useDoor register)
 				)
 				(= cycles 1)

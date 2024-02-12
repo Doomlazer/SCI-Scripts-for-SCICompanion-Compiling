@@ -583,13 +583,13 @@
 				(if (self cel:)
 					(sFX number: 453 loop: 1 flags: 5 play:)
 					(self setCycle: Beg self)
-					(-= y 100)
-					(-= z 100)
+					(= y (- y 100))
+					(= z (- z 100))
 				else
 					(sFX number: 452 loop: 1 flags: 5 play:)
 					(self setCycle: End self)
-					(+= y 100)
-					(+= z 100)
+					(= y (+ y 100))
+					(= z (+ z 100))
 				)
 			)
 			(else

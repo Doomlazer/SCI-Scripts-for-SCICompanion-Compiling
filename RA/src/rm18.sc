@@ -50,7 +50,7 @@
 		(while (tempList size:)
 			(= temp0 (Random 0 (- (tempList size:) 1)))
 			(= temp1 (tempList at: temp0))
-			(goodList add: (temp1 x: (+= temp2 48) y: temp3 yourself:))
+			(goodList add: (temp1 x: (= temp2 (+ temp2 48)) y: temp3 yourself:))
 			(if (== (goodList size:) 6)
 				(= temp2 -32)
 				(= temp3 111)

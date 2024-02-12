@@ -182,7 +182,7 @@
 						(++ global111)
 					)
 					(5
-						(+= global111 2)
+						(= global111 (+ global111 2))
 					)
 					(6
 						(++ global111)

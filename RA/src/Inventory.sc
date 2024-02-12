@@ -121,7 +121,7 @@
 				)
 			else
 				(++ numIcons)
-				(+= iconBarWidth (CelWide (obj view:) (obj loop:) (obj cel:)))
+				(= iconBarWidth (+ iconBarWidth (CelWide (obj view:) (obj loop:) (obj cel:))))
 				(if
 					(>
 						(= cHigh
@@ -224,10 +224,10 @@
 							nsBottom: (+ (obj nsTop:) cHigh)
 						)
 						(if (-- i)
-							(+= atX widestInv)
+							(= atX (+ atX widestInv))
 						else
 							(= i yesI)
-							(+= atY tallestInv)
+							(= atY (+ atY tallestInv))
 							(= atX firstX)
 						)
 					else
@@ -390,9 +390,9 @@
 			)
 			(temp1 dispose:)
 			(if (< param2 param3)
-				(+= temp2 4)
+				(= temp2 (+ temp2 4))
 			else
-				(-= temp2 4)
+				(= temp2 (- temp2 4))
 			)
 		)
 	)

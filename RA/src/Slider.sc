@@ -67,7 +67,7 @@
 		(for
 			((= i amount))
 			(<= yStep (Abs i))
-			((-= i (* yStep dir)))
+			((= i (- i (* yStep dir))))
 			
 			(= newTop (- sTop (* dir yStep)))
 			(= cHigh (CelHigh sliderView sliderLoop sliderCel))

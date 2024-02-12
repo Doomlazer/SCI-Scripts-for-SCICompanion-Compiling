@@ -62,7 +62,8 @@
 				(self setScript: sDoTalking)
 			)
 			(18
-				(self setScript: sCopyProBack)
+				;(self setScript: sCopyProBack)
+				(gGame handsOn:)
 			)
 			(235
 				(gEgo

@@ -129,7 +129,7 @@
 			((= temp1 (gInventory next: temp1)))
 			
 			(if (not ((= temp2 (NodeValue temp1)) isKindOf: InvI))
-				(+= temp0 (CelWide (temp2 view:) (temp2 loop:) (temp2 cel:)))
+				(= temp0 (+ temp0 (CelWide (temp2 view:) (temp2 loop:) (temp2 cel:))))
 			)
 		)
 		(super open:)

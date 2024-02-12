@@ -179,7 +179,7 @@
 				(client loop:)
 			else
 				(= cycleCnt gGameTime)
-				(+= loopIndex (* cycleDir (/ 8 numOfLoops)))
+				(= loopIndex (+ loopIndex (* cycleDir (/ 8 numOfLoops))))
 				(= loopIndex (umod loopIndex 8))
 				[trans2 loopIndex]
 			)

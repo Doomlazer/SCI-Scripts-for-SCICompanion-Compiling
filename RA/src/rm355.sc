@@ -43,7 +43,7 @@
 
 	(method (doit)
 		(if (< local0 100)
-			(Palette palSET_INTENSITY 0 255 (+= local0 2))
+			(Palette palSET_INTENSITY 0 255 (= local0 (+ local0 2)))
 			(if (== local0 100)
 				(self cue:)
 			)
@@ -193,7 +193,7 @@
 
 	(method (doit)
 		(if (< local0 100)
-			(Palette palSET_INTENSITY 0 255 (+= local0 2))
+			(Palette palSET_INTENSITY 0 255 (= local0 (+ local0 2)))
 			(if (== local0 100)
 				(self cue:)
 			)

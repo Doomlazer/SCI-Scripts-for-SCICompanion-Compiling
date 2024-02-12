@@ -73,32 +73,32 @@
 		(= theY (gLastEvent y:))
 		(switch prevDir
 			(1
-				(-= theY cursorInc)
+				(= theY (- theY cursorInc))
 			)
 			(2
-				(+= theX cursorInc)
-				(-= theY cursorInc)
+				(= theX (+ theX cursorInc))
+				(= theY (- theY cursorInc))
 			)
 			(3
-				(+= theX cursorInc)
+				(= theX (+ theX cursorInc))
 			)
 			(4
-				(+= theX cursorInc)
-				(+= theY cursorInc)
+				(= theX (+ theX cursorInc))
+				(= theY (+ theY cursorInc))
 			)
 			(5
-				(+= theY cursorInc)
+				(= theY (+ theY cursorInc))
 			)
 			(6
-				(-= theX cursorInc)
-				(+= theY cursorInc)
+				(= theX (- theX cursorInc))
+				(= theY (+ theY cursorInc))
 			)
 			(7
-				(-= theX cursorInc)
+				(= theX (- theX cursorInc))
 			)
 			(8
-				(-= theX cursorInc)
-				(-= theY cursorInc)
+				(= theX (- theX cursorInc))
+				(= theY(- theY cursorInc))
 			)
 		)
 		(gGame setCursor: gTheCursor 1 theX theY)

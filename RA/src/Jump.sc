@@ -65,8 +65,8 @@
 			(client x: (+ xLast xStep) y: (+ yLast yStep))
 			(= lxs xStep)
 			(= lys yStep)
-			(+= xStep gx)
-			(+= yStep gy)
+			(= xStep (+ xStep gx))
+			(= yStep (+ yStep gy))
 			(if
 				(and
 					(not waitApogeeX)

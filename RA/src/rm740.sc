@@ -68,7 +68,7 @@
 	(method (doit)
 		(super doit:)
 		(if local0
-			(Palette palSET_INTENSITY 0 255 (+= local1 2))
+			(Palette palSET_INTENSITY 0 255 (= local1 (+ local1 2)))
 			(if (>= local1 100)
 				(= local0 0)
 				(steve setScript: sGunShots)
