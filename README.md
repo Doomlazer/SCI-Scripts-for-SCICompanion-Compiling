@@ -4,7 +4,7 @@ To compile:
 
 Copy game.ini and the 'scr' folder into the root of your LB2 game folder.
 
-Open LB2 in SCICompanion by selecting the RESOURCE.000 file.
+Open LB2 in SCICompanion by selecting the RESOURCE.MAP file.
 
 File > Import the included 997.voc file and Rebuild Resources.
 
@@ -15,7 +15,7 @@ Importing 997.voc is essential, becaue it was removed by Sierra before shipping 
 
 The source code builds on the Sci-Scripts decompile of LB2, which generates thousands of erros if SCICompanion tries compiling it. Importing 997.voc removes all but a few issues which can be viewed in the commit history.
 
-Warning: Although the game compiles without error, there are still several crashes and other issues that need to be worked through. 
+Warning: Although the game compiles without error, there are still several crashes and other signifcant bugs that need to be fixed. 
 
 SCICompanion
 https://scicompanion.com/
