@@ -834,7 +834,7 @@
 			(= heading h)
 		)
 		(if looper
-			(looper doit: self heading (and (>= argc 2) whoCares))
+			(looper doit: self heading (if (>= argc 2) whoCares))
 		else
 			(DirLoop self heading)
 			(if (and (>= argc 2) (IsObject whoCares))
