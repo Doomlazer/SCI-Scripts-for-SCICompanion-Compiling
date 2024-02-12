@@ -326,22 +326,19 @@
 					else
 						0
 					)
-					(and
-						(IsObject bust)
+					(if (IsObject bust)
 						(+
 							(bust nsLeft:)
 							(CelWide (bust view:) (bust loop:) (bust cel:))
 						)
 					)
-					(and
-						(IsObject eyes)
+					(if (IsObject eyes)
 						(+
 							(eyes nsLeft:)
 							(CelWide (eyes view:) (eyes loop:) (eyes cel:))
 						)
 					)
-					(and
-						(IsObject mouth)
+					(if (IsObject mouth)
 						(+
 							(mouth nsLeft:)
 							(CelWide (mouth view:) (mouth loop:) (mouth cel:))
@@ -359,22 +356,19 @@
 					else
 						0
 					)
-					(and
-						(IsObject bust)
+					(if (IsObject bust)
 						(+
 							(bust nsTop:)
 							(CelHigh (bust view:) (bust loop:) (bust cel:))
 						)
 					)
-					(and
-						(IsObject eyes)
+					(if (IsObject eyes)
 						(+
 							(eyes nsTop:)
 							(CelHigh (eyes view:) (eyes loop:) (eyes cel:))
 						)
 					)
-					(and
-						(IsObject mouth)
+					(if (IsObject mouth)
 						(+
 							(mouth nsTop:)
 							(CelHigh (mouth view:) (mouth loop:) (mouth cel:))
