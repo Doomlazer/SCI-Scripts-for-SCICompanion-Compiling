@@ -468,7 +468,8 @@
 			(Print
 				window: theWin
 				posn: x y
-				modeless: 1 font font
+				modeless: 1
+				font: font
 				title: (if showTitle name else 0)
 				addText: theBuf
 				addIcon: view theLoop cel 0 0
