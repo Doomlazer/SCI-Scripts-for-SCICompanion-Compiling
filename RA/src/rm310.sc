@@ -243,40 +243,40 @@
 	)
 )
 
-(instance sBartender of Script ; UNUSED
-	(properties)
-
-	(method (changeState newState)
-		(switch (= state newState)
-			(0
-				(bartender setLoop: 2)
-				(= seconds (Random 9 19))
-			)
-			(1
-				(switch (Random 0 1)
-					(0
-						(bartender setLoop: 1 setMotion: MoveTo 55 113 self)
-					)
-					(1
-						(bartender setLoop: 0 setMotion: MoveTo 7 123 self)
-					)
-				)
-			)
-			(2
-				(if (> (bartender x:) 10)
-					(bartender setLoop: 0)
-				else
-					(bartender setLoop: 1)
-				)
-				(bartender setMotion: MoveTo 47 115 self)
-			)
-			(3
-				(= state -1)
-				(= cycles 1)
-			)
-		)
-	)
-)
+;;;(instance sBartender of Script ; UNUSED
+;;;	(properties)
+;;;
+;;;	(method (changeState newState)
+;;;		(switch (= state newState)
+;;;			(0
+;;;				(bartender setLoop: 2)
+;;;				(= seconds (Random 9 19))
+;;;			)
+;;;			(1
+;;;				(switch (Random 0 1)
+;;;					(0
+;;;						(bartender setLoop: 1 setMotion: MoveTo 55 113 self)
+;;;					)
+;;;					(1
+;;;						(bartender setLoop: 0 setMotion: MoveTo 7 123 self)
+;;;					)
+;;;				)
+;;;			)
+;;;			(2
+;;;				(if (> (bartender x:) 10)
+;;;					(bartender setLoop: 0)
+;;;				else
+;;;					(bartender setLoop: 1)
+;;;				)
+;;;				(bartender setMotion: MoveTo 47 115 self)
+;;;			)
+;;;			(3
+;;;				(= state -1)
+;;;				(= cycles 1)
+;;;			)
+;;;		)
+;;;	)
+;;;)
 
 (instance sZiggySmokes of Script
 	(properties)
@@ -313,30 +313,30 @@
 	)
 )
 
-(instance sNodder of Script ; UNUSED
-	(properties)
-
-	(method (changeState newState)
-		(switch (= state newState)
-			(0
-				(woman2 setCycle: End self)
-			)
-			(1
-				(= cycles (Random 1 10))
-			)
-			(2
-				(woman2 setCycle: Beg self)
-			)
-			(3
-				(= cycles (Random 10 20))
-			)
-			(4
-				(= state -1)
-				(= cycles 1)
-			)
-		)
-	)
-)
+;;;(instance sNodder of Script ; UNUSED
+;;;	(properties)
+;;;
+;;;	(method (changeState newState)
+;;;		(switch (= state newState)
+;;;			(0
+;;;				(woman2 setCycle: End self)
+;;;			)
+;;;			(1
+;;;				(= cycles (Random 1 10))
+;;;			)
+;;;			(2
+;;;				(woman2 setCycle: Beg self)
+;;;			)
+;;;			(3
+;;;				(= cycles (Random 10 20))
+;;;			)
+;;;			(4
+;;;				(= state -1)
+;;;				(= cycles 1)
+;;;			)
+;;;		)
+;;;	)
+;;;)
 
 (instance sWhoSentYa of Script
 	(properties)
