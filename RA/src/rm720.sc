@@ -495,7 +495,7 @@
 				(sFX fade:)
 				(SetFlag 65)
 				((gCurRoom obstacles:)
-					delete: ((gCurRoom obstacles:) at: 0) --UNKNOWN-PROPERTY--
+					delete: ((gCurRoom obstacles:) at: 0)
 				)
 				((ScriptID 2720 0) doit: (gCurRoom obstacles:)) ; poly2720Code
 				(steve stopUpd:)
@@ -537,7 +537,7 @@
 				(steve setPri: -1 stopUpd:)
 				(SetFlag 121)
 				((gCurRoom obstacles:)
-					delete: ((gCurRoom obstacles:) at: 0) --UNKNOWN-PROPERTY--
+					delete: ((gCurRoom obstacles:) at: 0)
 				)
 				((ScriptID 2720 0) doit: (gCurRoom obstacles:)) ; poly2720Code
 				(gMessager say: 21 2 5) ; "Ohhhh, my head...what happened? Laura?!"

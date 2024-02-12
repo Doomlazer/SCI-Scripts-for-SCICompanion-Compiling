@@ -385,9 +385,7 @@
 				)
 			)
 			(else
-				Unknown_Class_1358
-				--UNKNOWN-PROPERTY--
-				theVerb
+				(super doVerb: theVerb)
 			)
 		)
 	)
@@ -471,9 +469,7 @@
 				)
 			)
 			(else
-				Unknown_Class_1358
-				--UNKNOWN-PROPERTY--
-				theVerb
+				(super doVerb: theVerb)
 			)
 		)
 	)
