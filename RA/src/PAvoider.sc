@@ -71,7 +71,7 @@
 				(IsObject (= temp4 (temp9 doit:)))
 				(not (temp9 completed:))
 				(temp9 isKindOf: PolyPath)
-				(IsObject ((temp9) obstacles:))
+				(IsObject (temp9 obstacles:))
 			)
 			(= oldBlockerMover (temp4 mover:))
 			(if oldBlockerMover
