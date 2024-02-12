@@ -13,7 +13,7 @@
 		disposeWhenDone 1
 		oneOnly 0
 		killed 0
-		oldIconBarState 0
+		oldIconBarState2 0
 	)
 
 	(method (dispose &tmp temp0)
@@ -25,8 +25,8 @@
 			)
 			(= oldIconBarState 0)
 		)
-		(gTheIconBar state: oldIconBarState)
-		(= oldIconBarState 0)
+		(gTheIconBar state: oldIconBarState2)
+		(= oldIconBarState2 0)
 		(= temp0 caller)
 		(super dispose:)
 		(if temp0
@@ -52,8 +52,8 @@
 	(method (say param1 param2 param3 param4 param5 param6 &tmp temp0 temp1 temp2 temp3 [temp4 20])
 		(= temp0 (= temp1 (= temp2 0)))
 		(= caller (= oneOnly (= killed 0)))
-		(if (not oldIconBarState)
-			(= oldIconBarState (gTheIconBar state:))
+		(if (not oldIconBarState2)
+			(= oldIconBarState2 (gTheIconBar state:))
 		)
 		(if (> argc 5)
 			(= temp3 param6)
