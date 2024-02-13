@@ -261,7 +261,7 @@
 		view 151
 		loop 2
 		signal 2048
-		moveSpeed 0
+		;moveSpeed 0
 	)
 )
 
@@ -273,7 +273,7 @@
 		loop 2
 		cel 1
 		signal 2048
-		moveSpeed 0
+		;moveSpeed 0
 	)
 )
 

@@ -294,7 +294,7 @@
 		cel 2
 		priority 15
 		signal 16400
-		moveSpeed 0
+		;moveSpeed 0
 	)
 
 	(method (doVerb theVerb)

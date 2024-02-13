@@ -350,7 +350,7 @@
 		y 220
 		cel 1
 		signal 16384
-		moveSpeed 0
+		;moveSpeed 0
 	)
 )
 

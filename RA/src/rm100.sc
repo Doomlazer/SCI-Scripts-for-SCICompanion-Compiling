@@ -500,7 +500,7 @@
 		y 190
 		view 151
 		signal 2048
-		moveSpeed 0
+		;moveSpeed 0
 	)
 )
 
@@ -511,7 +511,7 @@
 		view 151
 		cel 1
 		signal 2048
-		moveSpeed 0
+		;moveSpeed 0
 	)
 )
 

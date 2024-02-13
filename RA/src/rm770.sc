@@ -240,7 +240,7 @@
 		loop 4
 		signal 24576
 		cycleSpeed 0
-		moveSpeed 0
+		;moveSpeed 0
 	)
 )
 
@@ -252,7 +252,7 @@
 		loop 5
 		signal 24576
 		cycleSpeed 0
-		moveSpeed 0
+		;moveSpeed 0
 	)
 )
 

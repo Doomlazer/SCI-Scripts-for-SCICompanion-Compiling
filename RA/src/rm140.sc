@@ -170,7 +170,7 @@
 		loop 3
 		cel 1
 		signal 26624
-		moveSpeed 0
+		;moveSpeed 0
 	)
 )
 

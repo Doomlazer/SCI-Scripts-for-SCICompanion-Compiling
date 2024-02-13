@@ -117,7 +117,7 @@
 		view 151
 		loop 4
 		signal 26624
-		moveSpeed 0
+		;moveSpeed 0
 	)
 )
 
@@ -129,7 +129,7 @@
 		loop 4
 		cel 1
 		signal 26624
-		moveSpeed 0
+		;moveSpeed 0
 	)
 )
 

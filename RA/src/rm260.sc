@@ -588,7 +588,7 @@
 		loop 5
 		cel 1
 		cycleSpeed 4
-		moveSpeed 0
+		;moveSpeed 0
 	)
 )
 

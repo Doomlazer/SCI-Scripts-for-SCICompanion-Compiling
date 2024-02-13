@@ -18,6 +18,7 @@
 (use Motion)
 (use Actor)
 (use System)
+(use Print) ;testing only remove
 
 (public
 	rm280 0
@@ -364,7 +365,7 @@
 		view 852
 		loop 5
 		cycleSpeed 4
-		moveSpeed 0
+		;moveSpeed 0
 	)
 )
 
