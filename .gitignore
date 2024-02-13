@@ -30,3 +30,6 @@ RA/SCIDHUV.EXE
 RA/SIERRA.BAT
 RA/VGA320.DRV
 RA/VGA320BW.DRV
+.DS_Store
+RA/stderr.txt
+RA/stdout.txt

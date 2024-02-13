@@ -11,11 +11,12 @@ File > Import the included 997.voc file and Rebuild Resources.
 The game should now compile with no errors.
 
 
-Importing 997.voc is essential, becaue it was removed by Sierra before shipping the floppy version. I've recreated it from scratch, so there is the possibility human error. In fact, there are still several unidentifed names (used) in the file.
+
+Importing 997.voc is essential, becaue it was removed by Sierra before shipping the floppy version. I've recreated it from scratch, so there is the possibility of human error. In fact, there are still several unidentifed names (unused) in the file.
 
 The source code builds on the Sci-Scripts decompile of LB2, which generates thousands of erros if SCICompanion tries compiling it. Importing 997.voc removes all but a few issues which can be viewed in the commit history.
 
-Warning: Although the game compiles without error, there are still several crashes and other signifcant bugs that need to be fixed. 
+
 
 SCICompanion
 https://scicompanion.com/
