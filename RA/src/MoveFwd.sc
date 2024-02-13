@@ -14,7 +14,7 @@
 					actor
 					(+ (actor x:) (SinMult (actor heading:) dist))
 					(- (actor y:) (CosMult (actor heading:) dist))
-					(and (>= argc 3) toCall)
+					(if (>= argc 3) toCall)
 			)
 		else
 			(super init:)
