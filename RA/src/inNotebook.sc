@@ -126,7 +126,7 @@
 				x
 				y
 				dsCOLOR
-				(and (== local4 param2) global160)
+				(if (== local4 param2) global160 else 0)
 				dsWIDTH
 				100
 			)

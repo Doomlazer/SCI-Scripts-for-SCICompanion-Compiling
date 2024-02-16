@@ -361,7 +361,7 @@
 	(method (doVerb theVerb)
 		(switch theVerb
 			(1 ; Look
-				(gMessager say: 4 1 (and (IsFlag 38) 2))
+				(gMessager say: 4 1 (if (IsFlag 38) 2 else 0))
 			)
 			(4 ; Do
 				(cond
@@ -445,7 +445,7 @@
 	(method (doVerb theVerb)
 		(switch theVerb
 			(1 ; Look
-				(gMessager say: 4 1 (and (IsFlag 38) 2))
+				(gMessager say: 4 1 (if (IsFlag 38) 2 else 0))
 			)
 			(4 ; Do
 				(cond

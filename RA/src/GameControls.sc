@@ -169,7 +169,7 @@
 	)
 
 	(method (select theIcon relVer)
-		(theIcon select: (and (>= argc 2) relVer))
+		(theIcon select: (if (>= argc 2) relVer))
 	)
 
 	(method (advanceCurIcon &tmp theIcon))

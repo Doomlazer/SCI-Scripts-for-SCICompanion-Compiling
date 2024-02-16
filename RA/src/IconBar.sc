@@ -695,7 +695,7 @@
 
 	(method (select theIcon relVer)
 		(return
-			(if (theIcon select: (and (>= argc 2) relVer))
+			(if (theIcon select: (if (>= argc 2) relVer))
 				(if (not (& (theIcon signal:) $0002))
 					(= curIcon theIcon)
 				)

@@ -18,7 +18,6 @@
 (use Motion)
 (use Actor)
 (use System)
-(use Print) ;testing only remove
 
 (public
 	rm280 0
