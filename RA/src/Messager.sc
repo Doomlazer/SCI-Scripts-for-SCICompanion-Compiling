@@ -9,24 +9,24 @@
 (class Messager of Obj
 	(properties
 		caller 0
-		oldIconBarState 0
+		talkerList 0
 		disposeWhenDone 1
 		oneOnly 0
 		killed 0
-		oldIconBarState2 0
+		oldIconBarState 0
 	)
 
 	(method (dispose &tmp temp0)
-		(if oldIconBarState
-			(oldIconBarState
+		(if talkerList
+			(talkerList
 				eachElementDo: #caller 0
 				eachElementDo: #dispose 1
 				dispose:
 			)
-			(= oldIconBarState 0)
+			(= talkerList 0)
 		)
-		(gTheIconBar state: oldIconBarState2)
-		(= oldIconBarState2 0)
+		(gTheIconBar state: oldIconBarState)
+		(= oldIconBarState 0)
 		(= temp0 caller)
 		(super dispose:)
 		(if temp0
@@ -52,16 +52,16 @@
 	(method (say param1 param2 param3 param4 param5 param6 &tmp temp0 temp1 temp2 temp3 [temp4 20])
 		(= temp0 (= temp1 (= temp2 0)))
 		(= caller (= oneOnly (= killed 0)))
-		(if (not oldIconBarState2)
-			(= oldIconBarState2 (gTheIconBar state:))
+		(if (not oldIconBarState)
+			(= oldIconBarState (gTheIconBar state:))
 		)
 		(if (> argc 5)
 			(= temp3 param6)
 		else
 			(= temp3 gCurRoomNum)
 		)
-		(if (not oldIconBarState)
-			((= oldIconBarState (Set new:)) add:)
+		(if (not talkerList)
+			((= talkerList (Set new:)) add:)
 		)
 		(if (== param1 -1)
 			(if (and (> argc 1) (IsObject param2))
@@ -114,7 +114,7 @@
 	(method (sayNext theMod theNoun theVerb theCase theSeq &tmp temp0)
 		(if (= temp0 (Message msgNEXT 0))
 			(= temp0 (self findTalker: temp0))
-			(oldIconBarState add: temp0)
+			(talkerList add: temp0)
 			(if argc
 				(temp0 say: theNoun theVerb theCase theSeq self theMod)
 			else
