@@ -1,25 +1,43 @@
-These source files allow for compiling Laura Bow 2 Floppy v1.000 in SCICompanion.
+# SCICompanion compiliable source code
 
-To compile:
+These files are intended for use by translators, modders or anyone else who needs to alter and recompile SCI game scripts.
 
-Copy game.ini and the 'scr' folder into the root of your LB2 game folder.
-
-Open LB2 in SCICompanion by selecting the RESOURCE.MAP file.
-
-File > Import the included 997.voc file and Rebuild Resources.
-
-The game should now compile with no errors.
+Based on the <a href="Sluicebox's Sci-Scripts 
+https://github.com/sluicebox/sci-scripts/tree/main/ra-dos-1.1"Sluicebox's Sci-Scripts</a> decompiles of SCI games. The SCR files have been modified to compile in SCICompanion without generating errors. This does not mean that they are completely bug-free, as the SCICompanion compiler is not perfect and will likely still introduce a few new bugs. Please report any bugs found, so they can be fixed.
 
 
+## Games ready for compilation
 
-Importing 997.voc is essential, becaue it was removed by Sierra before shipping the floppy version. I've recreated it from scratch, so there is the possibility of human error. In fact, there are still several unidentifed names (unused) in the file.
+There are currently two games in this repo (more will be added overtime, requests entertained):
 
-The source code builds on the Sci-Scripts decompile of LB2, which generates thousands of erros if SCICompanion tries compiling it. Importing 997.voc removes all but a few issues which can be viewed in the commit history.
+- LB1
+- LB2-floppy-v1.1
 
 
+## Usage
+
+Some games might require copying or importing additional patches (see individual readme files), but in general, follow these steps: 
+
+Copy the SCR folder and game.ini into a retail copy of the corresponding game. 
+
+Open SCICompanion, navagate to the games folder and select resource.map.
+
+In the SCICompanion menu select Script > Compile all (No errors should be produced, warnings can be ignored).
+
+In the SCICompanion menu select Tools > Rebuild Resources.
+
+The project is now ready for modifiying individual scripts as needed.
+
+
+## Thanks to:
+
+The Sierra game translation communities.
 
 SCICompanion
 https://scicompanion.com/
+
+Kawa's nightly SCICompanion builds
+https://github.com/Kawa-oneechan/SCICompanion/releases
 
 Sluicebox's Sci-Scripts 
 https://github.com/sluicebox/sci-scripts/tree/main/ra-dos-1.1
@@ -27,17 +45,5 @@ https://github.com/sluicebox/sci-scripts/tree/main/ra-dos-1.1
 SCI Programmer's Wiki
 http://sciwiki.sierrahelp.com/
 
-Thank you to the members of the SCIProgramming forum. 
-
-
-Debugger
-
-Scripts 10 & 25 are missing from the Floppy version of the game. I've ported them over with a few adjustments to allow debugging. Import 10.txt into SCICompanion.
-
-To enable the debugger, a 10.scr patch file must exsits in the patch or root folder of the game (depending on resources.cfg). The following files must be rebuilt into the resouce file or be exported as patch files: 
-
-10.scr 
-10.hep
-10.txt
-25.scr
-25.hep
+EO's SCI-Decompilation-Archive
+https://github.com/EricOakford/SCI-Decompilation-Archive
