@@ -72,9 +72,9 @@
 	(properties)
 )
 
-(instance Mood of Sound ; UNUSED
-	(properties)
-)
+;;;(instance Mood of Sound ; UNUSED
+;;;	(properties)
+;;;)
 
 (instance myCopy of Rm
 	(properties

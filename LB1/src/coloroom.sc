@@ -88,7 +88,7 @@
 			)
 		)
 		(Load rsFONT 4)
-		(LoadMany rsMESSAGE 243 temp0)
+		(LoadMany 143 243 temp0)
 		(Load rsVIEW 909)
 		(= global208 512)
 		(= [global377 9] temp0)

@@ -61,7 +61,7 @@
 		)
 		(if (and (or (== gClarenceWilburState 5) (== [gCycleTimers 1] 1)) (== gAct 1))
 			(Clarence init: setScript: clarActions)
-			(LoadMany rsMESSAGE 243 248)
+			(LoadMany 143 243 248)
 			(Load rsVIEW 906)
 			(= global208 64)
 			(= [global377 6] 248)

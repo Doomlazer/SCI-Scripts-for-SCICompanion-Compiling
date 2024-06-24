@@ -96,7 +96,7 @@
 			(|= gSpyFlags $0040)
 			(= global124 1)
 			(Load rsFONT 41)
-			(LoadMany rsMESSAGE 406)
+			(LoadMany 143 406)
 			(Load rsVIEW 642)
 			(LoadMany rsSOUND 94 95 96 29)
 			(coloEyes

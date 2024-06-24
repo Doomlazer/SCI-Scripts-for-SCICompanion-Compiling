@@ -39,7 +39,7 @@
 			(Load rsVIEW 642)
 		)
 		(Load rsFONT 4)
-		(LoadMany rsMESSAGE 406 243 288)
+		(LoadMany 143 406 243 288)
 		(Load rsVIEW 905)
 		(= global208 32)
 		(= [global377 5] 288)

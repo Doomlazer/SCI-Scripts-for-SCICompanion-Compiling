@@ -166,7 +166,7 @@
 				(= local4 1)
 				(Load rsSOUND 223)
 				(= local5 gConMusic)
-				(LoadMany rsMESSAGE 243 371)
+				(LoadMany 143 243 371)
 				(LoadMany rsVIEW 474 928)
 				(= global208 16)
 				(= [global377 4] 371)

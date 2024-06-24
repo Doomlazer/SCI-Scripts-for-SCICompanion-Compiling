@@ -78,7 +78,7 @@
 					(= [gCycleTimers 4] 1800)
 				)
 				(if (== gEthelState 0)
-					(LoadMany rsMESSAGE 243 221)
+					(LoadMany 143 243 221)
 					(LoadMany rsVIEW 325 903)
 					(= global208 8)
 					(= [global377 3] 221)

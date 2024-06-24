@@ -37,7 +37,7 @@
 			(Load rsSCRIPT 406)
 			(Load rsVIEW 642)
 		)
-		(LoadMany rsMESSAGE 243 291)
+		(LoadMany 143 243 291)
 		(Load rsVIEW 906)
 		(= [global377 6] 291)
 		(if (== [gCycleTimers 3] 0)

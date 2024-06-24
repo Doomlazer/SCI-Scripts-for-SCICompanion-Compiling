@@ -36,7 +36,7 @@
 		(super init:)
 		(= gFifiState 1)
 		(Load rsFONT 4)
-		(LoadMany rsMESSAGE 243 294)
+		(LoadMany 143 243 294)
 		(LoadMany rsVIEW 470 904)
 		(= global208 16)
 		(= [global377 4] 294)

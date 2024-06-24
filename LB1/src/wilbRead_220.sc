@@ -48,7 +48,7 @@
 		(LoadMany rsFONT 4 41)
 		(LoadMany rsVIEW 642 907)
 		(LoadMany rsSOUND 29 94 95 96)
-		(LoadMany rsMESSAGE 243 219 406)
+		(LoadMany 143 243 219 406)
 		(= global208 128)
 		(= [global377 7] 219)
 		(Wilbur init: stopUpd: setScript: reading)

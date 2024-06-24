@@ -60,7 +60,7 @@
 
 	(method (init)
 		(super init:)
-		(LoadMany rsMESSAGE 243 222)
+		(LoadMany 143 243 222)
 		(LoadMany rsVIEW 381 908)
 		(= global208 256)
 		(= [global377 8] 222)

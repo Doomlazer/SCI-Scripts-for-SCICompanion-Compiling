@@ -31,7 +31,7 @@
 		(= gDetailLevel -1)
 		(if (!= gPossibleScore 1)
 			(Load rsVIEW 899)
-			(LoadMany rsMESSAGE 409)
+			(LoadMany 143 409)
 		)
 		(Speedy
 			view: 991

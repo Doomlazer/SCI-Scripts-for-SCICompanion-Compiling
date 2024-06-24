@@ -62,7 +62,7 @@
 		(if (== global203 1)
 			(if (> [gCycleTimers 4] 1)
 				(LoadMany rsVIEW 500 505 905)
-				(LoadMany rsMESSAGE 243 226)
+				(LoadMany 143 243 226)
 				(= [global377 5] 226)
 				(|= global208 $0020)
 				(Lilian

@@ -114,7 +114,7 @@
 				(> gAct 0)
 			)
 			(Load rsVIEW 925)
-			(LoadMany rsMESSAGE 412)
+			(LoadMany 143 412)
 			(= local60 1)
 		)
 		(gAddToPics

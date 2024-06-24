@@ -40,7 +40,7 @@
 			(Load rsSCRIPT 406)
 		)
 		(Load rsVIEW 642 904)
-		(LoadMany rsMESSAGE 243 295)
+		(LoadMany 143 243 295)
 		(= global208 32)
 		(= [global377 5] 295)
 		(Lillian setCycle: Walk init:)

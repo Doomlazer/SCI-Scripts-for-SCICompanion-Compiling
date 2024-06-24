@@ -489,10 +489,10 @@
 	)
 )
 
-(instance Wind of Sound ; UNUSED
-	(properties)
-)
-
+;;;(instance Wind of Sound ; UNUSED
+;;;	(properties)
+;;;)
+;;;
 (instance myMusic of Sound
 	(properties)
 )

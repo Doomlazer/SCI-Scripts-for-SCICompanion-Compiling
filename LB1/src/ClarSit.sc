@@ -34,8 +34,8 @@
 
 	(method (init)
 		(super init:)
-		(LoadMany rsMESSAGE 243 218)
-		(LoadMany rsSYNC 7)
+		(LoadMany 143 243 218)
+		(LoadMany 142 7)
 		(= global208 64)
 		(= [global377 6] 218)
 		(ClarAss init: stopUpd:)

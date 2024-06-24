@@ -60,7 +60,7 @@
 
 	(method (delete theElement)
 		(super delete: theElement)
-		(if (and global54 (theElement isKindOf: Unknown_Class_2))
+		(if (and global54 (theElement isKindOf: Collect))
 			(theElement release: dispose:)
 		)
 	)
@@ -86,10 +86,10 @@
 	)
 )
 
-(instance controls of Controls
-	(properties)
-)
-
+;;;(instance controls of Controls
+;;;	(properties)
+;;;)
+;;;
 (instance timers of Set
 	(properties)
 )

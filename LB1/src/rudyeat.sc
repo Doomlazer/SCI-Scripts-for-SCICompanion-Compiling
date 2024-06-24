@@ -51,7 +51,7 @@
 			(Load rsVIEW 642)
 		)
 		(LoadMany rsVIEW 380 908)
-		(LoadMany rsMESSAGE 243 373)
+		(LoadMany 143 243 373)
 		(= global208 256)
 		(= [global377 8] 373)
 		(RHead setPri: 9 init: hide:)

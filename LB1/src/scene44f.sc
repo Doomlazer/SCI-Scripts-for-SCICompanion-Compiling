@@ -50,7 +50,7 @@
 		(Load rsFONT 41)
 		(Load rsVIEW 642)
 		(LoadMany rsSOUND 29 94 95 96)
-		(LoadMany rsMESSAGE 406)
+		(LoadMany 143 406)
 		(myMusic number: 27 loop: -1 play:)
 		(Lillian
 			view: 518

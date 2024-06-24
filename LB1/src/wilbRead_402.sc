@@ -51,7 +51,7 @@
 					(Load rsFONT 41)
 				)
 				(LoadMany rsVIEW 420 642 907)
-				(LoadMany rsMESSAGE 243 247)
+				(LoadMany 143 243 247)
 				(= global208 128)
 				(= [global377 7] 247)
 				(Wilbur posn: 196 139 init: stopUpd:)

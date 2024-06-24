@@ -8,6 +8,7 @@
 (use Menu)
 (use Actor)
 (use System)
+(use SortCopy)
 
 (local
 	[inputLine 23]
@@ -108,7 +109,8 @@
 
 	(method (said event)
 		(if global54
-			(proc984_0 alterEgo gSortedFeatures gCast gFeatures)
+			;(proc984_0 alterEgo gSortedFeatures gCast gFeatures)
+			(SortedAdd alterEgo gSortedFeatures gCast gFeatures)
 		else
 			(gSortedFeatures add: gCast gFeatures)
 		)

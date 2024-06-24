@@ -185,9 +185,9 @@
 				)
 				(shadow setCycle: End self)
 			)
-			(12
-				(= seconds 7)
-			)
+;;;			(12
+;;;				(= seconds 7)
+;;;			)
 			(13
 				(= global128 271)
 				(= global129 9)

@@ -34,7 +34,7 @@
 		(LoadMany rsFONT 41)
 		(LoadMany rsVIEW 642 900)
 		(LoadMany rsSOUND 29 94 95 96 114 115)
-		(LoadMany rsMESSAGE 406)
+		(LoadMany 143 406)
 		(Gertie setPri: 6 setCycle: Fwd init:)
 		(snores setPri: 6 init:)
 	)

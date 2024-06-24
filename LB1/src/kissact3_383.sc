@@ -44,7 +44,7 @@
 		(Load rsSCRIPT 985)
 		(Load rsSOUND 51)
 		(= gFifiState 1)
-		(LoadMany rsMESSAGE 243 294 377)
+		(LoadMany 143 243 294 377)
 		(LoadMany rsVIEW 470 904 910)
 		(= global208 (| (|= global208 $0010) $0400))
 		(= [global377 4] 294)
@@ -370,13 +370,13 @@
 	)
 )
 
-(instance Sweeper of Prop ; UNUSED
-	(properties
-		y 119
-		x 158
-		view 475
-		loop 2
-		cel 2
-	)
-)
+;;;(instance Sweeper of Prop ; UNUSED
+;;;	(properties
+;;;		y 119
+;;;		x 158
+;;;		view 475
+;;;		loop 2
+;;;		cel 2
+;;;	)
+;;;)
 

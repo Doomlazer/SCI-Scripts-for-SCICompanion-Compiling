@@ -82,7 +82,7 @@
 		(Load rsFONT 4)
 		(Load rsSOUND 112)
 		(Load rsSCRIPT 985)
-		(LoadMany rsMESSAGE 243 252)
+		(LoadMany 143 243 252)
 		(LoadMany rsVIEW 380 381 460 908)
 		(= global208 256)
 		(= [global377 8] 252)

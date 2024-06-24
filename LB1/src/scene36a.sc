@@ -67,7 +67,7 @@
 				(= global199 1)
 			else
 				(Load rsFONT 41)
-				(LoadMany rsMESSAGE 406)
+				(LoadMany 143 406)
 				(Load rsVIEW 642)
 				(LoadMany rsSOUND 29 94 95 96)
 				(Rudy setPri: 1 init: stopUpd:)

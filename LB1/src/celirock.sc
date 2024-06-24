@@ -44,10 +44,10 @@
 		(LoadMany rsVIEW 480 901)
 		(= global208 2)
 		(if global135
-			(LoadMany rsMESSAGE 243 283)
+			(LoadMany 143 243 283)
 			(= [global377 1] 283)
 		else
-			(LoadMany rsMESSAGE 243 228)
+			(LoadMany 143 243 228)
 			(= [global377 1] 228)
 		)
 		(Celie cycleSpeed: 1 setCycle: Fwd init:)
@@ -221,14 +221,14 @@
 	)
 )
 
-(instance frontDoor of Prop ; UNUSED
-	(properties
-		y 93
-		x 227
-		view 106
-		priority 5
-	)
-)
+;;;(instance frontDoor of Prop ; UNUSED
+;;;	(properties
+;;;		y 93
+;;;		x 227
+;;;		view 106
+;;;		priority 5
+;;;	)
+;;;)
 
 (instance chair of Prop
 	(properties

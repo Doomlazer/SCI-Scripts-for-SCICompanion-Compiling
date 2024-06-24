@@ -60,7 +60,7 @@
 	(method (init)
 		(super init:)
 		(LoadMany rsFONT 4 41)
-		(LoadMany rsMESSAGE 406)
+		(LoadMany 143 406)
 		(Load rsVIEW 642)
 		(LoadMany rsSOUND 29 94 95 96)
 		(HandsOff)

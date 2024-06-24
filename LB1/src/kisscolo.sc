@@ -36,7 +36,7 @@
 		(Load rsSCRIPT 985)
 		(LoadMany rsVIEW 470 642 909)
 		(LoadMany rsSOUND 29 51 94 95 96)
-		(LoadMany rsMESSAGE 243 225 406)
+		(LoadMany 143 243 225 406)
 		(= global208 512)
 		(= [global377 9] 225)
 		(if (and (== gAct 0) (== [gCycleTimers 3] 0))

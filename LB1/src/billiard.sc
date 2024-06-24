@@ -179,9 +179,9 @@
 			(Load rsVIEW 642)
 		)
 		(Load rsSCRIPT 985)
-		(LoadMany rsMESSAGE 243 249 248)
+		(LoadMany 143 243 249 248)
 		(LoadMany rsVIEW 405 407 365 364)
-		(LoadMany rsSYNC 7 3)
+		(LoadMany 142 7 3)
 		(= global208 68)
 		(= [global377 6] 248)
 		(= [global377 2] 249)
@@ -824,13 +824,13 @@
 	)
 )
 
-(instance Mouth of Prop ; UNUSED
-	(properties
-		view 364
-		loop 6
-		signal 16384
-	)
-)
+;;;(instance Mouth of Prop ; UNUSED
+;;;	(properties
+;;;		view 364
+;;;		loop 6
+;;;		signal 16384
+;;;	)
+;;;)
 
 (instance CueBall of Act
 	(properties

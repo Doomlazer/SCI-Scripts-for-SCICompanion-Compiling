@@ -42,7 +42,7 @@
 			(Load rsVIEW 642)
 		)
 		(if (== gAct 3)
-			(LoadMany rsMESSAGE 243 296)
+			(LoadMany 143 243 296)
 			(= [global377 8] 296)
 			(Load rsVIEW 908)
 			(if (== [gCycleTimers 1] 0)

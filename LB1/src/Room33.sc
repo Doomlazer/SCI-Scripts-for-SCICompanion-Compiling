@@ -69,7 +69,7 @@
 			)
 			(= local4 1)
 			(Load rsVIEW 925)
-			(LoadMany rsMESSAGE 412)
+			(LoadMany 143 412)
 		)
 		(Clock stopUpd: ignoreActors: 1 init:)
 		(if

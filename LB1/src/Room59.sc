@@ -84,20 +84,20 @@
 		(if (and (>= gAct 2) (<= gAct 5))
 			(self setRegions: 262) ; celihome
 		)
-		(LoadMany rsMESSAGE 243)
+		(LoadMany 143 243)
 		(Load rsVIEW 901)
 		(= global208 2)
 		(switch gAct
 			(2
-				(LoadMany rsMESSAGE 283)
+				(LoadMany 143 283)
 				(= [global377 1] 283)
 			)
 			(3
-				(LoadMany rsMESSAGE 283)
+				(LoadMany 143 283)
 				(= [global377 1] 283)
 			)
 			(4
-				(LoadMany rsMESSAGE 299)
+				(LoadMany 143 299)
 				(= [global377 1] 299)
 			)
 		)

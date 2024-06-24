@@ -80,7 +80,7 @@
 	(method (init)
 		(super init:)
 		(SetFlag 20)
-		(LoadMany rsMESSAGE 243 250)
+		(LoadMany 143 243 250)
 		(Load rsVIEW 904)
 		(= global208 16)
 		(= [global377 4] 250)
