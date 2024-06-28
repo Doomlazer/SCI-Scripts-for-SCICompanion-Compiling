@@ -786,13 +786,16 @@
 	(= temp1 (<< $0001 (mod param2 16)))
 	(switch param1
 		(0
-			(|= [global440 temp0] temp1)
+			; SCICompanion doesn't compile |=, +=, etc. correctly
+			;(|= [global440 temp0] temp1)
+			(= [global440 temp0] (| [global440 temp0] temp1))
 		)
 		(1
 			(return (& [global440 temp0] temp1))
 		)
 		(2
-			(&= [global440 temp0] (~ temp1))
+			;(&= [global440 temp0] (~ temp1))
+			(= [global440 temp0] (& [global440 temp0] (~ temp1)))
 		)
 	)
 )
