@@ -1426,7 +1426,7 @@
 					(DoSound sndVOLUME local8)
 					(door loop: 6 setCycle: Beg)
 					(gEgo illegalBits: -32760)
-					(&= global117 $7fff)
+					(= global117 (& global117 $7fff))
 				)
 			)
 			(2

@@ -744,7 +744,7 @@
 				(if (& global169 local0)
 					(HandsOff)
 					(= local1 local0)
-					(&= global169 (~ local0))
+					(= global169 (& global169 (~ local0)))
 					(Ok) ; "Okay."
 					(switch local1
 						(2

@@ -166,7 +166,7 @@
 				else
 					(= [gCycleTimers 3] (- 699 (* gJeevesChoresState 100)))
 				)
-				(&= global208 $ffbf)
+				(= global208 (& global208 $ffbf))
 				(= [global377 6] 0)
 				(Clarence dispose:)
 				(client setScript: 0)

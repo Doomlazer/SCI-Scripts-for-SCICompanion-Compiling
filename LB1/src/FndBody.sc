@@ -40,7 +40,7 @@
 			(+ (= temp3 (* (- [local0 temp0] 1) 7)) (/ [local0 (++ temp0)] 16))
 		)
 		(= temp4 (<< $0001 (mod [local0 temp0] 16)))
-		(&= [global225 temp3] (~ temp4))
+		(= [global225 temp3] (& [global225 temp3] (~ temp4)))
 		(if (== [local0 (++ temp0)] -32768)
 			(break)
 		)

@@ -62,10 +62,10 @@
 	)
 
 	(method (init)
-		(&= signal $7fff)
+		(= signal (& signal $7fff))
 		(if (not (gCast contains: self))
 			(= lsRight (= lsBottom (= lsLeft (= lsTop 0))))
-			(&= signal $ff77)
+			(= signal (& signal $ff77))
 		)
 		(BaseSetter self)
 		(gCast add: self)
@@ -95,7 +95,7 @@
 	)
 
 	(method (show)
-		(&= signal $fff7)
+		(= signal (& signal $fff7))
 	)
 
 	(method (delete)
@@ -116,7 +116,7 @@
 						)
 				)
 			)
-			(&= signal $7fff)
+			(= signal (& signal $7fff))
 			(gCast delete: self)
 			(if underBits
 				(UnLoad 133 underBits)
@@ -128,7 +128,7 @@
 
 	(method (stopUpd)
 		(= signal (| signal $0001))
-		(&= signal $fffd)
+		(= signal (& signal $fffd))
 	)
 
 	(method (forceUpd)
@@ -137,7 +137,7 @@
 
 	(method (startUpd)
 		(= signal (| signal $0002))
-		(&= signal $fffe)
+		(= signal (& signal $fffe))
 	)
 
 	(method (setPri newPri)
@@ -146,7 +146,7 @@
 				(= signal (| signal $0010))
 			)
 			((== newPri -1)
-				(&= signal $ffef)
+				(= signal (& signal $ffef))
 			)
 			(else
 				(= priority newPri)
@@ -162,7 +162,7 @@
 				(= signal (| signal $0800))
 			)
 			((== newLoop -1)
-				(&= signal $f7ff)
+				(= signal (& signal $f7ff))
 			)
 			(else
 				(= loop newLoop)
@@ -178,7 +178,7 @@
 				(= signal (| signal $1000))
 			)
 			((== newCel -1)
-				(&= signal $efff)
+				(= signal (& signal $efff))
 			)
 			(else
 				(= signal (| signal $1000))
@@ -198,7 +198,7 @@
 		(if (or (== 0 argc) arg)
 			(= signal (| signal $4000))
 		else
-			(&= signal $bfff)
+			(= signal (& signal $bfff))
 		)
 	)
 
@@ -223,7 +223,7 @@
 			(if value
 				(= signal (| signal $0200))
 			else
-				(&= signal $fdff)
+				(= signal (& signal $fdff))
 			)
 		)
 		(return ret)
@@ -343,7 +343,7 @@
 		(if viewer
 			(viewer doit: self)
 		)
-		(&= signal $fbff)
+		(= signal (& signal $fbff))
 		(cond
 			(avoider
 				(avoider doit:)
@@ -460,7 +460,7 @@
 		(if (or (not argc) arg)
 			(= signal (| signal $2000))
 		else
-			(&= signal $dfff)
+			(= signal (& signal $dfff))
 		)
 	)
 
@@ -472,7 +472,7 @@
 
 	(method (ignoreControl ctrl &tmp i)
 		(for ((= i 0)) (< i argc) ((++ i))
-			(&= illegalBits (~ [ctrl i]))
+			(= illegalBits (& illegalBits (~ [ctrl i])))
 		)
 	)
 

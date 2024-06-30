@@ -90,7 +90,7 @@
 				)
 				(self lastCel:)
 			else
-				(&= gElevatorState (~ gateStMask))
+				(= gElevatorState (& gElevatorState (~ gateStMask)))
 				0
 			)
 		)
@@ -147,7 +147,7 @@
 				else
 					(= temp1 -52)
 				)
-				(&= global111 $7fff)
+				(= global111 (& global111 $7fff))
 				(= gElevatorState (| gElevatorState $0040))
 				(HandsOff)
 				(= global110 0)
@@ -405,7 +405,7 @@
 						(if (gEgo has: 18) ; brass_key
 							(if (& gElevatorState $0008)
 								(Print 201 9) ; "A faint click is heard as you turn the key in the lock."
-								(&= gElevatorState $fff7)
+								(= gElevatorState (& gElevatorState $fff7))
 							else
 								(Print 201 10) ; "The control is locked."
 							)
@@ -481,7 +481,7 @@
 		else
 			(gConMusic number: 79)
 			(self setCycle: Beg self)
-			(&= gElevatorState (~ gateStMask))
+			(= gElevatorState (& gElevatorState (~ gateStMask)))
 		)
 		(gConMusic loop: 1 play:)
 		(if (and (== gCurRoomNum 32) (!= gCurRoomNum global111))
@@ -499,7 +499,7 @@
 		(switch (++ global110)
 			(0
 				(self stopUpd:)
-				(&= gElevatorState $ffbf)
+				(= gElevatorState (& gElevatorState $ffbf))
 				(if (!= gCurRoomNum global111)
 					(= global110 -1)
 				)
@@ -558,7 +558,7 @@
 						(Print msgID)
 					)
 					(HandsOn)
-					(&= gElevatorState $ffef)
+					(= gElevatorState (& gElevatorState $ffef))
 					(= global110 -1)
 					(self cue:)
 				)

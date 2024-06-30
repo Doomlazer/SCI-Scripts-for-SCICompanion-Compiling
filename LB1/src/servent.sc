@@ -50,7 +50,7 @@
 
 	(method (dispose)
 		(DisposeScript 985)
-		(&= global195 $fbff)
+		(= global195 (& global195 $fbff))
 		(super dispose:)
 	)
 

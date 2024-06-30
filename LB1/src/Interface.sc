@@ -283,7 +283,7 @@
 		(if bool
 			(= state (| state $0001))
 		else
-			(&= state $fffe)
+			(= state (& state $fffe))
 		)
 	)
 
@@ -291,7 +291,7 @@
 		(if bool
 			(= state (| state $0008))
 		else
-			(&= state $fff7)
+			(= state (& state $fff7))
 		)
 		(self draw:)
 	)

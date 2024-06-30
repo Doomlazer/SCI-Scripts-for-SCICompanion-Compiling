@@ -246,7 +246,7 @@
 				(Smashed fade:)
 				(= global179 0)
 				(Ethel dispose:)
-				(&= global208 $fff7)
+				(= global208 (& global208 $fff7))
 				(= [global377 3] 0)
 				(client setScript: 0)
 			)

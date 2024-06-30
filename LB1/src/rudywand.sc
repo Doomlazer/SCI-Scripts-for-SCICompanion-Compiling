@@ -219,7 +219,7 @@
 				)
 				(= global180 0)
 				(DisposeScript 985)
-				(&= global208 $feff)
+				(= global208 (& global208 $feff))
 				(= [global377 8] 0)
 				(= local63 0)
 				(client setScript: 0)

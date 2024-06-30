@@ -192,7 +192,7 @@
 					(global373 setScript: playRecord init:)
 				)
 				(= global163 1)
-				(&= [global377 4] $fee0)
+				(= [global377 4] (& [global377 4] $fee0))
 				(Fifi
 					cycleSpeed: 0
 					illegalBits: 0

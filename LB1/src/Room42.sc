@@ -135,7 +135,7 @@
 			(local1 view: 242 loop: 2 cel: 0 x: 283 y: 126)
 			(gAddToPics add: local0 local1 doit:)
 			(gEgo init:)
-			(&= gElevatorState $fff7)
+			(= gElevatorState (& gElevatorState $fff7))
 		else
 			(if (and (not (& gElevatorState $0030)) (not (& gCorpseFlags $0040))) ; Lillian
 				(= global111

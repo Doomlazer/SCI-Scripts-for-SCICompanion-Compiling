@@ -175,7 +175,7 @@
 					(if (& gElevatorState $0001)
 						(- (NumCels elevGate) 1)
 					else
-						(&= gElevatorState $fffe)
+						(= gElevatorState (& gElevatorState $fffe))
 					)
 				setPri: 9
 				init:
@@ -351,7 +351,7 @@
 						((Said '[<around,at][/room]')
 							(cond
 								((gCast contains: poker)
-									(&= global166 (~ (<< $0001 gAct)))
+									(= global166 (& global166 (~ (<< $0001 gAct))))
 									(Print 32 3) ; "Something looks wrong here! A chair has been knocked over, and there are signs of a struggle on the floor!"
 								)
 								((& (gEgo onControl: 0) $0020)
@@ -517,7 +517,7 @@
 				else
 					(gConMusic number: 79)
 					(elevGate setCycle: Beg)
-					(&= gElevatorState $fffe)
+					(= gElevatorState (& gElevatorState $fffe))
 				)
 				(gConMusic loop: 1 play: self)
 				(if (!= local4 -1)

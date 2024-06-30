@@ -256,7 +256,7 @@
 							(== gPrevRoomNum 63)
 							(& gMustDos $0002)
 						)
-						(&= gMustDos $00fb)
+						(= gMustDos (& gMustDos $00fb))
 					)
 					(gCurRoom newRoom: 63)
 				)
