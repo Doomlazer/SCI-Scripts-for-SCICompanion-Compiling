@@ -760,7 +760,7 @@
 )
 
 (procedure (LoadMany param1 param2 &tmp temp0 temp1)
-	(-= argc 2)
+	(= argc (- argc 2))
 	(for ((= temp0 0)) (<= temp0 argc) ((++ temp0))
 		(= temp1 [param2 temp0])
 		(switch param1

@@ -61,8 +61,8 @@
 	(method (inset h v)
 		(= top (+ top v))
 		(= left (+ left h))
-		(-= bottom v)
-		(-= right h)
+		(= bottom (- bottom v))
+		(= right (- right h))
 	)
 
 	(method (setMapSet &tmp mapSet)

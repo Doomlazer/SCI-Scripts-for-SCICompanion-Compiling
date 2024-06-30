@@ -23,7 +23,7 @@
 )
 
 (procedure (umod n modN)
-	(if (< (-= n (* modN (/ n modN))) 0)
+	(if (< (= n (- n (* modN (/ n modN)))) 0)
 		(= n (+ n modN))
 	)
 	(return n)

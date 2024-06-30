@@ -147,7 +147,7 @@
 				(== (= gCigarButtLocation (+ (Random 49 50) (gCurRoom east:))) gCaneLocation)
 			)
 			(if (> gCaneLocation 85)
-				(-= gCigarButtLocation 10)
+				(= gCigarButtLocation (- gCigarButtLocation 10))
 			else
 				(= gCigarButtLocation (+ gCigarButtLocation 10))
 			)

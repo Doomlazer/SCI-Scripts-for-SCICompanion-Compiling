@@ -12,7 +12,7 @@
 
 (procedure (localproc_1 param1 param2)
 	(if (>= argc 2)
-		(-= param1 param2)
+		(= param1 (- param1 param2))
 	)
 	(return
 		(cond

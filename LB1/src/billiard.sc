@@ -116,7 +116,10 @@
 		(and
 			(== [local73 (+ local103 2)] temp0)
 			(== [local73 (+ local103 3)] temp1)
-			(or (== (-= local103 5) 0) (== local103 15))
+			(or
+				(== (= local103 (- local103 5)) 0)
+				(== local103 15)
+			)
 		)
 		(= local103 (+ local103 10))
 	)

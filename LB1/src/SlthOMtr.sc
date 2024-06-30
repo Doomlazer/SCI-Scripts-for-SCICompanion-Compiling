@@ -546,7 +546,7 @@
 
 (procedure (localproc_9)
 	(if local32
-		(-= local32 4)
+		(= local32 (- local32 4))
 		(localproc_6)
 	)
 )

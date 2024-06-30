@@ -84,7 +84,7 @@
 	;;positive numbers mean shortest turn is clockwise
 	;;by Pablo Ghenis
 	
-	(if (>= argc 2) (-= ang h))				;deviation in -359/+359 range
+	(if (>= argc 2) (= ang (- ang h)))				;deviation in -359/+359 range
 	(return
 		(cond											;convert to -179/+180 range
 			((<= ang -180) (+ ang 360))

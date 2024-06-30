@@ -211,7 +211,7 @@
 						(JOY_LEFT
 							(if (> local101 5)
 								(if (> local101 7)
-									(-= local101 8)
+									(= local101 (- local101 8))
 								else
 									(-- local101)
 								)

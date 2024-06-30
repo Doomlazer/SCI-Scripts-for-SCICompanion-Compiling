@@ -615,7 +615,7 @@
 			)
 			(else
 				(if (< 180 (= maxCoord (GetAngle x y vy xIncr)))
-					(-= maxCoord 360)
+					(= maxCoord (- maxCoord 360))
 				)
 				(= maxCoord (+ (/ (+ maxCoord 90) 2) (* 45 (- dir 2))))
 				(= yIncr (TimesSin maxCoord 100))

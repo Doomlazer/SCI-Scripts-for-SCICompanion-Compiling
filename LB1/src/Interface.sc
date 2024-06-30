@@ -497,11 +497,11 @@
 		(while lines
 			(if (!= cursor text)
 				(= redraw 1)
-				(-= cursor x)
+				(= cursor (- cursor x))
 				(if mark
 					(-- mark)
 				else
-					(-= lsTop x)
+					(= lsTop (- lsTop x))
 				)
 			else
 				(break)
