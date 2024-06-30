@@ -134,7 +134,7 @@
 			)
 			(if (and (& gCorpseFlags $0040) (not (gEgo has: 5))) ; Lillian, skeleton_key
 				(door cel: (door lastCel:) ignoreActors: 1)
-				(|= global117 $8000)
+				(= global117 (| global117 $8000))
 			)
 		)
 		(Load rsVIEW 56)
@@ -375,7 +375,7 @@
 								(Print 74 1) ; "You are in the east wing of the attic. There is an attic door before you."
 							)
 							((and (not (& gCorpseFlags $0010)) (== gAct 5)) ; Jeeves & Fifi
-								(|= gCorpseFlags $0010) ; Jeeves & Fifi
+								(= gCorpseFlags (| gCorpseFlags $0010)) ; Jeeves & Fifi
 								(Print 74 6) ; "OH! This is terrible!! Fifi and Jeeves are sitting together on the sofa...DEAD!"
 							)
 							(else
@@ -1368,7 +1368,7 @@
 				((or (MousedOn self event 3) (Said 'look/fifi'))
 					(event claimed: 1)
 					(if (not (& global207 $0010))
-						(|= global207 $0010)
+						(= global207 (| global207 $0010))
 						(Say 0 74 73) ; "Fifi is the Colonel's pretty French maid. You surmise that she is probably very apt in her duties...whatever THEY may be! Fifi is young, blonde, and sexy. Although she seems to have a vivacious personality, you can sense a certain cunning underneath it all."
 					else
 						(Print 74 74) ; "Fifi must be getting ready to see someone special as she's taking great pains to make herself look pretty."
@@ -1420,7 +1420,7 @@
 					(DoSound sndVOLUME local8)
 					(door loop: 6 setCycle: End)
 					(gEgo illegalBits: -32768)
-					(|= global117 $8000)
+					(= global117 (| global117 $8000))
 				else
 					(mySound number: 44 loop: 1 priority: 10 play:)
 					(DoSound sndVOLUME local8)

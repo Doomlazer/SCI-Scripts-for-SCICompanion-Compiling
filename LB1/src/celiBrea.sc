@@ -151,7 +151,7 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0004))
-						(|= gMustDos $0004)
+						(= gMustDos (| gMustDos $0004))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)
@@ -771,7 +771,7 @@
 						(Say 1 236 43) ; "Like I said before, Laura, there's nothing there!"
 					else
 						(HandsOff)
-						(|= global145 $0001)
+						(= global145 (| global145 $0001))
 						(= local5 1)
 						(if (Lillian script:)
 							(((Lillian script:) client:) setScript: 0)

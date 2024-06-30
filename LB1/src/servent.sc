@@ -28,7 +28,7 @@
 		(= serveState -1)
 		(= guestState 1)
 		(= serving 0)
-		(|= global195 $0400)
+		(= global195 (| global195 $0400))
 	)
 
 	(method (doit &tmp temp0)
@@ -65,7 +65,7 @@
 						(Print 204 0) ; "Jeeves seems to be busy doing his chores."
 					else
 						(= global213 11)
-						(|= global207 $0400)
+						(= global207 (| global207 $0400))
 						(Say 0 204 1) ; "Jeeves is the Colonel's imposing butler. Though you find him somewhat good-looking, he nevertheless gives off a disconcerting feeling of secretiveness. You have noticed that Jeeves generally keeps to himself and seems to talk in little more than monosyllables. You wonder about him."
 					)
 					(event claimed: 1)

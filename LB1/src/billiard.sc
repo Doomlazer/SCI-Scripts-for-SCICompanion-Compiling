@@ -207,7 +207,7 @@
 					(Print 245 1) ; "They're not saying anything of interest."
 				)
 				((and (IsFlag 51) (Said 'tell//gertie<about'))
-					(|= global145 $0042)
+					(= global145 (| global145 $0042))
 					(= local12 1)
 					(= global202 0)
 					(Gloria startUpd: setScript: goSee)
@@ -388,7 +388,7 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0002))
-						(|= gMustDos $0002)
+						(= gMustDos (| gMustDos $0002))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)

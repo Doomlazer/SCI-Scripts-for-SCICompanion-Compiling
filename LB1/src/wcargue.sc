@@ -468,7 +468,7 @@
 						(Say 1 237 22) ; "I won't let you fool me again! Once was enough!"
 					else
 						(Say 1 237 23) ; "No! You can't be serious!"
-						(|= global145 $0004)
+						(= global145 (| global145 $0004))
 						(Wilbur setScript: goSee)
 						(Clarence setScript: 0)
 					)

@@ -690,7 +690,7 @@
 					setCycle: Walk
 					illegalBits: -32768
 				)
-				(|= global169 (| (<< local1 $0008) local1))
+				(= global169 (| global169 (| (<< local1 $0008) local1)))
 				(cls)
 				(HandsOn)
 				(client setScript: 0)

@@ -40,7 +40,7 @@
 	(method (init)
 		(proc415_1 4)
 		(Body setPri: 8 init:)
-		(|= gCorpseFlags $0004) ; Gloria
+		(= gCorpseFlags (| gCorpseFlags $0004)) ; Gloria
 		(= global195 4)
 		(self setScript: showCloseup)
 	)

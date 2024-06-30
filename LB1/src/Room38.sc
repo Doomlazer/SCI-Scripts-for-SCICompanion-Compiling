@@ -122,7 +122,7 @@
 				(= local3 1)
 				(if (not (& gSpyFlags $0002))
 					(if (== [gCycleTimers 1] 1)
-						(|= gSpyFlags $0002)
+						(= gSpyFlags (| gSpyFlags $0002))
 						(= [gCycleTimers 1] 0)
 						(self setRegions: 378) ; ClarSit
 					else

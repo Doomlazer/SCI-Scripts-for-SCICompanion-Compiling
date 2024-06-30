@@ -43,7 +43,7 @@
 )
 
 (procedure (localproc_3)
-	(|= gSpyFlags $0002)
+	(= gSpyFlags (| gSpyFlags $0002))
 	(= [gCycleTimers 1] 0)
 	(++ global197)
 	(SetFlag 16)
@@ -177,7 +177,7 @@
 							(= state -1)
 						)
 						((not (& gMustDos $0002))
-							(|= gMustDos $0002)
+							(= gMustDos (| gMustDos $0002))
 							(self setScript: (ScriptID 406 0)) ; Clock
 							(= state -1)
 						)

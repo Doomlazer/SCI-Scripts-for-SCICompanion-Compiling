@@ -65,7 +65,7 @@
 				(>= [gCycleTimers 1] (* (- 8 global114) 100))
 			)
 			(= global180 gCurRoomNum)
-			(|= global208 $0100)
+			(= global208 (| global208 $0100))
 			(= [gCycleTimers 1] (- 899 (* global114 100)))
 			(= local63 1)
 			(Rudy
@@ -96,7 +96,7 @@
 				(not local63)
 			)
 			(if (User controls:)
-				(|= global208 $0100)
+				(= global208 (| global208 $0100))
 				(= global114 (- 8 (/ [gCycleTimers 1] 100)))
 				(= global180 gCurRoomNum)
 				(= local63 1)
@@ -178,7 +178,7 @@
 						(if (and (== gMinute 3) (== gCurRoomNum 10))
 							(global373 startUpd:)
 						)
-						(|= gMustDos $0001)
+						(= gMustDos (| gMustDos $0001))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state 0)
 					)

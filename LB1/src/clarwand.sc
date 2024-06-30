@@ -50,7 +50,7 @@
 				(== [local42 (- 7 gJeevesChoresState)] gCurRoomNum)
 				(>= [gCycleTimers 3] (* (- 6 gJeevesChoresState) 100))
 			)
-			(|= global208 $0040)
+			(= global208 (| global208 $0040))
 			(= [gCycleTimers 3] (- 699 (* gJeevesChoresState 100)))
 			(= local50 1)
 			(Clarence
@@ -74,7 +74,7 @@
 				(== [local42 (/ [gCycleTimers 3] 100)] gCurRoomNum)
 			)
 			(= local50 1)
-			(|= global208 $0040)
+			(= global208 (| global208 $0040))
 			(= gJeevesChoresState (- 7 (/ [gCycleTimers 3] 100)))
 			(Clarence
 				setAvoider: ((Avoid new:) offScreenOK: 1)
@@ -136,7 +136,7 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0008))
-						(|= gMustDos $0008)
+						(= gMustDos (| gMustDos $0008))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)

@@ -146,7 +146,7 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0008))
-						(|= gMustDos $0008)
+						(= gMustDos (| gMustDos $0008))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)
@@ -389,7 +389,7 @@
 				(if (& global207 $0010)
 					(Print 231 15) ; "Currently, Fifi looks to be busily cleaning the Colonel's room."
 				else
-					(|= global207 $0010)
+					(= global207 (| global207 $0010))
 					(= global213 5)
 					(Say 0 231 16) ; "Fifi is the Colonel's pretty French maid. You surmise that she is probably very apt in her duties...whatever they may be. Fifi is young, blonde, and sexy. She seems to have a vivacious personality, but you can sense a certain cunning underneath it all."
 				)

@@ -47,7 +47,7 @@
 						(Say 1 241 0) ; "I won't fall for that old gag again!"
 					else
 						(Say 1 241 1) ; "That can't be true! Not Mother!"
-						(|= global145 $0080)
+						(= global145 (| global145 $0080))
 						(Rudy setScript: goSee)
 					)
 				else

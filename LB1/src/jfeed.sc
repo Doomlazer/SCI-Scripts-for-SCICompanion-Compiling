@@ -511,7 +511,7 @@
 				(if (& global207 $0400)
 					(Print 239 25) ; "Jeeves seems to be busy doing his chores."
 				else
-					(|= global207 $0400)
+					(= global207 (| global207 $0400))
 					(= global213 11)
 					(Say 0 239 26) ; "Jeeves is the Colonel's imposing butler. Though you find him somewhat good-looking, he nevertheless gives off a disconcerting feeling of secretiveness. You have noticed that Jeeves generally keeps to himself and seems to talk in little more than monosyllables. You wonder about him."
 				)

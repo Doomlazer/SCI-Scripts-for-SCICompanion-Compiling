@@ -304,7 +304,7 @@
 			(0
 				(cond
 					((not (& gMustDos $0001))
-						(|= gMustDos $0001)
+						(= gMustDos (| gMustDos $0001))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)
@@ -369,7 +369,7 @@
 									(Print 6 17) ; "Go away!! I'm not unlockin' this here door anymore!"
 									(= local1 0)
 								else
-									(|= global135 $0100)
+									(= global135 (| global135 $0100))
 									(Room6 setScript: lastGreet)
 								)
 							)

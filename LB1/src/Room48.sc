@@ -96,7 +96,7 @@
 			)
 			(2
 				(if (and (& gMustDos $0004) (< [gCycleTimers 2] 2))
-					(|= gSpyFlags $0008)
+					(= gSpyFlags (| gSpyFlags $0008))
 					(= local0 1)
 					(self setRegions: 260) ; csleep
 				else
@@ -133,7 +133,7 @@
 
 	(method (doit)
 		(if (and (not (& gSpyFlags $0008)) (== gAct 6))
-			(|= gSpyFlags $0008)
+			(= gSpyFlags (| gSpyFlags $0008))
 			(Print 48 0) ; "Uh, oh! A bad feeling comes over you as you look around this room. The small desk chair has been knocked over and you see a fresh bloodstain on the rug!"
 		)
 		(if (IsFirstTimeInRoom)
@@ -304,7 +304,7 @@
 			(0
 				(cond
 					((not (& gMustDos $0001))
-						(|= gMustDos $0001)
+						(= gMustDos (| gMustDos $0001))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)

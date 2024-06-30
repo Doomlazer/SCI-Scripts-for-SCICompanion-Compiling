@@ -100,7 +100,7 @@
 			(if (& global207 $0020)
 				(Print 265 11) ; "You see Lillian sitting up in bed."
 			else
-				(|= global207 $0020)
+				(= global207 (| global207 $0020))
 				(Print 265 12) ; "Your friend Lillian Prune, is a rebellious flapper. Like you, she is twenty years old, but unlike you, she has been known to hang out in speakeasies, smoke, and run around with several young men. She is assertive and out-going, to the point of obnoxiousness, but underneath it all you believe her to be a lonely, insecure girl."
 			)
 			(event claimed: 1)

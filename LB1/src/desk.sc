@@ -40,7 +40,7 @@
 					(not (& global207 $0040))
 					(or (MousedOn self event 3) (Said 'look/attorney'))
 				)
-				(|= global207 $0040)
+				(= global207 (| global207 $0040))
 				(= global213 7)
 				(event claimed: 1)
 				(Say 0 276 0) ; "Clarence Sparrow is a dapper-looking man in his late forties. From what you have gleaned, he has been the Colonel's attorney for some time and seems to know the rest of the group as well. His manner is a bit on the curt side and you can sense a bit of sneakiness here."
@@ -72,7 +72,7 @@
 					(not (& global207 $0040))
 					(or (MousedOn self event 3) (Said 'look/attorney'))
 				)
-				(|= global207 $0040)
+				(= global207 (| global207 $0040))
 				(= global213 7)
 				(event claimed: 1)
 				(Say 0 276 0) ; "Clarence Sparrow is a dapper-looking man in his late forties. From what you have gleaned, he has been the Colonel's attorney for some time and seems to know the rest of the group as well. His manner is a bit on the curt side and you can sense a bit of sneakiness here."
@@ -222,7 +222,7 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0008))
-						(|= gMustDos $0008)
+						(= gMustDos (| gMustDos $0008))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)

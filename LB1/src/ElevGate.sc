@@ -148,7 +148,7 @@
 					(= temp1 -52)
 				)
 				(&= global111 $7fff)
-				(|= gElevatorState $0040)
+				(= gElevatorState (| gElevatorState $0040))
 				(HandsOff)
 				(= global110 0)
 				(elevatorID
@@ -207,7 +207,7 @@
 			(cond
 				((& (gEgo onControl: 1) $0010)
 					(= global110 15)
-					(|= gElevatorState $0020)
+					(= gElevatorState (| gElevatorState $0020))
 					(HandsOff)
 					(gEgo
 						view: 5
@@ -369,7 +369,7 @@
 								(!= upRoomNo -1)
 								(or (!= upRoomNo 75) (& gElevatorState $0008))
 							)
-							(|= gElevatorState $0040)
+							(= gElevatorState (| gElevatorState $0040))
 							(= global110 9)
 							(self cue:)
 						else
@@ -387,7 +387,7 @@
 					)
 					(if (& gElevatorState $0010)
 						(if (!= downRoomNo -1)
-							(|= gElevatorState $0040)
+							(= gElevatorState (| gElevatorState $0040))
 							(= global110 12)
 							(self cue:)
 						else
@@ -427,7 +427,7 @@
 								(Print 201 12) ; "The control is already unlocked."
 							else
 								(Print 201 9) ; "A faint click is heard as you turn the key in the lock."
-								(|= gElevatorState $0008)
+								(= gElevatorState (| gElevatorState $0008))
 							)
 						else
 							(Print 201 11) ; "You don't have the key for this lock."
@@ -452,7 +452,7 @@
 				(if (!= gCurRoomNum global111)
 					(self gateFunc: 1 3)
 				else
-					(|= gElevatorState $0040)
+					(= gElevatorState (| gElevatorState $0040))
 					(= global110 5)
 					(self cue:)
 				)
@@ -461,7 +461,7 @@
 				(self gateFunc: 1 2)
 			)
 			((& gElevatorState $0010)
-				(|= gElevatorState $0040)
+				(= gElevatorState (| gElevatorState $0040))
 				(= global110 1)
 				(self cue:)
 			)
@@ -477,7 +477,7 @@
 		(if (== param1 1)
 			(gConMusic number: 81)
 			(self setCycle: End self)
-			(|= gElevatorState gateStMask)
+			(= gElevatorState (| gElevatorState gateStMask))
 		else
 			(gConMusic number: 79)
 			(self setCycle: Beg self)
@@ -565,7 +565,7 @@
 			)
 			(6
 				(HandsOff)
-				(|= gElevatorState $0010)
+				(= gElevatorState (| gElevatorState $0010))
 				(self gateFunc: 1 -1)
 				(gEgo
 					setMotion: MoveTo elevX (+ gateY (gEgo yStep:))

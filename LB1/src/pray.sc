@@ -28,7 +28,7 @@
 	(method (handleEvent event)
 		(cond
 			((and (MousedOn self event 3) (not (& global207 $0002)))
-				(|= global207 $0002)
+				(= global207 (| global207 $0002))
 				(= global213 2)
 				(event claimed: 1)
 				(Say 0 279 0) ; "Celie is the Colonel's cook. She is an overweight black lady who, on the surface, seems to be distant and unfriendly. However, you sense that she is probably a very nice person just "mindin' her own bizness." You have heard that Celie practices voodoo and you wonder about this."
@@ -130,7 +130,7 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0008))
-						(|= gMustDos $0008)
+						(= gMustDos (| gMustDos $0008))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)

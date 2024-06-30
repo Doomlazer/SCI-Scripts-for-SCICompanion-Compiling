@@ -90,7 +90,7 @@
 			init:
 		)
 		(myMusic number: 27 loop: -1 play:)
-		(|= gSpyFlags $0040)
+		(= gSpyFlags (| gSpyFlags $0040))
 		(self setScript: stoke)
 	)
 

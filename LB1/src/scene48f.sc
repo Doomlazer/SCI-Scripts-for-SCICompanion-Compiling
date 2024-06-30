@@ -102,7 +102,7 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0008))
-						(|= gMustDos $0008)
+						(= gMustDos (| gMustDos $0008))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)

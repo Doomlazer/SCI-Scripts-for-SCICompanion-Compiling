@@ -513,7 +513,7 @@
 				(if (== local3 1)
 					(gConMusic number: 81)
 					(elevGate setCycle: End)
-					(|= gElevatorState $0001)
+					(= gElevatorState (| gElevatorState $0001))
 				else
 					(gConMusic number: 79)
 					(elevGate setCycle: Beg)

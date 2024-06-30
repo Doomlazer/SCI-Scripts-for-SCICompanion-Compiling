@@ -46,7 +46,7 @@
 		(= gFifiState 1)
 		(LoadMany 143 243 294 377)
 		(LoadMany rsVIEW 470 904 910)
-		(= global208 (| (|= global208 $0010) $0400))
+		(= global208 (| (= global208 (| global208 $0010)) $0400))
 		(= [global377 4] 294)
 		(= [global377 10] 377)
 		(myMusic number: 112 loop: 0)
@@ -253,7 +253,7 @@
 					(or (MousedOn self event 3) (Said 'look/butler'))
 				)
 				(= global213 11)
-				(|= global207 $0400)
+				(= global207 (| global207 $0400))
 				(event claimed: 1)
 				(Say 0 383 0) ; "Jeeves is the Colonel's imposing butler. Though you find him somewhat good-looking, he nevertheless gives off a disconcerting feeling of secretiveness. You have noticed that Jeeves generally keeps to himself and seems to talk in little more than monosyllables. You wonder about him."
 			)

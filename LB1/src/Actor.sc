@@ -87,11 +87,11 @@
 
 	(method (dispose)
 		(self startUpd: hide:)
-		(|= signal $8000)
+		(= signal (| signal $8000))
 	)
 
 	(method (hide)
-		(|= signal $0008)
+		(= signal (| signal $0008))
 	)
 
 	(method (show)
@@ -127,30 +127,30 @@
 	)
 
 	(method (stopUpd)
-		(|= signal $0001)
+		(= signal (| signal $0001))
 		(&= signal $fffd)
 	)
 
 	(method (forceUpd)
-		(|= signal $0040)
+		(= signal (| signal $0040))
 	)
 
 	(method (startUpd)
-		(|= signal $0002)
+		(= signal (| signal $0002))
 		(&= signal $fffe)
 	)
 
 	(method (setPri newPri)
 		(cond
 			((== argc 0)
-				(|= signal $0010)
+				(= signal (| signal $0010))
 			)
 			((== newPri -1)
 				(&= signal $ffef)
 			)
 			(else
 				(= priority newPri)
-				(|= signal $0010)
+				(= signal (| signal $0010))
 			)
 		)
 		(self forceUpd:)
@@ -159,14 +159,14 @@
 	(method (setLoop newLoop)
 		(cond
 			((== argc 0)
-				(|= signal $0800)
+				(= signal (| signal $0800))
 			)
 			((== newLoop -1)
 				(&= signal $f7ff)
 			)
 			(else
 				(= loop newLoop)
-				(|= signal $0800)
+				(= signal (| signal $0800))
 			)
 		)
 		(self forceUpd:)
@@ -175,13 +175,13 @@
 	(method (setCel newCel)
 		(cond
 			((== argc 0)
-				(|= signal $1000)
+				(= signal (| signal $1000))
 			)
 			((== newCel -1)
 				(&= signal $efff)
 			)
 			(else
-				(|= signal $1000)
+				(= signal (| signal $1000))
 				(= cel
 					(if (>= newCel (self lastCel:))
 						(self lastCel:)
@@ -196,7 +196,7 @@
 
 	(method (ignoreActors arg)
 		(if (or (== 0 argc) arg)
-			(|= signal $4000)
+			(= signal (| signal $4000))
 		else
 			(&= signal $bfff)
 		)
@@ -221,7 +221,7 @@
 		(= ret (& signal $0200))
 		(if argc
 			(if value
-				(|= signal $0200)
+				(= signal (| signal $0200))
 			else
 				(&= signal $fdff)
 			)
@@ -458,7 +458,7 @@
 
 	(method (ignoreHorizon arg)
 		(if (or (not argc) arg)
-			(|= signal $2000)
+			(= signal (| signal $2000))
 		else
 			(&= signal $dfff)
 		)
@@ -466,7 +466,7 @@
 
 	(method (observeControl ctrl &tmp i)
 		(for ((= i 0)) (< i argc) ((++ i))
-			(|= illegalBits [ctrl i])
+			(= illegalBits (| illegalBits [ctrl i]))
 		)
 	)
 

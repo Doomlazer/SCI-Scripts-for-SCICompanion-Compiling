@@ -73,7 +73,7 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0002))
-						(|= gMustDos $0002)
+						(= gMustDos (| gMustDos $0002))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)
@@ -153,7 +153,7 @@
 					(not (& global207 $0020))
 					(or (MousedOn self event 3) (Said 'look/lil'))
 				)
-				(|= global207 $0020)
+				(= global207 (| global207 $0020))
 				(= global213 6)
 				(event claimed: 1)
 				(Say 0 274 1) ; "Your friend Lillian Prune, is a rebellious flapper. Like you, she is twenty years old, but unlike you, she has been known to hang out in speakeasies, smoke, and run around with several young men. She is assertive and outgoing, to the point of obnoxiousness, but underneath it all you believe her to be a lonely, insecure girl."

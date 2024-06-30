@@ -36,7 +36,7 @@
 		(cond
 			((and (not (& global207 $0100)) (MousedOn self event 3))
 				(event claimed: 1)
-				(|= global207 $0100)
+				(= global207 (| global207 $0100))
 				(Say 0 385 0) ; "It seems that Rudy Dijon is Gloria Swansong's brother, and Gertie's son. (You surmise that "Swansong" must be Gloria's stagename.) Rudy is a handsome man and any woman would be attracted to him. But, you sense an undercurrent of hostility in Rudy; a sense that he should not be crossed."
 			)
 			(
@@ -144,7 +144,7 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0004))
-						(|= gMustDos $0004)
+						(= gMustDos (| gMustDos $0004))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)

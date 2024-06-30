@@ -113,7 +113,7 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0004))
-						(|= gMustDos $0004)
+						(= gMustDos (| gMustDos $0004))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)
@@ -463,7 +463,7 @@
 						(Say 1 259 15) ; "You must really think I'm stupid if you expect me to believe you again!"
 					else
 						(Say 1 259 16) ; "Mother? Dead? She can't be!"
-						(|= global145 $0080)
+						(= global145 (| global145 $0080))
 						(Rudy setScript: goSee)
 					)
 				else

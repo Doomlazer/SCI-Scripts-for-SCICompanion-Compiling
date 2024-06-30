@@ -544,7 +544,7 @@
 						)
 					)
 				else
-					(|= global207 $0400)
+					(= global207 (| global207 $0400))
 					(Say 0 246 36) ; "Jeeves is the Colonel's imposing butler. Though you find him somewhat good-looking, he nevertheless gives off a disconcerting feeling of secretiveness. You have noticed that Jeeves generally keeps to himself and seems to talk in little more than monosyllables. You wonder about him."
 				)
 			)

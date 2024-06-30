@@ -88,7 +88,7 @@
 			(4
 				(Jeeves setLoop: 3 setCycle: Fwd)
 				(boa dispose:)
-				(|= global141 $0004)
+				(= global141 (| global141 $0004))
 				(if (gCast contains: bRecord)
 					(bRecord dispose:)
 				)
@@ -177,7 +177,7 @@
 					(or (MousedOn self event 3) (Said 'look/butler'))
 				)
 				(= global213 11)
-				(|= global207 $0400)
+				(= global207 (| global207 $0400))
 				(event claimed: 1)
 				(Say 0 382 2) ; "Jeeves is the Colonel's imposing butler. Though you find him somewhat good-looking, he nevertheless gives off a disconcerting feeling of secretiveness. You have noticed that Jeeves generally keeps to himself and seems to talk in little more than monosyllables. You wonder about him."
 			)

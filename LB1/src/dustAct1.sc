@@ -166,7 +166,7 @@
 			((or (MousedOn self event 3) (Said 'look/fifi'))
 				(event claimed: 1)
 				(if (not (& global207 $0010))
-					(|= global207 $0010)
+					(= global207 (| global207 $0010))
 					(= global213 5)
 					(Say 0 380 1) ; "Fifi is the Colonel's pretty French maid. You surmise that she is probably very apt in her duties...whatever THEY may be! Fifi is young, blonde, and sexy. Although she seems to have a vivacious personality, you can sense a certain cunning underneath it all."
 				else

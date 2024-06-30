@@ -143,7 +143,7 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0002))
-						(|= gMustDos $0002)
+						(= gMustDos (| gMustDos $0002))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)
@@ -445,7 +445,7 @@
 						(Print 270 33) ; "Colonel Dijon tries to ignore you as you again invade the privacy of his room."
 					)
 				else
-					(|= global207 $0200)
+					(= global207 (| global207 $0200))
 					(DoLook {colonel})
 				)
 				(event claimed: 1)

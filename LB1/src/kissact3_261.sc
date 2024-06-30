@@ -115,8 +115,8 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0002))
-						(|= gMustDos $0002)
-						(|= gSpyFlags $0008)
+						(= gMustDos (| gMustDos $0002))
+						(= gSpyFlags (| gSpyFlags $0008))
 						(= [gCycleTimers 2] 0)
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
@@ -280,7 +280,7 @@
 					(cond
 						((not (& global207 $0010))
 							(= global213 5)
-							(|= global207 $0010)
+							(= global207 (| global207 $0010))
 							(Say 0 261 3) ; "Fifi is the Colonel's pretty French maid. You surmise that she is probably very apt in her duties...whatever THEY may be! Fifi is young, blonde, and sexy. Although she seems to have a vivacious personality, you can sense a certain cunning underneath it all."
 						)
 						(global163

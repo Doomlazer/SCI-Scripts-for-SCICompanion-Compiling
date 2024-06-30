@@ -29,7 +29,7 @@
 		(if (& [global302 (/= temp0 16)] temp1)
 			(return 0)
 		)
-		(|= [global302 temp0] temp1)
+		(= [global302 temp0] (| [global302 temp0] temp1))
 	)
 	(return 1)
 )

@@ -160,7 +160,7 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0001))
-						(|= gMustDos $0001)
+						(= gMustDos (| gMustDos $0001))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)
@@ -303,7 +303,7 @@
 						(Say 1 403 19) ; "You won't get me to fall for one of your stories this time!"
 					else
 						(Say 1 403 20) ; "Oh, no! That's terrible."
-						(|= global145 $0080)
+						(= global145 (| global145 $0080))
 						(rudyeat setScript: goSee)
 					)
 				else
@@ -317,7 +317,7 @@
 						(Say 1 403 21) ; "Forget it. You tried that trick on me already!"
 					else
 						(Say 1 403 20) ; "Oh, no! That's terrible."
-						(|= global145 $0080)
+						(= global145 (| global145 $0080))
 						(rudyeat setScript: goSee)
 					)
 				else

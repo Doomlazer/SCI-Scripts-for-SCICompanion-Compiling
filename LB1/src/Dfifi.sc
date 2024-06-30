@@ -146,7 +146,7 @@
 			(0
 				(mySound number: 99 loop: -1 play:)
 				(global373 setCycle: Fwd init:)
-				(|= gCorpseFlags $0010) ; Jeeves & Fifi
+				(= gCorpseFlags (| gCorpseFlags $0010)) ; Jeeves & Fifi
 				(SetFlag 22)
 				(HandsOff)
 				(= seconds 2)

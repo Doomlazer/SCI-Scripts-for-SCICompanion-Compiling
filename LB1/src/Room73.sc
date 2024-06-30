@@ -64,7 +64,7 @@
 				(LoadMany rsVIEW 500 505 905)
 				(LoadMany 143 243 226)
 				(= [global377 5] 226)
-				(|= global208 $0020)
+				(= global208 (| global208 $0020))
 				(Lilian
 					setAvoider: ((Avoid new:) offScreenOK: 1)
 					init:
@@ -797,7 +797,7 @@
 		(cond
 			((or (MousedOn self event 3) (Said 'look/lil'))
 				(if (not (& global207 $0020))
-					(|= global207 $0020)
+					(= global207 (| global207 $0020))
 					(= global213 6)
 					(Say 0 73 39) ; "Your friend Lillian Prune, is a rebellious flapper. Like you, she is twenty years old, but unlike you, she has been known to hang out in speakeasies, smoke, and run around with several young men. She is assertive and out-going, to the point of obnoxiousness, but underneath it all you believe her to be a lonely, insecure girl."
 				else

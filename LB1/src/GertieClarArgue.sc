@@ -68,7 +68,7 @@
 			(LoadMany 143 216)
 			(Gertie init:)
 			(self setScript: argue)
-			(|= global208 $0001)
+			(= global208 (| global208 $0001))
 		)
 	)
 
@@ -128,7 +128,7 @@
 						(= state -1)
 					)
 					((not (& gMustDos $0002))
-						(|= gMustDos $0002)
+						(= gMustDos (| gMustDos $0002))
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)

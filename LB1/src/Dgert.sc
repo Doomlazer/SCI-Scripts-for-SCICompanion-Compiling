@@ -36,7 +36,7 @@
 	(method (init)
 		(proc415_1 1)
 		(Body view: 343 cel: 0 posn: 55 126 init:)
-		(|= gCorpseFlags $0001) ; Gertie
+		(= gCorpseFlags (| gCorpseFlags $0001)) ; Gertie
 		(= global195 1)
 		(self setScript: showCloseup)
 	)

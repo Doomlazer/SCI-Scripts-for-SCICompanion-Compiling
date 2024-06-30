@@ -127,7 +127,7 @@
 			)
 			(2
 				(if (not (& gCorpseFlags $0008)) ; Ethel
-					(|= gCorpseFlags $0008) ; Ethel
+					(= gCorpseFlags (| gCorpseFlags $0008)) ; Ethel
 					(myMusic play:)
 					(if (!= gCurRoomNum 61)
 						(Print 268 10 #at 10 10 #icon 323 1 0 #mode 1) ; "This is dreadful!! Poor Ethel has been hit over the head and killed! Something terrible is going on around here and you suddenly feel a cold fear spreading ominously throughout your body!"

@@ -290,7 +290,7 @@
 						(= state -1)
 					)
 					((not (& gCorpseFlags $0040)) ; Lillian
-						(|= gCorpseFlags $0040) ; Lillian
+						(= gCorpseFlags (| gCorpseFlags $0040)) ; Lillian
 						(self setScript: (ScriptID 406 0)) ; Clock
 						(= state -1)
 					)

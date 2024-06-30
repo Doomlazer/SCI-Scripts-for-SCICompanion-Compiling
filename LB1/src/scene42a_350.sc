@@ -93,7 +93,7 @@
 		(HandsOff)
 		(myMusic number: 27 loop: -1 play:)
 		(if (and (not (& gSpyFlags $0040)) (!= [gCycleTimers 3] 1))
-			(|= gSpyFlags $0040)
+			(= gSpyFlags (| gSpyFlags $0040))
 			(= global124 1)
 			(Load rsFONT 41)
 			(LoadMany 143 406)
@@ -293,7 +293,7 @@
 							(= state -1)
 						)
 						((not (& gMustDos $0008))
-							(|= gMustDos $0008)
+							(= gMustDos (| gMustDos $0008))
 							(self setScript: (ScriptID 406 0)) ; Clock
 							(= state -1)
 						)
@@ -369,7 +369,7 @@
 				)
 				(15
 					(++ gFifiState)
-					(|= gSpyFlags $0040)
+					(= gSpyFlags (| gSpyFlags $0040))
 					(gCurRoom newRoom: gPrevRoomNum)
 				)
 			)

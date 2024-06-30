@@ -203,7 +203,7 @@
 			)
 			((== global198 200)
 				(++ global198)
-				(|= gCorpseFlags $0002) ; Wilbur
+				(= gCorpseFlags (| gCorpseFlags $0002)) ; Wilbur
 			)
 		)
 		(super newRoom: newRoomNumber)

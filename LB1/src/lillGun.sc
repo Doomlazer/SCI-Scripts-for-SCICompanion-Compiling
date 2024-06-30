@@ -115,7 +115,7 @@
 							(= state -1)
 						)
 						((not (& gMustDos $0002))
-							(|= gMustDos $0002)
+							(= gMustDos (| gMustDos $0002))
 							(self setScript: (ScriptID 406 0)) ; Clock
 							(= state -1)
 						)
@@ -349,7 +349,7 @@
 						(Say 1 264 16) ; "I've already told you, Laura, there's nothing there!"
 						(event claimed: 1)
 					else
-						(|= global145 $0001)
+						(= global145 (| global145 $0001))
 						(self setScript: goSee)
 						(event claimed: 1)
 					)
@@ -363,7 +363,7 @@
 						(Say 1 264 16) ; "I've already told you, Laura, there's nothing there!"
 						(event claimed: 1)
 					else
-						(|= global145 $0001)
+						(= global145 (| global145 $0001))
 						(self setScript: goSee)
 						(event claimed: 1)
 					)
@@ -377,7 +377,7 @@
 						(Say 1 264 16) ; "I've already told you, Laura, there's nothing there!"
 						(event claimed: 1)
 					else
-						(|= global145 $0001)
+						(= global145 (| global145 $0001))
 						(self setScript: goSee)
 					)
 				else

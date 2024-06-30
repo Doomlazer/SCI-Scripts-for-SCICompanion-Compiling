@@ -141,7 +141,7 @@
 		)
 		(if (and (not (& gSpyFlags $0040)) (!= [gCycleTimers 1] 1))
 			(= [gCycleTimers 1] 1)
-			(|= gSpyFlags $0040)
+			(= gSpyFlags (| gSpyFlags $0040))
 			(Load rsFONT 41)
 			(LoadMany 143 406)
 			(Load rsVIEW 642)
@@ -202,7 +202,7 @@
 							(= state -1)
 						)
 						((not (& gMustDos $0002))
-							(|= gMustDos $0002)
+							(= gMustDos (| gMustDos $0002))
 							(self setScript: (ScriptID 406 0)) ; Clock
 							(= state -1)
 						)

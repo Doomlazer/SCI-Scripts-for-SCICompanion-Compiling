@@ -69,7 +69,7 @@
 			)
 			(Smashed number: 62 loop: -1 priority: 12 play:)
 			(= local84 1)
-			(|= global208 $0008)
+			(= global208 (| global208 $0008))
 			(Ethel
 				setCycle: Walk
 				ignoreHorizon: 1
@@ -116,7 +116,7 @@
 				(Smashed number: 62 loop: -1 priority: 12 play:)
 				(DisposeScript 990)
 				(= global113 (- 11 (/ [gCycleTimers 0] 100)))
-				(|= global208 $0008)
+				(= global208 (| global208 $0008))
 				(= local84 1)
 				(Ethel
 					setCycle: Walk
@@ -205,7 +205,7 @@
 								(= local86 1)
 								(global373 startUpd:)
 							)
-							(|= gMustDos $0004)
+							(= gMustDos (| gMustDos $0004))
 							(self setScript: (ScriptID 406 0)) ; Clock
 							(= state -1)
 						)

@@ -61,7 +61,7 @@
 		(HandsOff)
 		(myMusic number: 27 loop: -1 play:)
 		(if (and (not (& gSpyFlags $0020)) (> [gCycleTimers 2] 1))
-			(|= gSpyFlags $0020)
+			(= gSpyFlags (| gSpyFlags $0020))
 			(= [gCycleTimers 2] 1)
 			(Fifi setPri: 3 cycleSpeed: 2 init:)
 			(fifiMouth cycleSpeed: 1 setPri: 4 init: hide:)

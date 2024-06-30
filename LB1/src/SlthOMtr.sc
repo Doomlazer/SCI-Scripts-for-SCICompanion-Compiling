@@ -33,7 +33,7 @@
 (procedure (localproc_0 param1 &tmp temp0 temp1)
 	(= temp0 (/ param1 16))
 	(= temp1 (<< $0001 (mod param1 16)))
-	(|= [local24 temp0] temp1)
+	(= [local24 temp0] (| [local24 temp0] temp1))
 )
 
 (procedure (localproc_1 param1)

@@ -192,7 +192,7 @@
 				))
 			((or (MousedOn self event 3) (Said 'look/ethel'))
 				(if (not (& global207 $0008))
-					(|= global207 $0008)
+					(= global207 (| global207 $0008))
 					(Say 0 238 14) ; "Ethel is a stylishly-dressed, overly made-up older woman. Many years of hard drinking have taken their toll on her as her face is puffy and red, and her skin has wrinkled prematurely. She always seems to have a drink in her hand. You have never met her before, but Ethel is your friend Lillian's mother."
 				else
 					(Print 238 15) ; "Ethel sits at the bar and, as usual, is hitting the booze. She seems to be taking an inordinate interest in the parrot."

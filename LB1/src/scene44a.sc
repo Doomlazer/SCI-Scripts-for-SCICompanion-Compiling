@@ -74,7 +74,7 @@
 
 	(method (dispose)
 		(if (and (not (& gSpyFlags $0080)) global125)
-			(|= gSpyFlags $0080)
+			(= gSpyFlags (| gSpyFlags $0080))
 		)
 		(super dispose:)
 	)

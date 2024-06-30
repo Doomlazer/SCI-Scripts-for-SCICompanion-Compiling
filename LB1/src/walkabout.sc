@@ -34,7 +34,7 @@
 
 	(method (init &tmp [temp0 50])
 		(super init:)
-		(|= global195 $0400)
+		(= global195 (| global195 $0400))
 		(Load rsSCRIPT 985)
 		(Load rsSCRIPT 983)
 		(if (== [gCycleTimers 2] 0)
@@ -221,7 +221,7 @@
 				(if (& global207 $0400)
 					(Print 381 0) ; "Jeeves seems to be busy doing his chores."
 				else
-					(|= global207 $0400)
+					(= global207 (| global207 $0400))
 					(Say 0 381 1) ; "Jeeves is the Colonel's imposing butler. Though you find him somewhat good-looking, he nevertheless gives off a disconcerting feeling of secretiveness. You have noticed that Jeeves generally keeps to himself and seems to talk in little more than monosyllables. You wonder about him."
 				)
 				(event claimed: 1)

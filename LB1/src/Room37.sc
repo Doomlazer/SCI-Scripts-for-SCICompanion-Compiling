@@ -548,7 +548,7 @@
 										)
 									)
 									(if local52
-										(|= global142 (<< $0001 local52))
+										(= global142 (| global142 (<< $0001 local52)))
 										(self setScript: oiling)
 									)
 								else

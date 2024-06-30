@@ -88,7 +88,7 @@
 				(if (and (not (& gSpyFlags $0001)) (== [gCycleTimers 0] 1))
 					(= [gCycleTimers 0] 0)
 					(= [gCycleTimers 2] 1800)
-					(|= gSpyFlags $0001)
+					(= gSpyFlags (| gSpyFlags $0001))
 					(= global199 1)
 				)
 				(if (and (== global199 1) (== [gCycleTimers 2] 1))

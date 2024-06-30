@@ -388,10 +388,10 @@
 						((& (gEgo onControl: 1) $0008)
 							(switch (gCurRoom south:)
 								(38
-									(|= global175 $0008)
+									(= global175 (| global175 $0008))
 								)
 								(48
-									(|= global175 $0080)
+									(= global175 (| global175 $0080))
 								)
 							)
 							(HandsOff)
@@ -400,10 +400,10 @@
 						((& (gEgo onControl: 1) $0004)
 							(switch (gCurRoom north:)
 								(34
-									(|= global175 $0002)
+									(= global175 (| global175 $0002))
 								)
 								(44
-									(|= global175 $0020)
+									(= global175 (| global175 $0020))
 								)
 							)
 							(self setScript: Back)

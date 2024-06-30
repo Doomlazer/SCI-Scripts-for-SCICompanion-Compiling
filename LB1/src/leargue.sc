@@ -215,7 +215,7 @@
 				else
 					(= cycles 1)
 				)
-				(|= global208 $0028)
+				(= global208 (| global208 $0028))
 				(HandsOn)
 			)
 			(3
@@ -565,7 +565,7 @@
 				(Lillian setMotion: MoveTo 121 153 self)
 			)
 			(3
-				(|= global208 $0020)
+				(= global208 (| global208 $0020))
 				(Lillian
 					view: 501
 					loop: 0

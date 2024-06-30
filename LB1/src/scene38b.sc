@@ -70,7 +70,7 @@
 
 	(method (dispose)
 		(super dispose:)
-		(|= gSpyFlags $0002)
+		(= gSpyFlags (| gSpyFlags $0002))
 	)
 
 	(procedure (localproc_3 param1) ; UNUSED

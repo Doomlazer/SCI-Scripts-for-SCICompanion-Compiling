@@ -42,7 +42,7 @@
 	(method (doit)
 		(super doit:)
 		(if (and global216 (not (& gMustDos $0004)))
-			(|= gMustDos $0004)
+			(= gMustDos (| gMustDos $0004))
 			(self setScript: (ScriptID 406 0)) ; Clock
 		)
 		(if (and (== (snoring prevSignal:) -1) (== (snoring number:) 114))
@@ -91,7 +91,7 @@
 							(if (& global207 $0001)
 								(Print 224 2) ; "Gertie looks awfully tired. Perhaps you shouldn't bother her."
 							else
-								(|= global207 $0001)
+								(= global207 (| global207 $0001))
 								(Say 0 224 3) ; "Gertrude Dijon is the Colonel's widowed sister-in-law. She obviously is behind the times, as she looks like she has just stepped out of the gay '90's! A bit of a snob, she walks around with her nose up in the air and has an annoying habit of constantly playing with her many strands of pearls."
 							)
 						)

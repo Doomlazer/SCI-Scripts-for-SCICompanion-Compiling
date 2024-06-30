@@ -106,7 +106,7 @@
 				(not (& gCorpseFlags $0002)) ; Wilbur
 				(not (& gCorpseFlags $0040)) ; Lillian
 			)
-			(|= gCorpseFlags $0002) ; Wilbur
+			(= gCorpseFlags (| gCorpseFlags $0002)) ; Wilbur
 			(self setRegions: 256) ; Dwilb
 		)
 		(gEgo

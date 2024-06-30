@@ -48,7 +48,7 @@
 		(= horizon 0)
 		(super init:)
 		(gAddToPics add: rags tub eachElementDo: #init doit:)
-		(|= gCorpseFlags $003f) ; Everyone but Lillian
+		(= gCorpseFlags (| gCorpseFlags $003f)) ; Everyone but Lillian
 		(self
 			setRegions: 242 ; tunnelReg
 			setFeatures:
@@ -185,7 +185,7 @@
 				(= global213 25)
 				(Say 0 52 1) ; ""EEEEEEEEEKKKK!!!" A pile of dead bodies!!"
 				(Print 52 2) ; "Someone has cruelly dumped the bodies of Gertie, Wilbur, Gloria, Ethel, Fifi, Jeeves, and Clarence down the old laundry chute!!"
-				(|= global205 $0002)
+				(= global205 (| global205 $0002))
 				(= gEthelState 101)
 			)
 			(else
@@ -517,7 +517,7 @@
 			)
 			(6
 				(panelCrank setCycle: End self)
-				(|= global205 $0001)
+				(= global205 (| global205 $0001))
 			)
 			(7
 				(cls)

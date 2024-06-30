@@ -63,7 +63,7 @@
 		(Leg init: setScript: crossLeg)
 		(record init: setScript: playRecord)
 		(if (and (== gAct 0) (not (& global194 $0004)))
-			(|= global194 $0004)
+			(= global194 (| global194 $0004))
 			(Jeeves
 				view: 444
 				posn: 320 98
@@ -164,7 +164,7 @@
 							(= state -1)
 						)
 						((not (& gMustDos $0008))
-							(|= gMustDos $0008)
+							(= gMustDos (| gMustDos $0008))
 							(self setScript: (ScriptID 406 0)) ; Clock
 							(= state -1)
 						)
@@ -342,7 +342,7 @@
 						(proc243_1 temp0 233 9)
 					else
 						(DisposeScript 990)
-						(|= global145 $0002)
+						(= global145 (| global145 $0002))
 						(Say 1 233 10) ; "Mother??? Oh, no! It can't be!"
 						(Gloria setScript: goSee)
 					)
@@ -367,7 +367,7 @@
 					(or (MousedOn self event 3) (Said 'look/actress[/!*]'))
 				)
 				(event claimed: 1)
-				(|= global207 $0004)
+				(= global207 (| global207 $0004))
 				(Say 0 233 12) ; "Gloria Swansong, a beautiful platinum-blonde, is the Colonel's other niece and Gertie's daughter. She seems so glamorous with her long feather boa, stunning jewels, and lovely gown. You've been told that she's a successful actress in Hollywood, although you've never heard of her."
 			)
 			(

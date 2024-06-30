@@ -173,7 +173,7 @@
 		)
 		(if (and (!= newRoomNumber 73) (== global106 73) (== global201 200))
 			(++ global201)
-			(|= gCorpseFlags $0020) ; Clarence
+			(= gCorpseFlags (| gCorpseFlags $0020)) ; Clarence
 		)
 		(super newRoom: newRoomNumber)
 	)

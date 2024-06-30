@@ -136,7 +136,7 @@
 
 	(method (newRoom newRoomNumber)
 		(if local4
-			(|= gCorpseFlags $0004) ; Gloria
+			(= gCorpseFlags (| gCorpseFlags $0004)) ; Gloria
 			(= global122 0)
 		)
 		(super newRoom: newRoomNumber)

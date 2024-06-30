@@ -102,7 +102,7 @@
 			)
 		)
 		(if (== gAct 5)
-			(|= gMustDos $0001)
+			(= gMustDos (| gMustDos $0001))
 		)
 		(gEgo view: 0 posn: 115 160 init:)
 		(HandsOn)
