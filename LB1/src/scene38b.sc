@@ -27,7 +27,7 @@
 
 (procedure (localproc_1)
 	(localproc_0 &rest)
-	(+= local1 (/ local1 4))
+	(= local1 (+ local1 (/ local1 4)))
 	(Mouth setScript: cycleMouth)
 	(ParrotMouth setCycle: 0)
 	(Print &rest #at 160 120 #font 4 #width 140 #mode 1 #dispose)

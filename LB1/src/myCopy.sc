@@ -197,7 +197,7 @@
 							(if (< local101 7)
 								(cond
 									((< local101 4)
-										(+= local101 8)
+										(= local101 (+ local101 8))
 									)
 									((> local101 4)
 										(++ local101)

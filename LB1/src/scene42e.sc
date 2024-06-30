@@ -28,14 +28,14 @@
 
 (procedure (localproc_1)
 	(localproc_0 &rest)
-	(+= local0 (/ local0 4))
+	(= local0 (+ local0 (/ local0 4)))
 	(lillMouth setScript: cycleMouth)
 	(Print &rest #at 160 115 #font 4 #width 140 #mode 1 #dispose)
 )
 
 (procedure (localproc_2)
 	(localproc_0 &rest)
-	(+= local0 (/ local0 2))
+	(= local0 (+ local0 (/ local0 2)))
 	(coloMouth loop: 5 setScript: cycleMouth)
 	(Print &rest #at 20 115 #font 4 #width 140 #mode 1 #dispose)
 )

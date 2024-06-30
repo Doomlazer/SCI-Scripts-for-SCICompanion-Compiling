@@ -63,8 +63,8 @@
 	(properties)
 
 	(method (next)
-		(+= x (self at: (++ value)))
-		(+= y (self at: (++ value)))
+		(= x (+ x (self at: (++ value))))
+		(= y (+ y (self at: (++ value))))
 	)
 )
 

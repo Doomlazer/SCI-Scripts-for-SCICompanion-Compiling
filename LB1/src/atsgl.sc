@@ -47,10 +47,10 @@
 			(= local178 (* (- global212 1) 2))
 			(switch global213
 				(2
-					(+= local178 8)
+					(= local178 (+ local178 8))
 				)
 				(5
-					(+= local178 16)
+					(= local178 (+ local178 16))
 				)
 			)
 			(Say 1 [local18 local178] [local18 (++ local178)])

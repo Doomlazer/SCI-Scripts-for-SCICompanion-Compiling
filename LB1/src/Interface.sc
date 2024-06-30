@@ -114,14 +114,14 @@
 					value: [args (++ i)]
 					setSize:
 				)
-				(+= buttonWide (+ ([buttons buttonsUsed] nsRight:) 4))
+				(= buttonWide (+ buttonWide (+ ([buttons buttonsUsed] nsRight:) 4)))
 				(++ buttonsUsed)
 			)
 			(82
 				(if (IsObject [args (+ i 1)])
 					(= iconI ([args (+ i 1)] new:))
 					(iconI setSize:)
-					(+= i 1)
+					(= i (+ i 1))
 				else
 					(= iconI (DIcon new:))
 					(iconI
@@ -130,7 +130,7 @@
 						cel: [args (+ i 3)]
 						setSize:
 					)
-					(+= i 3)
+					(= i (+ i 3))
 				)
 			)
 			(88
@@ -364,10 +364,10 @@
 	(method (setSize))
 
 	(method (move param1 param2)
-		(+= nsRight param1)
-		(+= nsLeft param1)
-		(+= nsTop param2)
-		(+= nsBottom param2)
+		(= nsRight (+ nsRight param1))
+		(= nsLeft (+ nsLeft param1))
+		(= nsTop (+ nsTop param2))
+		(= nsBottom (+ nsBottom param2))
 	)
 
 	(method (moveTo param1 param2)
@@ -424,8 +424,8 @@
 
 	(method (setSize &tmp [r 4])
 		(TextSize @[r 0] text font)
-		(+= [r 2] 2)
-		(+= [r 3] 2)
+		(= [r 2] (+ [r 2] 2))
+		(= [r 3] (+ [r 3] 2))
 		(= nsBottom (+ nsTop [r 2]))
 		(= [r 3] (* (/ (+ [r 3] 15) 16) 16))
 		(= nsRight (+ [r 3] nsLeft))
@@ -476,7 +476,7 @@
 			(if (not (StrCmp what ptr))
 				(return i)
 			)
-			(+= ptr x)
+			(= ptr (+ ptr x))
 		)
 	)
 
@@ -518,11 +518,11 @@
 		(while lines
 			(if (StrAt cursor x)
 				(= redraw 1)
-				(+= cursor x)
+				(= cursor (+ cursor x))
 				(if (< (+ mark 1) y)
 					(++ mark)
 				else
-					(+= lsTop x)
+					(= lsTop (+ lsTop x))
 				)
 			else
 				(break)
@@ -851,10 +851,10 @@
 	)
 
 	(method (move h v)
-		(+= nsRight h)
-		(+= nsLeft h)
-		(+= nsTop v)
-		(+= nsBottom v)
+		(= nsRight (+ nsRight h))
+		(= nsLeft (+ nsLeft h))
+		(= nsTop (+ nsTop v))
+		(= nsBottom (+ nsBottom v))
 	)
 
 	(method (moveTo h v)
@@ -912,8 +912,8 @@
 				(= nsBottom (obj nsBottom:))
 			)
 		)
-		(+= nsRight 4)
-		(+= nsBottom 4)
+		(= nsRight (+ nsRight 4))
+		(= nsBottom (+ nsBottom 4))
 		(self moveTo: 0 0)
 	)
 )

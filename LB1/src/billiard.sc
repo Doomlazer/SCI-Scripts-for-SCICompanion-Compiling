@@ -61,7 +61,7 @@
 		)
 	)
 	(if (> (CueBall x:) 154)
-		(+= local103 28)
+		(= local103 (+ local103 28))
 	)
 	(if (== param1 Clarence)
 		(= temp0 35)
@@ -118,7 +118,7 @@
 			(== [local73 (+ local103 3)] temp1)
 			(or (== (-= local103 5) 0) (== local103 15))
 		)
-		(+= local103 10)
+		(= local103 (+ local103 10))
 	)
 )
 
@@ -137,7 +137,7 @@
 		forceUpd:
 	)
 	(if (and (== param1 Gloria) (<= local10 1))
-		(Gloria loop: (+= local10 4) forceUpd:)
+		(Gloria loop: (= local10 (+ local10 4)) forceUpd:)
 	)
 )
 
@@ -470,7 +470,7 @@
 					else
 						(= cycles 1)
 					)
-					(+= local103 2)
+					(= local103 (+ local103 2))
 					(= state 3)
 				)
 			)
@@ -522,7 +522,7 @@
 					else
 						(= cycles 1)
 					)
-					(+= local103 2)
+					(= local103 (+ local103 2))
 					(= state 9)
 				)
 			)
@@ -561,7 +561,7 @@
 						else
 							(= cycles 1)
 						)
-						(+= local103 2)
+						(= local103 (+ local103 2))
 						(= state 11)
 					)
 				)
@@ -655,7 +655,7 @@
 						else
 							(= cycles 1)
 						)
-						(+= local103 2)
+						(= local103 (+ local103 2))
 						(= state 17)
 					)
 				)

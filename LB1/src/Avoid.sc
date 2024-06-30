@@ -194,8 +194,12 @@
 		)
 		(= facing (<= (= absDiff (Abs (= ang (localproc_1 ang h)))) 90))
 		(= thisTurn (or (sign ang) escapeTurn))
-		(if (and (> absDiff (/ angleDelta 2)) (not escaping))
-			(+= heading (* thisTurn angleDelta))
+		(if
+			(and
+				(> absDiff (/ angleDelta 2))
+				(not escaping)
+			)
+			(= heading (+ heading (* thisTurn angleDelta)))
 		)
 		(if escaping
 			(= thisTurn escapeTurn)
@@ -227,7 +231,7 @@
 				(self incClientPos:)
 			)
 			(if (== j numLoops)
-				(+= heading (* escapeTurn angleDelta))
+				(= heading (+ heading (* escapeTurn angleDelta)))
 			)
 			(= h heading)
 		)

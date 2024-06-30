@@ -47,7 +47,7 @@
 			(= temp0 4)
 		)
 		(if (== (gEgo loop:) 3)
-			(+= temp0 2)
+			(= temp0 (+ temp0 2))
 		)
 		(Print [local0 temp0] [local0 (++ temp0)] #at 65 67 #dispose)
 		(LookAround seconds: 4)
@@ -166,7 +166,7 @@
 			(if (> gCaneLocation 85)
 				(-= gCigarButtLocation 10)
 			else
-				(+= gCigarButtLocation 10)
+				(= gCigarButtLocation (+ gCigarButtLocation 10))
 			)
 		)
 		(if

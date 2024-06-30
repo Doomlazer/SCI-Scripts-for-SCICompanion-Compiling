@@ -44,7 +44,7 @@
 
 (procedure (localproc_3)
 	(localproc_0 &rest)
-	(+= local0 (/ local0 4))
+	(= local0 (+ local0 (/ local0 4)))
 	(coloMouth setScript: cycleMouth)
 	(Print &rest #at 20 115 #font 4 #width 140 #mode 1 #dispose)
 )

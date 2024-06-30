@@ -293,7 +293,7 @@
 					show:
 				)
 				(Mask1 x: [local23 local181])
-				(+= local181 6)
+				(= local181 (+ local181 6))
 				(if (>= local185 2)
 					(= local21 [local7 (++ local19)])
 					(local21
@@ -314,7 +314,7 @@
 						show:
 					)
 					(Mask2 x: [local23 local181])
-					(+= local181 6)
+					(= local181 (+ local181 6))
 				)
 				(if (== local185 3)
 					(= local22 [local7 (++ local19)])
@@ -334,7 +334,7 @@
 						show:
 					)
 					(Mask3 x: [local23 local181])
-					(+= local181 6)
+					(= local181 (+ local181 6))
 				)
 				(localproc_0 [local187 (++ local211)] [local187 (++ local211)])
 				(localproc_1 [local187 (++ local211)] [local187 (++ local211)])

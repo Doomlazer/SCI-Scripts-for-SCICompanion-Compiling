@@ -30,7 +30,7 @@
 (procedure (localproc_1)
 	(puff cel: 0 setCycle: End show:)
 	(localproc_0 &rest)
-	(+= local2 (/ local2 4))
+	(= local2 (+ local2 (/ local2 4)))
 	(glorMouth setScript: cycleMouth)
 	(Print &rest #at 160 120 #font 4 #width 140 #mode 1 #dispose)
 )

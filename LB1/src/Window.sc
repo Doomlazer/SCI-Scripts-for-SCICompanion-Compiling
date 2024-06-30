@@ -48,10 +48,10 @@
 	)
 
 	(method (move h v)
-		(+= left h)
-		(+= right v)
-		(+= right h)
-		(+= bottom v)
+		(= left (+ left h))
+		(= right (+ right v))
+		(= right (+ right h))
+		(= bottom (+ bottom v))
 	)
 
 	(method (moveTo h v)
@@ -59,8 +59,8 @@
 	)
 
 	(method (inset h v)
-		(+= top v)
-		(+= left h)
+		(= top (+ top v))
+		(= left (+ left h))
 		(-= bottom v)
 		(-= right h)
 	)

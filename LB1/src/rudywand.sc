@@ -120,7 +120,7 @@
 				)
 				(self setScript: rudyActions)
 			else
-				(+= [gCycleTimers 0] 10)
+				(= [gCycleTimers 0] (+ [gCycleTimers 0] 10))
 			)
 		)
 		(super doit:)

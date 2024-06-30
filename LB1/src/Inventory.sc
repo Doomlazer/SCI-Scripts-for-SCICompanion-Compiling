@@ -100,11 +100,11 @@
 				)
 				(if
 					(>
-						(+= temp1 (+ (- (temp4 nsBottom:) (temp4 nsTop:)) 1))
+						(= temp1 (+ temp1 (+ (- (temp4 nsBottom:) (temp4 nsTop:)) 1)))
 						140
 					)
 					(= temp1 4)
-					(+= temp0 (+ temp2 10))
+					(= temp0 (+ temp0 (+ temp2 10)))
 					(= temp2 0)
 				)
 			)

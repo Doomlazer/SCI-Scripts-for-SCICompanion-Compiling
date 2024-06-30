@@ -509,7 +509,7 @@
 					dsFONT
 					4
 				)
-				(+= temp0 9)
+				(= temp0 (+ temp0 9))
 			else
 				(= temp6 1)
 			)
@@ -539,7 +539,7 @@
 
 (procedure (localproc_8)
 	(if (< local32 92)
-		(+= local32 4)
+		(= local32 (+ local32 4))
 		(localproc_6)
 	)
 )

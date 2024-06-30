@@ -143,7 +143,7 @@
 				(= global179 gCurRoomNum)
 				(self setScript: ethelActions)
 			else
-				(+= [gCycleTimers 0] 10)
+				(= [gCycleTimers 0] (+ [gCycleTimers 0] 10))
 			)
 		)
 		(super doit:)

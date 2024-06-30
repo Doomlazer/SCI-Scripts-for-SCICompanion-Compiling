@@ -292,10 +292,10 @@
 		(if (!= temp0 -1)
 			(switch global213
 				(2
-					(+= temp0 2)
+					(= temp0 (+ temp0 2))
 				)
 				(5
-					(+= temp0 4)
+					(= temp0 (+ temp0 4))
 				)
 			)
 			(Say 1 [local0 temp0] [local0 (+ temp0 1)])
