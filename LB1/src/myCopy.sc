@@ -16,10 +16,10 @@
 )
 
 (local
-	local0
-	local1
-	local2
-	local3
+	fingerCel
+	fingerLoop
+	saveBits
+	saveBits2
 	local4
 	[local5 48] = [0 36 40 52 0 62 59 85 0 89 37 107 0 116 54 137 0 129 65 161 34 164 107 182 129 164 204 182 219 164 298 182 250 31 303 53 250 60 303 84 250 90 303 118 250 126 303 154]
 	[local53 24] = [0 1 5 2 3 4 7 6 8 11 9 10 3 0 7 1 6 5 11 2 4 8 10 9]
@@ -54,7 +54,11 @@
 	(DrawPic 88 4 1 1)
 )
 
-(procedure (localproc_3)
+(procedure (WrongAnswer)
+	; Proper copy protection bypass
+	; uncomment the (identify cue:) line below.
+	;(identify cue:)
+	; then comment out the following three lines
 	(localproc_2)
 	(Print 414 0 #mode 1) ; "Sorry, this performance is sold out. Please come back again."
 	(= gQuit 1)
@@ -87,11 +91,11 @@
 		(TheMenuBar state: 0)
 		(= local102 1)
 		(gConMusic number: 52 loop: -1 play:)
-		(= local0 (/ (Random 0 600) 100))
-		(= local1 (/ (Random 1 1000) 250))
+		(= fingerCel (/ (Random 0 600) 100))
+		(= fingerLoop (/ (Random 1 1000) 250))
 		(SetCursor 1 1 320 20)
 		(Logo view: 553 loop: 4 cel: 1 posn: 161 120 init: stopUpd:)
-		(Finger view: 553 loop: local1 cel: local0 posn: 161 110 init: hide:)
+		(Finger view: 553 loop: fingerLoop cel: fingerCel posn: 161 110 init: hide:)
 		(Glass
 			view: 553
 			setLoop: 5
@@ -151,11 +155,11 @@
 					(if
 						(==
 							(= local4 (localproc_1 (event x:) (event y:)))
-							[local53 (+ (* local1 6) local0)]
+							[local53 (+ (* fingerLoop 6) fingerCel)]
 						)
 						(self cue:)
 					else
-						(localproc_3)
+						(WrongAnswer)
 					)
 					(event claimed: 1)
 				)
@@ -165,11 +169,11 @@
 					(if
 						(==
 							(= local4 (localproc_1 (event x:) (event y:)))
-							[local53 (+ (* local1 6) local0)]
+							[local53 (+ (* fingerLoop 6) fingerCel)]
 						)
 						(self cue:)
 					else
-						(localproc_3)
+						(WrongAnswer)
 					)
 					(event claimed: 1)
 				)
@@ -231,11 +235,11 @@
 									(= local4
 										(localproc_1 (event x:) (event y:))
 									)
-									[local53 (+ (* local1 6) local0)]
+									[local53 (+ (* fingerLoop 6) fingerCel)]
 								)
 								(self cue:)
 							else
-								(localproc_3)
+								(WrongAnswer)
 							)
 						)
 						((== (event message:) KEY_F2)
@@ -257,13 +261,13 @@
 	(method (changeState newState &tmp [temp0 25])
 		(switch (= state newState)
 			(0
-				(= local3
+				(= saveBits2
 					(Display 414 1 dsCOORD 90 16 dsWIDTH 256 dsCOLOR 15 dsBACKGROUND -1 dsFONT 0 dsSAVEPIXELS) ; "A SIERRA Production"
 				)
 				(= cycles 20)
 			)
 			(1
-				(= local2
+				(= saveBits
 					(Display
 						(Format @temp0 414 2 gVersion) ; "Version %s \04 1989 Sierra On-Line, Inc."
 						dsALIGN
@@ -306,8 +310,8 @@
 			(5
 				(SetCursor 1 1 10 39)
 				(= local102 0)
-				(Display 414 3 dsRESTOREPIXELS local2)
-				(Display 414 3 dsRESTOREPIXELS local3)
+				(Display 414 3 dsRESTOREPIXELS saveBits)
+				(Display 414 3 dsRESTOREPIXELS saveBits2)
 				(Display 414 4 dsCOORD 32 8 dsWIDTH 256 dsCOLOR 15 dsBACKGROUND -1 dsFONT 4 dsALIGN alCENTER dsSAVEPIXELS) ; "Using your magnifying glass and the back of the map enclosed in your "Colonel's Bequest" box, please identify the following fingerprint."
 				(Display 414 5 dsCOORD 5 40 dsWIDTH 101 dsCOLOR 15 dsBACKGROUND -1 dsFONT 4 dsSAVEPIXELS) ; "Celie  Rudy Dijon  Fifi  Dr. Feels Gertrude Dijon"
 				(Display 414 6 dsCOORD 40 170 dsWIDTH 320 dsCOLOR 15 dsBACKGROUND -1 dsFONT 4 dsSAVEPIXELS) ; "Lillian Prune"
