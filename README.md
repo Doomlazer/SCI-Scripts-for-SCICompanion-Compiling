@@ -10,6 +10,7 @@ There are currently two games in this repo (more will be added over time, reques
 
 - LB1
 - LB2-floppy-v1.1
+- PQ2-1.002.011
 
 ## Usage
 
