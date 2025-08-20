@@ -1,7 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 105)
-(include sci.sh)
+(include system.sh)
+(include keys.sh)
+(include game.sh)
 (use Main)
 (use Motion)
 (use Game)
@@ -13,31 +14,28 @@
 )
 
 (local
-	local0
+	mealPrice
 	[local1 3]
-	local4
+	heart
 	[local5 2]
 )
-
-(procedure (localproc_0 &tmp temp0)
-	(repeat
-		(= temp0 (Event new: evMOUSEKEYBOARD))
-		(breakif (temp0 type:))
+(procedure (localproc_000c &tmp temp0)
+	(while (not ((= temp0 (Event new: 5)) type?))
 		(temp0 dispose:)
 	)
 	(temp0 dispose:)
 )
 
-(instance rm105 of Rm
+(instance rm105 of Room
 	(properties
 		picture 104
-		style 7
+		style IRISOUT ;$0007
 	)
-
+	
 	(method (init)
-		(Load rsVIEW 266)
+		(Load VIEW 266)
 		(HandsOff)
-		(= local0 32)
+		(= mealPrice 32)
 		(super init:)
 		(self setScript: rm105Script)
 	)
@@ -45,14 +43,14 @@
 
 (instance rm105Script of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(= cycles 2)
 			)
 			(1
-				(switch global126
+				(switch dateState
 					(0
 						(self changeState: 2)
 					)
@@ -74,78 +72,122 @@
 				)
 			)
 			(2
-				(Display 105 0 dsFONT 1 dsWIDTH 300 dsCOORD 45 63 dsCOLOR 15) ; "You go home and spend a boring and restless evening as you contemplate the events of the day. Eventually you drift off to sleep, wondering why you never called Marie for a date."
-				(localproc_0)
+				(Display 105 0
+					p_font 1
+					p_width 300
+					p_at 45 63
+					p_color 15
+				)
+				(localproc_000c)
 				(self changeState: 9)
 			)
 			(4
-				(Display 105 1 dsFONT 1 dsWIDTH 300 dsCOORD 14 43 dsCOLOR 15) ; "Since you were not in the mood, you've let a nice, romantic evening with Marie slip through your fingers. She left the restaurant more than a little upset, and you wonder how you're going to talk your way out of this one!                          Meanwhile, you must get back to the task at hand."
-				((= local4 (Prop new:))
+				(Display 105 1
+					p_font 1
+					p_width 300
+					p_at 14 43
+					p_color 15
+				)
+				((= heart (Prop new:))
 					view: 285
 					loop: 0
 					cel: 0
 					posn: 255 175
 					setPri: -1
 					init:
-					setCycle: Fwd
+					setCycle: Forward
 					startUpd:
 				)
-				(localproc_0)
-				(local4 hide:)
+				(localproc_000c)
+				(heart hide:)
 				(self changeState: 9)
 			)
 			(5
-				(if (> global107 local0)
-					(-= global107 local0)
-					(SetScore 2)
-					(Display 105 2 dsFONT 1 dsWIDTH 300 dsCOORD 14 43 dsCOLOR 15) ; "Although the meal was nice, and you had great fun with Marie, you must get back to the task at hand. You pay the waiter for your meal, leave him a generous tip, and see Marie home to her house."
+				(if (> dollars mealPrice)
+					(= dollars (- dollars mealPrice))
+					(SolvePuzzle 2)
+					(Display 105 2
+						p_font 1
+						p_width 300
+						p_at 14 43
+						p_color 15
+					)
 				else
-					(Display 105 3 dsFONT 1 dsWIDTH 300 dsCOORD 14 43 dsCOLOR 15) ; "Uh-oh! It seems you've spent too much of your ready cash. Even worse than that, you're overextended on your credit cards.   Embarrassed, because you're broke, you ask the waiter if he has any dishes to wash.   Marie sits at the table, embarrassed, while you wash, dry, and think about the case you're working on."
+					(Display 105 3
+						p_font 1
+						p_width 300
+						p_at 14 43
+						p_color 15
+					)
 				)
-				(localproc_0)
+				(localproc_000c)
 				(self changeState: 9)
 			)
 			(6
-				(Display 105 4 dsFONT 1 dsWIDTH 300 dsCOORD 30 63 dsCOLOR 15) ; "The meal was great, you had a lot of fun with Marie, but you must get back to the task at hand. You see Marie home."
-				(localproc_0)
+				(Display 105 4
+					p_font 1
+					p_width 300
+					p_at 30 63
+					p_color 15
+				)
+				(localproc_000c)
 				(self changeState: 9)
 			)
 			(7
-				(if (> global107 local0)
-					(-= global107 local0)
-					(SetScore 2)
-					(Display 105 5 dsFONT 1 dsWIDTH 300 dsCOORD 14 43 dsCOLOR 15) ; "The meal is barely noticed as you and Marie take advantage of the precious moment. You see her home, and the rest is history.....!"
+				(if (> dollars mealPrice)
+					(= dollars (- dollars mealPrice))
+					(SolvePuzzle 2)
+					(Display 105 5
+						p_font 1
+						p_width 300
+						p_at 14 43
+						p_color 15
+					)
 				else
-					(Display 105 3 dsFONT 1 dsWIDTH 300 dsCOORD 14 43 dsCOLOR 15) ; "Uh-oh! It seems you've spent too much of your ready cash. Even worse than that, you're overextended on your credit cards.   Embarrassed, because you're broke, you ask the waiter if he has any dishes to wash.   Marie sits at the table, embarrassed, while you wash, dry, and think about the case you're working on."
+					(Display 105 3
+						p_font 1
+						p_width 300
+						p_at 14 43
+						p_color 15
+					)
 				)
-				(localproc_0)
+				(localproc_000c)
 				(self changeState: 9)
 			)
 			(8
-				(Display 105 6 dsFONT 1 dsWIDTH 300 dsCOORD 14 43 dsCOLOR 15) ; "Well, Sonny Bonds! No one will ever know why you walked out on your girl at Arnie's Restaurant, but you must know how badly you hurt Marie's feelings. You will have to deal with your guilt as you work on the task at hand."
-				(localproc_0)
+				(Display 105 6
+					p_font 1
+					p_width 300
+					p_at 14 43
+					p_color 15
+				)
+				(localproc_000c)
 				(self changeState: 9)
 			)
 			(9
-				(gCurRoom drawPic: 104 7)
+				(curRoom drawPic: 104 7)
 				(= cycles 1)
 			)
 			(10
-				(Display 105 7 dsFONT 0 dsWIDTH 150 dsCOORD 114 95 dsCOLOR 15) ; "The next day...."
+				(Display 105 7
+					p_font 0
+					p_width 150
+					p_at 114 95
+					p_color 15
+				)
 				(DrawCel 999 0 0 138 128 15)
 				(= cycles 1)
 			)
 			(11
-				(= global138 0)
-				(= global100 8)
-				(= global158 600)
-				(= global131 33)
-				(= global130 105)
+				(= isOnDuty 0)
+				(= gamePhase 8)
+				(= captainWarningTimer 600)
+				(= currentCar carPersonal)
+				(= roomCarParked 105)
 				(= global160 0)
 				(HandsOn)
-				(gCurRoom newRoom: 1)
+				(curRoom newRoom: 1)
 			)
 		)
 	)
 )
-

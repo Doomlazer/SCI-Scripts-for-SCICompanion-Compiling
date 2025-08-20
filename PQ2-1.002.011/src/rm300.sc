@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 300)
-(include sci.sh)
+(include game.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Motion)
 (use Game)
 (use Actor)
@@ -13,18 +12,22 @@
 	rm300 0
 )
 
-(procedure (localproc_0)
-	(Print &rest #font 4 #at -1 145 #width 280)
+(procedure (CaptainSays)
+	(Print &rest
+		#font 4
+		#at -1 145
+		#width 280
+	)
 )
 
-(instance rm300 of Rm
+(instance rm300 of Room
 	(properties
 		picture 502
-		style 6
+		style IRISIN
 	)
-
+	
 	(method (init)
-		(Load rsVIEW 500)
+		(Load VIEW 500)
 		(super init:)
 		(HandsOff)
 		(capFace
@@ -73,7 +76,7 @@
 			setPri: 14
 			init:
 		)
-		(if (== global158 1)
+		(if (== captainWarningTimer 1)
 			(self setScript: warned)
 		else
 			(self setScript: suspended)
@@ -82,67 +85,53 @@
 )
 
 (instance warned of Script
-	(properties)
-
-	(method (handleEvent event)
-		(if
-			(and
-				(not (event claimed:))
-				(or (== (event type:) evKEYBOARD) (== (event type:) evMOUSEBUTTON))
-				gModelessDialog
-			)
-			(event claimed: 1)
-			(= seconds 0)
-			(= cycles 1)
-		)
-	)
-
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(= global158 0)
+				(= captainWarningTimer 0)
 				(= cycles 1)
 			)
 			(1
-				(localproc_0 300 0 88) ; "Hey, BOY!" says the captain..."Just in case you don't know it, we have a police department to run. Now quit MESSING around and get to work!"
+				(CaptainSays 300 0 #dispose)
 				(= seconds 10)
 			)
 			(2
-				(clr)
-				(localproc_0 300 1 88) ; "Having your undivided attention, the captain says..."For your information, DETECTIVE BONDS, it would be so ducky if you could check in with me once in a while just to see if I might have something for you to do.""
+				(cls)
+				(CaptainSays 300 1 #dispose)
 				(= seconds 10)
 			)
 			(3
-				(clr)
-				(localproc_0 300 2 88) ; "After your mild reaming he says... "Consider this a warning FELLA! You can go now.""
+				(cls)
+				(CaptainSays 300 2 #dispose)
 				(= seconds 10)
 			)
 			(4
-				(clr)
+				(cls)
 				(HandsOn)
 				(++ state)
-				(gCurRoom newRoom: 4)
+				(curRoom newRoom: 4)
 			)
+		)
+	)
+	
+	(method (handleEvent event)
+		(if
+			(and
+				(not (event claimed?))
+				(or
+					(== (event type?) keyDown)
+					(== (event type?) mouseDown)
+				)
+				modelessDialog
+			)
+			(event claimed: TRUE)
+			(= seconds 0)
+			(= cycles 1)
 		)
 	)
 )
 
 (instance suspended of Script
-	(properties)
-
-	(method (handleEvent event)
-		(if
-			(and
-				(not (event claimed:))
-				(or (== (event type:) evKEYBOARD) (== (event type:) evMOUSEBUTTON))
-				gModelessDialog
-			)
-			(event claimed: 1)
-			(= cycles (= seconds 0))
-			(self cue:)
-		)
-	)
-
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -150,54 +139,68 @@
 				(= cycles 1)
 			)
 			(1
-				(localproc_0 300 3 88) ; "I regret having to inform you of this." says the Captain... "But refusing to obey orders is strictly against departmental policy. It's a violation called insubordination!"
+				(CaptainSays 300 3 #dispose)
 				(= seconds 10)
 			)
 			(2
-				(clr)
-				(localproc_0 300 4 88) ; "Continuing he says..."According to departmental 'Standard Operating Procedure', you are hereby suspended for two days, effective immediately!!""
+				(cls)
+				(CaptainSays 300 4 #dispose)
 				(= seconds 10)
 				(= state 9)
 			)
 			(3
-				(localproc_0 300 5 88) ; "Well, Bonds, ol' buddy," says the Captain..."You've managed to earn yourself a couple days off without PAY!"
+				(CaptainSays 300 5 #dispose)
 				(= seconds 10)
 			)
 			(4
-				(clr)
-				(localproc_0 300 6 88) ; "Continuing he says..."Failing to carry out your assignments will land you in the `stuff' every time. Try and remember that when you return to work.""
+				(cls)
+				(CaptainSays 300 6 #dispose)
 				(= seconds 10)
 				(= state 9)
 			)
 			(5
-				(localproc_0 300 7 88) ; "The Captain isn't very happy as he says..."Well, here you are again Sonny! You seem to have difficulty following orders.""
+				(CaptainSays 300 7 #dispose)
 				(= seconds 10)
 			)
 			(6
-				(clr)
-				(localproc_0 300 8 88) ; "Another two days off with no pay!" he rants..."You keep this up and you're gonna wind up owing the department your whole pay check!!"
+				(cls)
+				(CaptainSays 300 8 #dispose)
 				(= seconds 10)
 				(= state 9)
 			)
 			(10
-				(clr)
-				(EgoDead 300 9) ; "Even the hottest detective needs to follow orders."
+				(cls)
+				(EgoDead 300 9)
 			)
+		)
+	)
+	
+	(method (handleEvent event)
+		(if
+			(and
+				(not (event claimed?))
+				(or
+					(== (event type?) keyDown)
+					(== (event type?) mouseDown)
+				)
+				modelessDialog
+			)
+			(event claimed: TRUE)
+			(= cycles (= seconds 0))
+			(self cue:)
 		)
 	)
 )
 
 (instance speak of Script
-	(properties)
-
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(client setCycle: Fwd)
+				(client setCycle: Forward)
 				(= seconds (Random 1 2))
 			)
 			(1
-				(client setCycle: End self)
+				(client setCycle: EndLoop self)
 			)
 			(2
 				(= seconds (Random 1 2))
@@ -207,23 +210,12 @@
 	)
 )
 
-(instance capFace of View
-	(properties)
-)
+(instance capFace of View)
 
-(instance capTorso of View
-	(properties)
-)
+(instance capTorso of View)
 
-(instance capHand of View
-	(properties)
-)
+(instance capHand of View)
 
-(instance capLips of Prop
-	(properties)
-)
+(instance capLips of Prop)
 
-(instance sonny of View
-	(properties)
-)
-
+(instance sonny of View)

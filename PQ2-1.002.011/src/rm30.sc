@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 30)
 (include sci.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Sound)
 (use Motion)
 (use Game)
@@ -16,16 +15,16 @@
 )
 
 (local
-	local0
-	local1
-	local2
-	local3
-	local4
-	local5
-	[local6 4]
-	local10
-	local11
-	local12
+	waiter
+	newProp_6
+	newProp
+	newProp_2
+	newProp_7
+	newView
+	[newProp_8 4]
+	newProp_3
+	newProp_4
+	newProp_5
 	local13
 	local14
 	local15
@@ -60,12 +59,11 @@
 	local44
 	local45
 )
-
-(procedure (localproc_0)
+(procedure (localproc_000c)
 	(Print &rest #at -1 125)
 )
 
-(procedure (localproc_1)
+(procedure (localproc_001b)
 	(if (== (Random 1 8) 1)
 		(coughScript changeState: 0)
 		(= local14 20)
@@ -98,158 +96,30 @@
 	)
 )
 
-(instance rm30 of Rm
+(instance rm30 of Room
 	(properties
 		picture 30
-		style 0
+		style $0000
 	)
-
-	(method (doit)
-		(cond
-			((> local14 1)
-				(-- local14)
-			)
-			((== local14 1)
-				(= local14 0)
-				(coughScript changeState: 1)
-			)
-			((> local15 1)
-				(-- local15)
-			)
-			((== local15 1)
-				(= local15 0)
-				(coughScript changeState: 3)
-			)
-			((> local19 0)
-				(-- local19)
-			)
-			((> local20 1)
-				(-- local20)
-			)
-			((== local20 1)
-				(waiterScript changeState: 16)
-				(= local20 0)
-			)
-			((> local16 1)
-				(-- local16)
-			)
-			((== local16 1)
-				(= local16 0)
-				(coughScript changeState: 5)
-			)
-			((> local17 1)
-				(-- local17)
-			)
-			((== local17 1)
-				(= local17 0)
-				(coughScript changeState: 7)
-			)
-			((> local18 1)
-				(-- local18)
-			)
-			((== local18 1)
-				(= local18 0)
-				(day2Script changeState: 1)
-			)
-		)
-		(if (> local13 1)
-			(-- local13)
-		)
-		(if (== local13 1)
-			(= local13 0)
-			(if local24
-				(waiterScript changeState: 6)
-			else
-				(= local13 100)
-			)
-		)
-		(cond
-			((and (!= (mod (gEgo view:) 2) 0) (<= (gEgo y:) 123))
-				(gEgo view: (- (gEgo view:) 1))
-			)
-			((and (!= (mod (gEgo view:) 2) 1) (> (gEgo y:) 123))
-				(gEgo view: (+ (gEgo view:) 1))
-			)
-		)
-		(cond
-			((> (gEgo y:) 165)
-				(= global126 5)
-				(gCurRoom newRoom: 105)
-			)
-			((and (gEgo inRect: 95 99 215 109) (== (local4 cel:) 5))
-				(localproc_1)
-				(local4 setCycle: End startUpd:)
-				(if (not local32)
-					(local5 posn: 157 164)
-					(= local32 1)
-				)
-			)
-			((and (not (gEgo inRect: 95 99 215 109)) local32)
-				(local5 posn: 0 0)
-				(= local32 0)
-			)
-			((> (local2 x:) 0)
-				(if (not local24)
-					(= local24 1)
-				)
-			)
-			((and (> (gEgo x:) 0) local24)
-				(= local24 0)
-			)
-		)
-		(cond
-			(
-				(and
-					(< (gEgo x:) 120)
-					(> (gEgo y:) 130)
-					local31
-					(not local39)
-				)
-				(waiterScript changeState: 24)
-			)
-			((and (< (gEgo x:) 140) (not local24) local33)
-				(if (not local34)
-					(localproc_0 30 0) ; "What kind of a gentleman are you, leaving without saying goodbye to Marie?"
-				)
-				(= local33 0)
-			)
-			((and (gEgo inRect: 170 111 223 120) (not local22))
-				(= local22 1)
-				(mariesTheme play:)
-				(localproc_0 30 1) ; "Hi, Sonny!"
-				(localproc_0 30 2) ; "I'm so glad to see you. Please sit down."
-			)
-		)
-		(super doit:)
-	)
-
-	(method (dispose)
-		(coughScript dispose:)
-		(marieScript dispose:)
-		(sonnyScript dispose:)
-		(waiterScript dispose:)
-		(day2Script dispose:)
-		(super dispose:)
-	)
-
+	
 	(method (init)
 		(super init:)
 		(Load rsVIEW 1)
 		(Load rsVIEW 0)
 		(Load rsVIEW 266)
 		(Load rsVIEW 28)
-		(= global212 3)
+		(= gunFireState 3)
 		(= local42 16)
 		(= local43 8)
 		(= local44 5)
-		((= local2 (Prop new:)) init:)
-		((= local3 (Prop new:)) init:)
-		((= local10 (Prop new:)) init:)
-		((= local11 (Prop new:)) init:)
-		((= local12 (Prop new:)) init:)
+		((= newProp (Prop new:)) init:)
+		((= newProp_2 (Prop new:)) init:)
+		((= newProp_3 (Prop new:)) init:)
+		((= newProp_4 (Prop new:)) init:)
+		((= newProp_5 (Prop new:)) init:)
 		(dinnerMusic play:)
-		(= global204 0)
-		(gEgo
+		(= gunDrawn 0)
+		(ego
 			view: 1
 			setStep: 3 2
 			init:
@@ -257,7 +127,7 @@
 			setMotion: MoveTo 107 143
 			setScript: day2Script
 		)
-		((= local0 (Act new:))
+		((= waiter (Actor new:))
 			view: 28
 			posn: 137 104
 			init:
@@ -265,7 +135,7 @@
 			setStep: 3 2
 			setScript: waiterScript
 		)
-		((= local1 (Prop new:))
+		((= newProp_6 (Prop new:))
 			view: 266
 			posn: 178 111
 			loop: 8
@@ -274,7 +144,7 @@
 			stopUpd:
 			setScript: marieScript
 		)
-		((= local5 (View new:))
+		((= newView (View new:))
 			view: 266
 			posn: 0 0
 			loop: 4
@@ -283,7 +153,7 @@
 			init:
 			stopUpd:
 		)
-		((= local4 (Prop new:))
+		((= newProp_7 (Prop new:))
 			view: 266
 			loop: 7
 			cel: 5
@@ -434,7 +304,7 @@
 			stopUpd:
 			addToPic:
 		)
-		((= [local6 0] (Prop new:))
+		((= [newProp_8 0] (Prop new:))
 			view: 266
 			posn: 0 0
 			loop: 3
@@ -443,7 +313,7 @@
 			init:
 			stopUpd:
 		)
-		((= [local6 1] (Prop new:))
+		((= [newProp_8 1] (Prop new:))
 			view: 266
 			posn: 0 0
 			loop: 3
@@ -452,7 +322,7 @@
 			init:
 			stopUpd:
 		)
-		((= [local6 2] (Prop new:))
+		((= [newProp_8 2] (Prop new:))
 			view: 266
 			posn: 0 0
 			loop: 3
@@ -461,7 +331,7 @@
 			init:
 			stopUpd:
 		)
-		((= [local6 3] (Prop new:))
+		((= [newProp_8 3] (Prop new:))
 			view: 266
 			posn: 0 0
 			loop: 3
@@ -471,353 +341,308 @@
 			stopUpd:
 		)
 	)
-
+	
+	(method (doit)
+		(cond 
+			((> local14 1) (-- local14))
+			((== local14 1) (= local14 0) (coughScript changeState: 1))
+			((> local15 1) (-- local15))
+			((== local15 1) (= local15 0) (coughScript changeState: 3))
+			((> local19 0) (-- local19))
+			((> local20 1) (-- local20))
+			((== local20 1) (waiterScript changeState: 16) (= local20 0))
+			((> local16 1) (-- local16))
+			((== local16 1) (= local16 0) (coughScript changeState: 5))
+			((> local17 1) (-- local17))
+			((== local17 1) (= local17 0) (coughScript changeState: 7))
+			((> local18 1) (-- local18))
+			((== local18 1) (= local18 0) (day2Script changeState: 1))
+		)
+		(if (> local13 1) (-- local13))
+		(if (== local13 1)
+			(= local13 0)
+			(if local24
+				(waiterScript changeState: 6)
+			else
+				(= local13 100)
+			)
+		)
+		(cond 
+			(
+			(and (!= (mod (ego view?) 2) 0) (<= (ego y?) 123)) (ego view: (- (ego view?) 1)))
+			(
+			(and (!= (mod (ego view?) 2) 1) (> (ego y?) 123)) (ego view: (+ (ego view?) 1)))
+		)
+		(cond 
+			((> (ego y?) 165) (= dateState 5) (curRoom newRoom: 105))
+			(
+				(and
+					(ego inRect: 95 99 215 109)
+					(== (newProp_7 cel?) 5)
+				)
+				(localproc_001b)
+				(newProp_7 setCycle: EndLoop startUpd:)
+				(if (not local32)
+					(newView posn: 157 164)
+					(= local32 1)
+				)
+			)
+			(
+			(and (not (ego inRect: 95 99 215 109)) local32) (newView posn: 0 0) (= local32 0))
+			((> (newProp x?) 0) (if (not local24) (= local24 1)))
+			((and (> (ego x?) 0) local24) (= local24 0))
+		)
+		(cond 
+			(
+				(and
+					(< (ego x?) 120)
+					(> (ego y?) 130)
+					local31
+					(not local39)
+				)
+				(waiterScript changeState: 24)
+			)
+			((and (< (ego x?) 140) (not local24) local33) (if (not local34) (localproc_000c 30 0)) (= local33 0))
+			(
+			(and (ego inRect: 170 111 223 120) (not local22))
+				(= local22 1)
+				(mariesTheme play:)
+				(localproc_000c 30 1)
+				(localproc_000c 30 2)
+			)
+		)
+		(super doit:)
+	)
+	
+	(method (dispose)
+		(coughScript dispose:)
+		(marieScript dispose:)
+		(sonnyScript dispose:)
+		(waiterScript dispose:)
+		(day2Script dispose:)
+		(super dispose:)
+	)
+	
 	(method (handleEvent event)
-		(switch (event type:)
+		(switch (event type?)
 			(evSAID
-				(cond
+				(cond 
 					((Said 'look>')
-						(cond
-							((Said '[<at,around][/!*,chamber,cafe,arnie]')
-								(localproc_0 30 3) ; "Even for Lytton, this is a very classy place to dine. The wallpaper is white velveteen and the napkins are linen."
-							)
-							((Said '<below/table')
-								(localproc_0 30 4) ; "You look, but all you see is a bony knee here and there."
-							)
-							((Said '/table')
-								(localproc_0 30 5) ; "The elegant tables are made of solid oak."
-							)
-							((Said '/wall')
-								(Print 30 6 #at -1 125) ; "There are some limited edition prints on the wall. There is a partition which separates the rear of the restaurant from the front."
-							)
-							((or (Said '<up') (Said '/ceiling'))
-								(localproc_0 30 7) ; "In one corner, you can see the stain left from a leaky roof."
-							)
-							((or (Said '<down') (Said '/floor'))
-								(localproc_0 30 8) ; "The carpeting was chosen in a light blue by Nguyen Interiors, Inc. It does little to hide the food stains."
-							)
-							((Said '/partition')
-								(localproc_0 30 9) ; "Constructed from forest products, it separates the smoking section from the non-smoking section."
-							)
-							((Said '/counter')
-								(localproc_0 30 10) ; "A telephone is located on the counter."
-							)
-							((Said '/phone')
-								(Print 30 11) ; "Manufactured by the Steelton Phone Company."
-							)
-							((Said '/desk')
-								(localproc_0 30 12) ; "The cash register is located on the desk"
-							)
+						(cond 
+							((Said '[<at,around][/!*,chamber,cafe,arnie]') (localproc_000c 30 3))
+							((Said '<below/table') (localproc_000c 30 4))
+							((Said '/table') (localproc_000c 30 5))
+							((Said '/wall') (Print 30 6 #at -1 125))
+							((or (Said '<up') (Said '/ceiling')) (localproc_000c 30 7))
+							((or (Said '<down') (Said '/floor')) (localproc_000c 30 8))
+							((Said '/partition') (localproc_000c 30 9))
+							((Said '/counter') (localproc_000c 30 10))
+							((Said '/phone') (Print 30 11))
+							((Said '/desk') (localproc_000c 30 12))
 							((Said '/chow')
 								(if local31
-									(localproc_0 30 13) ; "Looks delicious!"
+									(localproc_000c 30 13)
 								else
-									(localproc_0 30 14) ; "You notice that the other customers don't have any food on their tables."
+									(localproc_000c 30 14)
 								)
 							)
-							((Said '/man')
-								(if (<= (local0 distanceTo: gEgo) 20)
-									(localproc_0 30 15) ; "His velveteen outfit is very stylish. He seems to know his business."
+							((Said '/dude')
+								(if (<= (waiter distanceTo: ego) 20)
+									(localproc_000c 30 15)
 								else
-									(localproc_0 30 16) ; "The couple at the table seem happy and content."
+									(localproc_000c 30 16)
 								)
 							)
-							((Said '/crowd,couple,customer')
-								(localproc_0 30 16) ; "The couple at the table seem happy and content."
-							)
+							((Said '/crowd,couple,customer') (localproc_000c 30 16))
 							((Said '/waiter')
 								(if
-									(and
-										(< (local0 y:) 105)
-										(> (local0 x:) 105)
-									)
-									(localproc_0 30 17) ; "He's not around to look at."
+								(and (< (waiter y?) 105) (> (waiter x?) 105))
+									(localproc_000c 30 17)
 								else
-									(localproc_0 30 15) ; "His velveteen outfit is very stylish. He seems to know his business."
+									(localproc_000c 30 15)
 								)
 							)
-							((Said '/woman,cheeks')
-								(cond
+							((Said '/broad,cheeks')
+								(cond 
 									(
-										(and
-											(not local24)
-											(not
-												(gEgo
-													inRect: 170 111 223 120
-												)
-											)
-										)
-										(localproc_0 30 18) ; "Marie slips you a sidelong glance. She suspects that you're looking at another woman."
-									)
+									(and (not local24) (not (ego inRect: 170 111 223 120))) (localproc_000c 30 18))
 									(
-										(and
-											(not local24)
-											(gEgo inRect: 170 111 223 120)
-										)
-										(localproc_0 30 19) ; "You want to gaze into Marie's eyes. You'd better sit down."
-									)
-									(else
-										(localproc_0 30 20) ; "You can't get over what a knockout Marie is!"
-									)
+									(and (not local24) (ego inRect: 170 111 223 120)) (localproc_000c 30 19))
+									(else (localproc_000c 30 20))
 								)
 							)
-							((Said '/computer,terminal,register')
-								(localproc_0 30 21) ; "The cash register is a modern point-of-sale computer terminal which feeds its information to Arnie's home office."
-							)
-							((Said '/plant')
-								(localproc_0 30 22) ; "It's a fake rubber plant."
-							)
-							((Said '/painting,print')
-								(localproc_0 30 23) ; "The painting adorning the wall is in a new style called "Computer Art.""
-							)
-							((Said '/grass')
-								(localproc_0 30 24) ; "There isn't any marijuana in here."
-							)
-							((Said '/pane')
-								(localproc_0 30 25) ; "You see the parking lot through the window."
-							)
+							((Said '/computer,terminal,register') (localproc_000c 30 21))
+							((Said '/plant') (localproc_000c 30 22))
+							((Said '/painting,print') (localproc_000c 30 23))
+							((Said '/grass') (localproc_000c 30 24))
+							((Said '/pane') (localproc_000c 30 25))
 						)
 					)
 					((Said 'look,read/sign')
-						(if (or (< (gEgo x:) 160) local24)
-							(localproc_0 30 26) ; "It informs patrons that the Smoking Section is behind the partition."
+						(if (or (< (ego x?) 160) local24)
+							(localproc_000c 30 26)
 						else
-							(localproc_0 30 27) ; "You can't read it from where you're standing."
+							(localproc_000c 30 27)
 						)
 					)
-					((Said 'frisk[<behind]/partition')
-						(localproc_0 30 28) ; "Searching the partition is not in the realm of logical thinking."
-					)
-					((Said 'frisk/customer,cafe,man,woman,couple')
-						(localproc_0 30 29) ; "You wouldn't want to upset the patrons."
-					)
+					((Said 'frisk[<behind]/partition') (localproc_000c 30 28))
+					((Said 'frisk/customer,cafe,dude,broad,couple') (localproc_000c 30 29))
 					(
 						(or
 							(Said '(use,dial,(pick[<up]))<phone')
 							(Said 'make/call')
 						)
-						(localproc_0 30 30) ; "Who ya gonna call...Crimebusters?"
+						(localproc_000c 30 30)
 					)
-					((Said 'open/register')
-						(localproc_0 30 31) ; "You could be arrested for doing that."
-					)
-					((Said 'get/plant')
-						(localproc_0 30 32) ; "It would look nice in your apartment, but you really shouldn't."
-					)
-					((Said 'get/register')
-						(localproc_0 30 33) ; "That would be stealing."
-					)
-					((Said 'yes')
+					((Said 'open/register') (localproc_000c 30 31))
+					((Said 'get/plant') (localproc_000c 30 32))
+					((Said 'get/register') (localproc_000c 30 33))
+					((Said 'affirmative')
 						(if local24
-							(localproc_0 30 34) ; "Thanks, Sonny!"
+							(localproc_000c 30 34)
 						else
-							(localproc_0 30 35) ; "Good. A positive outlook."
+							(localproc_000c 30 35)
 						)
 					)
-					((Said 'no')
+					((Said 'n')
 						(if local24
-							(localproc_0 30 36) ; "Marie just looks at you thoughtfully."
+							(localproc_000c 30 36)
 						else
-							(localproc_0 30 37) ; "Being negative never helps."
+							(localproc_000c 30 37)
 						)
 					)
 					((Said 'beg')
-						(cond
-							((> (gEgo x:) 105)
-								(localproc_0 30 38) ; "It's funny...he doesn't look like a bum."
-							)
-							(local24
-								(localproc_0 30 39) ; "You beg Marie for her affections."
-							)
-							(else
-								(localproc_0 30 40) ; "Not much luck on this side of the room."
-							)
+						(cond 
+							((> (ego x?) 105) (localproc_000c 30 38))
+							(local24 (localproc_000c 30 39))
+							(else (localproc_000c 30 40))
 						)
 					)
-					((Said 'talk>')
-						(cond
-							((Said '/man,crowd,customer,cafe,customer')
-								(cond
-									((> (gEgo x:) 105)
+					((Said 'chat>')
+						(cond 
+							((Said '/dude,crowd,customer,cafe,customer')
+								(cond 
+									((> (ego x?) 105)
 										(switch (Random 0 5)
-											(0
-												(Print 30 41 #at -1 125) ; "Thinking you're the waiter, the diner says..."I'll take the #3 medium well, with baked potato and... oh yes, a side order of mushrooms, please.""
-											)
-											(1
-												(localproc_0 30 42) ; "Unless you're the waiter," the man snarls, "I don't need a thing."
-											)
-											(2
-												(localproc_0 30 43) ; "Give me a break!" the customer snaps, "can't you see I'm trying to eat?"
-											)
-											(3
-												(localproc_0 30 44) ; "Try begging at the next table, BUB!"
-											)
-											(4
-												(localproc_0 30 45) ; "Why you poor thing," the lady says, "are you lost?"
-											)
-											(5
-												(localproc_0 30 46) ; "With a smile the man says, "I'll have the special of the day with iced tea, please.""
-											)
+											(0 (Print 30 41 #at -1 125))
+											(1 (localproc_000c 30 42))
+											(2 (localproc_000c 30 43))
+											(3 (localproc_000c 30 44))
+											(4 (localproc_000c 30 45))
+											(5 (localproc_000c 30 46))
 										)
 									)
-									((not local24)
-										(localproc_0 30 47) ; "All of the people are on the other side of the room."
-									)
-									(else
-										(localproc_0 30 48) ; "Marie says, "Sonny, you're not paying attention to me!""
-									)
+									((not local24) (localproc_000c 30 47))
+									(else (localproc_000c 30 48))
 								)
 							)
 							((Said '/waiter')
 								(if
-									(and
-										(< (local0 y:) 105)
-										(> (local0 x:) 105)
-									)
-									(localproc_0 30 49) ; "He's not around to talk to."
+								(and (< (waiter y?) 105) (> (waiter x?) 105))
+									(localproc_000c 30 49)
 								else
-									(localproc_0 30 50) ; "He's the strong, silent type. He only waits."
+									(localproc_000c 30 50)
 								)
 							)
-							((Said '/woman,cheeks,cheeks')
-								(cond
-									((not local24)
-										(localproc_0 30 51) ; "Why don't you sit down with her first."
-									)
-									((and local31 (not local37))
-										(localproc_0 30 52) ; "Gosh, Sonny. This food looks so good! Let's eat, shall we?"
-									)
-									(local35
-										(localproc_0 30 53) ; ""Why don't you give the man your order?" says Marie."
-									)
-									(else
-										(localproc_0 30 54) ; "All excited, Marie says..."Oh precious, I'm so happy to see you!""
-										(localproc_0 30 55) ; "My life is so different now," she says, "and it's all because of you. I owe everything to you, Sonny!"
-									)
+							((Said '/broad,cheeks,cheeks')
+								(cond 
+									((not local24) (localproc_000c 30 51))
+									((and local31 (not local37)) (localproc_000c 30 52))
+									(local35 (localproc_000c 30 53))
+									(else (localproc_000c 30 54) (localproc_000c 30 55))
 								)
 							)
-							(local24
-								(localproc_0 30 56) ; "Marie just looks longingly into your eyes."
-							)
-							(else
-								(localproc_0 30 57) ; "You're talking to yourself again."
-							)
+							(local24 (localproc_000c 30 56))
+							(else (localproc_000c 30 57))
 						)
 						(event claimed: 1)
 					)
-					((Said 'kiss/!*')
-						(localproc_0 30 58) ; "Kiss who?"
-					)
+					((Said 'kiss/!*') (localproc_000c 30 58))
 					(
 						(or
-							(Said 'kiss/cheeks,woman,cheeks')
-							(Said 'give/kiss/woman')
+							(Said 'kiss/cheeks,broad,cheeks')
+							(Said 'gave/kiss/broad')
 						)
-						(cond
-							((and (not local26) local24)
-								(marieScript changeState: 4)
-							)
-							((gEgo inRect: 0 0 320 200)
-								(localproc_0 30 51) ; "Why don't you sit down with her first."
-							)
-							(local35
-								(localproc_0 30 59) ; ""Not in front of the waiter, Sonny!" Marie says."
-							)
-							(else
-								(localproc_0 30 60) ; "Not now, Sonny!" Marie says. "The waiter'll be here any minute."
-							)
+						(cond 
+							((and (not local26) local24) (marieScript changeState: 4))
+							((ego inRect: 0 0 320 200) (localproc_000c 30 51))
+							(local35 (localproc_000c 30 59))
+							(else (localproc_000c 30 60))
 						)
 					)
-					((Said 'eat,blow,fuck/couple,customer,cafe,customer,man')
-						(Print 30 61 #at -1 125) ; "Golly gee!" the customer declares. "It must be one of them there preeverts that you read about in the papers. Go on, buddy! Get away! Shoo! Shoo!"
-					)
-					((Said 'fuck,eat,blow/woman,cheeks,cheeks')
-						(if (> (local2 x:) 0)
+					(
+					(Said 'eat,blow,fuck/couple,customer,cafe,customer,dude') (Print 30 61 #at -1 125))
+					((Said 'fuck,eat,blow/broad,cheeks,cheeks')
+						(if (> (newProp x?) 0)
 							(switch (Random 0 3)
-								(0
-									(localproc_0 30 62) ; "Embarrassed, she says..."Oh Sonny, you shouldn't talk like that.""
-								)
-								(1
-									(localproc_0 30 63) ; ""WOW!" she says."
-								)
-								(2
-									(localproc_0 30 64) ; "Have a drink of water, Sonny. You must be getting warm."
-								)
-								(3
-									(localproc_0 30 65) ; "Without saying anything, Marie blushes, but her eyes remain fixed on yours."
-								)
+								(0 (localproc_000c 30 62))
+								(1 (localproc_000c 30 63))
+								(2 (localproc_000c 30 64))
+								(3 (localproc_000c 30 65))
 							)
 						else
-							(localproc_0 30 66) ; "Here??? In the restaurant???"
+							(localproc_000c 30 66)
 						)
 					)
 					(
 						(or
 							(Said 'ask/cost[<chow,lobster,loaf,rib]')
-							(Said 'ask/man,waiter/cost')
+							(Said 'ask/dude,waiter/cost')
 							(Said 'much<how')
 						)
 						(if (and local35 (not local28))
-							(localproc_0 30 67) ; "He answers..."Meatloaf is $5.00, prime rib is $8.00, and the lobster is $16.00""
+							(localproc_000c 30 67)
 							(= local38 1)
 						else
-							(localproc_0 30 68) ; "Better ask the waiter, if you can get his attention."
+							(localproc_000c 30 68)
 						)
 					)
 					(
 						(or
 							(Said 'read,ask/chow,choice,menu')
-							(Said 'look,give,show,get/menu[/me]')
+							(Said 'look,gave,display,get/menu[/i]')
 							(Said 'ask/waiter/menu,chow,choice')
 						)
 						(if local35
-							(localproc_0 30 67) ; "He answers..."Meatloaf is $5.00, prime rib is $8.00, and the lobster is $16.00""
+							(localproc_000c 30 67)
 						else
-							(localproc_0 30 69) ; "This restaurant has no menus. You must ask the waiter."
+							(localproc_000c 30 69)
 						)
 					)
-					((Said 'show/badge')
-						(cond
+					((Said 'display/badge')
+						(cond 
 							((and local25 local38 (not local28))
-								(localproc_0 30 70) ; "He answers..."Meatloaf is $3.00, prime rib is $4.00, and the lobster is $8.00""
+								(localproc_000c 30 70)
 								(= local42 8)
 								(= local43 4)
 								(= local44 3)
 							)
-							((or (gEgo inRect: 170 111 223 120) local24)
-								(localproc_0 30 71) ; "With a tear in her eye, Marie says, "S-S-S-Sonny! Are you BUSTING me????""
-							)
-							((> (gEgo x:) 105)
+							((or (ego inRect: 170 111 223 120) local24) (localproc_000c 30 71))
+							((> (ego x?) 105)
 								(switch (Random 0 3)
-									(0
-										(localproc_0 30 72) ; "You whip out the ole badge, and the customer says... "Now what??""
-									)
-									(1
-										(localproc_0 30 73) ; "After you have displayed your badge, the patron says: "So what?""
-									)
-									(2
-										(localproc_0 30 74) ; "You show your badge and the customer lashes out..."Whatsa matter, am I holding my fork wrong or something?""
-									)
-									(3
-										(localproc_0 30 75) ; ""Good day officer," he says, after you have displayed your badge."
-									)
+									(0 (localproc_000c 30 72))
+									(1 (localproc_000c 30 73))
+									(2 (localproc_000c 30 74))
+									(3 (localproc_000c 30 75))
 								)
 							)
-							(else
-								(localproc_0 30 76) ; "Quit flashing your badge at the wall!"
-							)
+							(else (localproc_000c 30 76))
 						)
 					)
-					((or (Said '[exit]/info[/waiter]') (Said 'info[/waiter]'))
+					(
+						(or
+							(Said '[exit]/info[/waiter]')
+							(Said 'info[/waiter]')
+						)
 						(if local37
-							(if (> global107 5)
-								(localproc_0 30 77) ; "Being the big tipper you are, you throw down $5.00."
-								(-= global107 5)
+							(if (> dollars 5)
+								(localproc_000c 30 77)
+								(= dollars (- dollars 5))
 							else
-								(localproc_0 30 78) ; "Oops! You're down to your last cash...better not leave a tip!"
+								(localproc_000c 30 78)
 							)
 						else
-							(localproc_0 30 79) ; "Most people wait until they've finished eating."
+							(localproc_000c 30 79)
 						)
 					)
 					(
@@ -832,7 +657,7 @@
 								(waiterScript changeState: 28)
 							)
 						else
-							(localproc_0 30 80) ; "You might as well eat your food before paying for it."
+							(localproc_000c 30 80)
 						)
 					)
 					((Said '[order]/chow')
@@ -856,15 +681,20 @@
 						)
 						(waiterScript changeState: 11)
 					)
-					((or (Said '[order]/meatloaf') (Said '[order]/loaf<meat'))
+					(
+						(or
+							(Said '[order]/meatloaf')
+							(Said '[order]/loaf<meat')
+						)
 						(if (not local28)
 							(= local41 1)
 							(= local40 (+ local42 local44))
 						)
 						(waiterScript changeState: 11)
 					)
-					((or (Said 'get,get/chow') (Said '[call,get]/waiter'))
-						(cond
+					(
+					(or (Said 'get,get/chow') (Said '[call,get]/waiter'))
+						(cond 
 							(
 								(and
 									local28
@@ -879,24 +709,12 @@
 								(= local20 0)
 								(waiterScript changeState: 16)
 							)
-							((and local28 (> local19 0))
-								(localproc_0 30 81) ; "Good food takes a little time."
-							)
-							((and (not local24) (not local28))
-								(localproc_0 30 82) ; "So...go sit down and order some food, first!"
-							)
-							((and local24 (not local28))
-								(localproc_0 30 83) ; "Have some patience! The waiter will take your order."
-							)
-							((and local31 (not local37))
-								(localproc_0 30 84) ; "There's food on your plate...eat it if you're hungry."
-							)
-							((not local29)
-								(localproc_0 30 85) ; "Have some patience with the poor waiter!"
-							)
-							((and local30 (not local31))
-								(localproc_0 30 86) ; "Your food is on the way."
-							)
+							((and local28 (> local19 0)) (localproc_000c 30 81))
+							((and (not local24) (not local28)) (localproc_000c 30 82))
+							((and local24 (not local28)) (localproc_000c 30 83))
+							((and local31 (not local37)) (localproc_000c 30 84))
+							((not local29) (localproc_000c 30 85))
+							((and local30 (not local31)) (localproc_000c 30 86))
 							(local37
 								(if local24
 									(waiterScript changeState: 6)
@@ -904,80 +722,51 @@
 									(waiterScript changeState: 28)
 								)
 							)
-							(else
-								(localproc_0 30 87) ; "The waiter's in back flirting with the cook."
-							)
+							(else (localproc_000c 30 87))
 						)
 					)
 					((Said '[order]/water,tea,coffee,coca')
 						(if local24
-							(localproc_0 30 88) ; "Your choice comes with the meal."
+							(localproc_000c 30 88)
 						else
-							(localproc_0 30 89) ; "Sit down first."
+							(localproc_000c 30 89)
 						)
 					)
 					((Said '[order]/beer,booze,drink')
 						(if local37
-							(localproc_0 30 90) ; "Maybe a little later."
+							(localproc_000c 30 90)
 						else
-							(localproc_0 30 91) ; "You feel like eating something before you have a drink."
+							(localproc_000c 30 91)
 						)
 					)
-					((Said 'eat[/chow,chow,meatloaf,loaf,rib,lobster]')
-						(cond
-							((and local31 local24 (not local36) (not local37))
-								(marieScript changeState: 1)
-							)
-							((and (not local24) (not local37))
-								(localproc_0 30 92) ; "Sit at the table in order to eat."
-							)
-							((not local24)
-								(localproc_0 30 89) ; "Sit down first."
-							)
-							(local37
-								(localproc_0 30 93) ; "You've already cleaned your plate."
-							)
-							(local36
-								(localproc_0 30 94) ; "Can't you tell from the taste in your mouth that you're already eating?"
-							)
-							(else
-								(localproc_0 30 95) ; "You don't have any food of your own yet."
-							)
+					(
+					(Said 'eat[/chow,chow,meatloaf,loaf,rib,lobster]')
+						(cond 
+							(
+							(and local31 local24 (not local36) (not local37)) (marieScript changeState: 1))
+							((and (not local24) (not local37)) (localproc_000c 30 92))
+							((not local24) (localproc_000c 30 89))
+							(local37 (localproc_000c 30 93))
+							(local36 (localproc_000c 30 94))
+							(else (localproc_000c 30 95))
 						)
 					)
-					((Said 'give/flower,rose,plant,bouquet,carnation')
-						(cond
-							((and local24 (not local26) (gEgo has: 11)) ; potted_plant
-								(sonnyScript changeState: 2)
-							)
-							((and local24 local27)
-								(localproc_0 30 96) ; "She already has them."
-							)
-							((not local24)
-								(localproc_0 30 97) ; "Why don't you sit down first?"
-							)
-							((and local26 (gEgo has: 11)) ; potted_plant
-								(localproc_0 30 98) ; "Wait until the waiter's taken your order."
-							)
-							(else
-								(localproc_0 30 99) ; "You didn't buy them when you had a chance."
-							)
+					(
+					(Said 'gave/flower,rose,plant,bouquet,carnation')
+						(cond 
+							((and local24 (not local26) (ego has: 11)) (sonnyScript changeState: 2))
+							((and local24 local27) (localproc_000c 30 96))
+							((not local24) (localproc_000c 30 97))
+							((and local26 (ego has: 11)) (localproc_000c 30 98))
+							(else (localproc_000c 30 99))
 						)
 					)
 					((Said 'sat[<down]')
-						(cond
-							((gEgo inRect: 203 105 233 120)
-								(sonnyScript changeState: 0)
-							)
-							((gEgo inRect: 170 111 203 120)
-								(localproc_0 30 100) ; "On her lap??! Try your own chair!"
-							)
-							(local24
-								(localproc_0 30 101) ; "You can't sit down any farther!"
-							)
-							(else
-								(localproc_0 30 102) ; "Why don't you sit with your girlfriend?"
-							)
+						(cond 
+							((ego inRect: 203 105 233 120) (sonnyScript changeState: 0))
+							((ego inRect: 170 111 203 120) (localproc_000c 30 100))
+							(local24 (localproc_000c 30 101))
+							(else (localproc_000c 30 102))
 						)
 					)
 					(
@@ -987,11 +776,11 @@
 							(Said '/cheeks<bye')
 						)
 						(= local34 1)
-						(localproc_0 30 103) ; "Snif!"
+						(localproc_000c 30 103)
 					)
 					((Said 'stand,(get<up)')
 						(if (not local24)
-							(localproc_0 30 104) ; "Get up from where? You're already standing!"
+							(localproc_000c 30 104)
 						else
 							(sonnyScript changeState: 4)
 						)
@@ -1004,66 +793,48 @@
 
 (instance coughScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
-			(0
-				([local6 0] posn: 121 54)
-			)
-			(1
-				([local6 0] posn: 0 0)
-			)
-			(2
-				([local6 1] posn: 112 69)
-			)
-			(3
-				([local6 1] posn: 0 0)
-			)
-			(4
-				([local6 2] posn: 92 88)
-			)
-			(5
-				([local6 2] posn: 0 0)
-			)
-			(6
-				([local6 3] posn: 77 60)
-			)
-			(7
-				([local6 3] posn: 0 0)
-			)
+			(0 ([newProp_8 0] posn: 121 54))
+			(1 ([newProp_8 0] posn: 0 0))
+			(2 ([newProp_8 1] posn: 112 69))
+			(3 ([newProp_8 1] posn: 0 0))
+			(4 ([newProp_8 2] posn: 92 88))
+			(5 ([newProp_8 2] posn: 0 0))
+			(6 ([newProp_8 3] posn: 77 60))
+			(7 ([newProp_8 3] posn: 0 0))
 		)
 	)
 )
 
 (instance waiterScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(User canControl: 0)
-				(local0 setMotion: MoveTo 103 104 self startUpd:)
+				(waiter setMotion: MoveTo 103 104 self startUpd:)
 			)
 			(1
-				(local0 setMotion: MoveTo 103 115 self)
+				(waiter setMotion: MoveTo 103 115 self)
 			)
 			(2
-				(local0 stopUpd: (Print 30 105 #at 68 150)) ; ""Please find a table, Sir, and we'll be right with you," says the waiter."
+				(waiter stopUpd: (Print 30 105 #at 68 150))
 				(self cue:)
 				(User canControl: 1)
 			)
 			(3
-				(local0 setMotion: MoveTo 103 104 self startUpd:)
+				(waiter setMotion: MoveTo 103 104 self startUpd:)
 			)
 			(4
-				(local0 setMotion: MoveTo 127 104 self)
+				(waiter setMotion: MoveTo 127 104 self)
 			)
-			(5
-				(local0 stopUpd:)
-			)
+			(5 (waiter stopUpd:))
 			(6
 				(User canControl: 0 canInput: 0)
-				(local0
+				(waiter
 					ignoreActors: 1
 					illegalBits: 0
 					setCycle: Walk
@@ -1074,79 +845,67 @@
 				)
 			)
 			(7
-				(local0 setMotion: MoveTo 103 113 self)
+				(waiter setMotion: MoveTo 103 113 self)
 			)
 			(8
-				(local0 setPri: 8 setMotion: MoveTo 194 113 self)
+				(waiter setPri: 8 setMotion: MoveTo 194 113 self)
 			)
 			(9
-				(local0 setMotion: MoveTo 194 112 self)
+				(waiter setMotion: MoveTo 194 112 self)
 			)
 			(10
-				(local0 stopUpd:)
+				(waiter stopUpd:)
 				(User canInput: 1)
 				(if local37
 					(self changeState: 28)
 				else
-					(Print 30 106 #at 59 140 #time 6) ; "Good day sir," says the waiter..."Our specials of the day are meatloaf, prime rib, and lobster."
-					(Print 30 107 #at 59 150) ; "Continuing he says, "Which would you prefer?""
+					(Print 30 106 #at 59 140 #time 6)
+					(Print 30 107 #at 59 150)
 					(= local35 1)
 				)
 			)
 			(11
-				(cond
+				(cond 
 					((and local24 local35 (not local28))
 						(switch local41
-							(3
-								(localproc_0 30 108) ; "Very good, sir. The lobster is excellent this season. And what will you have, young lady?"
-							)
-							(1
-								(localproc_0 30 109) ; "A wise choice....very frugal. And what will you have, young lady?"
-							)
-							(2
-								(localproc_0 30 110) ; "Our beef comes only from contented steers. And what will you have, young lady?"
-							)
+							(3 (localproc_000c 30 108))
+							(1 (localproc_000c 30 109))
+							(2 (localproc_000c 30 110))
 						)
-						(localproc_0 30 111) ; ""I'll have the lobster!" says Marie."
+						(localproc_000c 30 111)
 						(= local28 1)
 						(= local19 300)
 						(= local20 450)
 						(self cue:)
 					)
-					(local28
-						(localproc_0 30 112) ; "You've already ordered food."
-					)
-					((not local35)
-						(localproc_0 30 113) ; "Wait for the waiter."
-					)
-					(else
-						(localproc_0 30 114) ; "You must be seated at a table if you want to order."
-					)
+					(local28 (localproc_000c 30 112))
+					((not local35) (localproc_000c 30 113))
+					(else (localproc_000c 30 114))
 				)
 				(User canControl: 1)
 			)
 			(12
-				(localproc_0 30 115) ; "Thank you very much sir" the waiter says, "your order will be ready shortly."
-				(local0 setMotion: MoveTo 103 113 self startUpd:)
+				(localproc_000c 30 115)
+				(waiter setMotion: MoveTo 103 113 self startUpd:)
 				(= local35 0)
 				(= local26 0)
 				(User canInput: 0)
 			)
 			(13
-				(local0 setMotion: MoveTo 103 104 self)
+				(waiter setMotion: MoveTo 103 104 self)
 			)
 			(14
-				(local0 setPri: 6 setMotion: MoveTo 125 102 self)
+				(waiter setPri: 6 setMotion: MoveTo 125 102 self)
 			)
 			(15
-				(local0 stopUpd:)
+				(waiter stopUpd:)
 				(= local29 1)
 				(User canInput: 1)
 			)
 			(16
-				(localproc_0 30 116 25 3) ; "Here comes the chow!"
+				(localproc_000c 30 116 25 3)
 				(HandsOff)
-				(local0
+				(waiter
 					view: 44
 					setLoop: 5
 					setMotion: MoveTo 103 104 self
@@ -1155,19 +914,23 @@
 				(= local30 1)
 			)
 			(17
-				(local0 setLoop: 6 setPri: 8 setMotion: MoveTo 103 113 self)
+				(waiter
+					setLoop: 6
+					setPri: 8
+					setMotion: MoveTo 103 113 self
+				)
 			)
 			(18
-				(local0 setLoop: 4 setMotion: MoveTo 190 113 self)
+				(waiter setLoop: 4 setMotion: MoveTo 190 113 self)
 			)
 			(19
-				(local0 setLoop: 7 setMotion: MoveTo 190 112 self)
+				(waiter setLoop: 7 setMotion: MoveTo 190 112 self)
 			)
 			(20
-				(local0 stopUpd:)
+				(waiter stopUpd:)
 				(= local31 1)
-				(localproc_0 30 117 25 3) ; "Your dinner, sir. Please enjoy."
-				(local0
+				(localproc_000c 30 117 25 3)
+				(waiter
 					view: 44
 					loop: 1
 					cel: 0
@@ -1179,23 +942,25 @@
 				(HandsOn)
 			)
 			(21
-				(local0 setLoop: 3 setPri: 6 setMotion: MoveTo 100 104 self)
+				(waiter
+					setLoop: 3
+					setPri: 6
+					setMotion: MoveTo 100 104 self
+				)
 			)
 			(22
-				(local0 setLoop: 0 setMotion: MoveTo 125 102 self)
+				(waiter setLoop: 0 setMotion: MoveTo 125 102 self)
 			)
-			(23
-				(local0 stopUpd:)
-			)
+			(23 (waiter stopUpd:))
 			(24
-				(gEgo stopUpd:)
+				(ego stopUpd:)
 				(HandsOff)
 				(= local39 1)
-				(localproc_0 30 118) ; "What kind of turkey are you, leaving without paying?"
+				(localproc_000c 30 118)
 				(self cue:)
 			)
 			(25
-				(local0
+				(waiter
 					view: 28
 					ignoreActors: 1
 					illegalBits: 0
@@ -1207,29 +972,29 @@
 				)
 			)
 			(26
-				(local0 setLoop: 2 setMotion: MoveTo 103 125 self)
+				(waiter setLoop: 2 setMotion: MoveTo 103 125 self)
 			)
 			(27
-				(localproc_0 30 119) ; "Here is the bill, sir"
+				(localproc_000c 30 119)
 				(self cue:)
 			)
 			(28
 				(User canInput: 1)
 				(if (or local31 local37)
-					(if (> global107 local40)
-						(localproc_0 30 120) ; "Paying your bill, you thank the waiter for the fine food and service."
-						(-= global107 local40)
+					(if (> dollars local40)
+						(localproc_000c 30 120)
+						(= dollars (- dollars local40))
 						(= local39 1)
-						(SetScore 2)
+						(SolvePuzzle 2)
 					else
-						(localproc_0 30 121) ; "Uh-oh! It seems you've spent too much of your ready cash. Even worse than that, you're overextended on your credit cards."
-						(localproc_0 30 122) ; "Embarrassed, because you're broke, you ask the waiter if he has any dishes to wash."
+						(localproc_000c 30 121)
+						(localproc_000c 30 122)
 					)
 				else
-					(localproc_0 30 79) ; "Most people wait until they've finished eating."
+					(localproc_000c 30 79)
 				)
-				(= global126 3)
-				(gCurRoom newRoom: 105)
+				(= dateState 3)
+				(curRoom newRoom: 105)
 			)
 		)
 	)
@@ -1237,27 +1002,37 @@
 
 (instance marieScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
-			(0
-				(local1 stopUpd:)
-			)
+			(0 (newProp_6 stopUpd:))
 			(1
 				(HandsOff)
 				(= local36 1)
-				(SetScore 1)
-				(local1 loop: 8 cel: 0 setCycle: Fwd cycleSpeed: 3 startUpd:)
-				(local2 loop: 9 cel: 0 setCycle: Fwd cycleSpeed: 0 startUpd:)
+				(SolvePuzzle 1)
+				(newProp_6
+					loop: 8
+					cel: 0
+					setCycle: Forward
+					cycleSpeed: 3
+					startUpd:
+				)
+				(newProp
+					loop: 9
+					cel: 0
+					setCycle: Forward
+					cycleSpeed: 0
+					startUpd:
+				)
 				(= seconds 3)
 			)
 			(2
-				(localproc_0 30 123 25 3) ; "Hungry, you consume the meal in record time."
+				(localproc_000c 30 123 25 3)
 				(= seconds 6)
 			)
 			(3
-				(local1 setCel: 0 stopUpd:)
-				(local2 setCel: 0 stopUpd:)
+				(newProp_6 setCel: 0 stopUpd:)
+				(newProp setCel: 0 stopUpd:)
 				(HandsOn)
 				(= local37 1)
 				(= local36 0)
@@ -1265,78 +1040,70 @@
 			)
 			(4
 				(HandsOff)
-				(local1 loop: 5 cel: 0 setCycle: End cycleSpeed: 0)
-				(local2 posn: 209 111 loop: 6 cel: 0 setCycle: End)
-				(+= local45 1)
-				(local10
+				(newProp_6 loop: 5 cel: 0 setCycle: EndLoop cycleSpeed: 0)
+				(newProp posn: 209 111 loop: 6 cel: 0 setCycle: EndLoop)
+				(= local45 (+ local45 1))
+				(newProp_3
 					view: 285
 					loop: 0
 					cel: 0
 					posn: 196 78
 					setPri: 7
 					init:
-					setCycle: Fwd
+					setCycle: Forward
 					startUpd:
 				)
-				(local11
+				(newProp_4
 					view: 285
 					loop: 1
 					cel: 0
 					posn: 218 70
 					setPri: 7
 					init:
-					setCycle: Fwd
+					setCycle: Forward
 					startUpd:
 				)
-				(local12
+				(newProp_5
 					view: 285
 					loop: 2
 					cel: 0
 					posn: 175 62
 					setPri: 7
 					init:
-					setCycle: Fwd
+					setCycle: Forward
 					startUpd:
 				)
 				(= seconds 4)
 			)
 			(5
-				(local1 setCycle: Beg)
-				(local2 setCycle: Beg)
-				(local10 posn: 0 0 stopUpd:)
-				(local11 posn: 0 0 stopUpd:)
-				(local12 posn: 0 0 stopUpd:)
+				(newProp_6 setCycle: BegLoop)
+				(newProp setCycle: BegLoop)
+				(newProp_3 posn: 0 0 stopUpd:)
+				(newProp_4 posn: 0 0 stopUpd:)
+				(newProp_5 posn: 0 0 stopUpd:)
 				(= seconds 4)
-				(cond
-					((== local45 2)
-						(SetScore 2)
-						(localproc_0 30 124) ; "WOW! You're some kisser, Sonny!"
-					)
-					((== local45 3)
-						(localproc_0 30 125) ; "I don't know how much more of this I can take, Sonny!"
-					)
-					((> local45 3)
-						(localproc_0 30 126) ; "Marie says, "Listen, Sonny...we'd better go somewhere more private if you're going to keep this up.""
-						(self changeState: 7)
-					)
+				(cond 
+					((== local45 2) (SolvePuzzle 2) (localproc_000c 30 124))
+					((== local45 3) (localproc_000c 30 125))
+					((> local45 3) (localproc_000c 30 126) (self changeState: 7))
 				)
 				(= seconds 1)
 			)
 			(6
 				(HandsOn)
 				(if (== local45 1)
-					(SetScore 2)
-					(localproc_0 30 127) ; "Oh, by the way," she says..."How do you like my new lipstick? It's called Pink Rapture."
-					(localproc_0 30 128) ; "I really like it" she says, "It's my favorite. It's so PINK!"
+					(SolvePuzzle 2)
+					(localproc_000c 30 127)
+					(localproc_000c 30 128)
 				)
 			)
 			(7
-				(if (> global107 local40)
-					(= global126 4)
+				(if (> dollars local40)
+					(= dateState 4)
 				else
-					(= global126 2)
+					(= dateState 2)
 				)
-				(gCurRoom newRoom: 105)
+				(curRoom newRoom: 105)
 			)
 		)
 	)
@@ -1344,13 +1111,13 @@
 
 (instance sonnyScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(User canControl: 0)
-				(gEgo posn: -100 0 stopUpd:)
-				(local2
+				(ego posn: -100 0 stopUpd:)
+				(newProp
 					view: 266
 					posn: 209 111
 					loop: 6
@@ -1364,41 +1131,35 @@
 					(= local26 1)
 					(= local13 100)
 				)
-				(if (not local23)
-					(self cue:)
-				)
+				(if (not local23) (self cue:))
 			)
 			(1
 				(= local23 1)
-				(localproc_0 30 129 83) ; "Marie says, "Oh Sonny. I've been so worried for you.""
-				(localproc_0 30 130 83) ; "I know that Jessie Bains is looking for revenge. I know he's out to get even, especially with you."
-				(localproc_0 30 131 83) ; "I'm scared Sonny! Promise you'll stop in and see me sometime tomorrow. I need to know that you're all right."
+				(localproc_000c 30 129 83)
+				(localproc_000c 30 130 83)
+				(localproc_000c 30 131 83)
 			)
 			(4
-				(cond
+				(cond 
 					(local28
-						(gEgo loop: 1 cel: 3 posn: 214 112)
-						(local2 posn: -100 0 stopUpd:)
+						(ego loop: 1 cel: 3 posn: 214 112)
+						(newProp posn: -100 0 stopUpd:)
 						(self cue:)
 					)
-					(local35
-						(localproc_0 30 132) ; "Don't get up. Order your dinner."
-					)
-					(else
-						(localproc_0 30 133) ; "Don't get up yet. You just got here."
-					)
+					(local35 (localproc_000c 30 132))
+					(else (localproc_000c 30 133))
 				)
 			)
 			(5
-				(localproc_0 30 134 83) ; "Sonny! Where are you going, Sonny? Don't leave me!"
+				(localproc_000c 30 134 83)
 				(= local33 1)
 				(User canControl: 1)
 			)
 			(2
 				(= local27 1)
-				(SetScore 3)
-				(if (gEgo has: 11) ; potted_plant
-					(local3
+				(SolvePuzzle 3)
+				(if (ego has: 11)
+					(newProp_2
 						view: 266
 						posn: 187 89
 						loop: 4
@@ -1406,23 +1167,17 @@
 						init:
 						stopUpd:
 					)
-					(switch ((gInventory at: 11) cel:) ; potted_plant
-						(0
-							(local3 cel: 6)
-						)
-						(1
-							(local3 cel: 3)
-						)
-						(2
-							(local3 cel: 5)
-						)
+					(switch ((inventory at: 11) cel?)
+						(0 (newProp_2 cel: 6))
+						(1 (newProp_2 cel: 3))
+						(2 (newProp_2 cel: 5))
 					)
-					(gEgo put: 11 30) ; potted_plant
+					(ego put: 11 30)
 				)
 				(self cue:)
 			)
 			(3
-				(Print 30 135 #at 69 140 #time 5 #draw) ; "Oh, Sonny....you're WONDERFUL!!!"
+				(Print 30 135 #at 69 140 #time 5 #draw)
 			)
 		)
 	)
@@ -1430,41 +1185,21 @@
 
 (instance day2Script of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
-			(0
-				(= local18 1500)
-			)
+			(0 (= local18 1500))
 			(1
-				(cond
-					((and (== local45 0) (not local28) (not local25))
-						(= global126 1)
-						(gCurRoom newRoom: 105)
-					)
-					((and (== local45 0) (not local28) local25)
-						(localproc_0 30 136 25 10) ; "Boy!" you think to yourself. "A romantic evening like this sure works up the old appetite."
-						(day2Script changeState: 0)
-					)
-					((and (== local45 0) local28)
-						(localproc_0 30 137 25 10) ; "You think to yourself..."What a wonderful time to get romantic, Sonny. Marie looks positively delicious!""
-						(day2Script changeState: 0)
-					)
-					((and (> local45 0) (not local28))
-						(localproc_0 30 136 25 10) ; "Boy!" you think to yourself. "A romantic evening like this sure works up the old appetite."
-						(day2Script changeState: 0)
-					)
-					((not local39)
-						(= global126 2)
-						(gCurRoom newRoom: 105)
-					)
-					(else
-						(= global126 3)
-						(gCurRoom newRoom: 105)
-					)
+				(cond 
+					(
+					(and (== local45 0) (not local28) (not local25)) (= dateState 1) (curRoom newRoom: 105))
+					((and (== local45 0) (not local28) local25) (localproc_000c 30 136 25 10) (day2Script changeState: 0))
+					((and (== local45 0) local28) (localproc_000c 30 137 25 10) (day2Script changeState: 0))
+					((and (> local45 0) (not local28)) (localproc_000c 30 136 25 10) (day2Script changeState: 0))
+					((not local39) (= dateState 2) (curRoom newRoom: 105))
+					(else (= dateState 3) (curRoom newRoom: 105))
 				)
 			)
 		)
 	)
 )
-

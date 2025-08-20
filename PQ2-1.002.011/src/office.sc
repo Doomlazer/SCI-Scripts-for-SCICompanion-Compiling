@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
-(script# 156)
-(include sci.sh)
+(script# regOffice)
+(include game.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Game)
 
 (public
@@ -11,88 +10,82 @@
 )
 
 (instance office of Locale
-	(properties)
-
 	(method (handleEvent event)
 		(super handleEvent: event)
-		(if (or (event claimed:) (!= (event type:) evSAID))
+		(if (or (event claimed?) (!= (event type?) saidEvent))
 			(return)
 		)
-		(cond
+		(cond 
 			((Said 'look,read/board')
-				(Print 156 0) ; "Looking at the bulletin board you think, "Humm, nothing of interest here.""
+				(Print 156 0)
 			)
 			((Said 'look>')
-				(cond
+				(cond 
 					((Said '/file,cabinet')
-						(Print 156 1) ; "The file cabinet contains many reports, case histories, and other police stuff."
+						(Print 156 1)
 					)
 					((Said '[<(through,out)]/pane')
-						(Print 156 2) ; "You note fair weather as you look through the window."
+						(Print 156 2)
 					)
 					((Said '/map')
-						(Print 156 3) ; "A map of Lytton hangs on the wall."
+						(Print 156 3)
 					)
 					(
 						(or
 							(Said '[<below][/desk]')
 							(Said '[<up,at][/ceiling]')
 							(Said '[<down,at][/floor]')
-							(Said '/man,woman')
+							(Said '/dude,broad')
 						)
-						(Print 156 4) ; "You don't see anything interesting."
+						(Print 156 4)
 					)
 					((Said '/phone')
-						(Print 156 5) ; "It's just a standard office phone."
+						(Print 156 5)
 					)
 					((Said '/bench')
-						(Print 156 6) ; "Not the best, but it beats sitting on the floor."
+						(Print 156 6)
 					)
 					((Said '/wall')
-						(Print 156 7) ; "You see a bulletin board and map."
+						(Print 156 7)
 					)
-					(
-						(Said
-							'/book,(bookcase<book),(briefcase<book),bookcase,bookcase'
-						)
-						(Print 156 8) ; "The bookshelf is filled with volumes of departmental manuals. The material would bore you to tears."
+					((Said '/book,(bookcase<book),(briefcase<book),bookcase,bookcase')
+						(Print 156 8)
 					)
 					((Said '/flyer,painting')
-						(Print 156 9) ; "Looking at the peaceful, relaxing poster of the South Sea Isles almost throws your brain into neutral."
+						(Print 156 9)
 					)
 				)
 			)
-			((Said '/hello[/!*]')
-				(Print 156 10) ; "Hi, Sonny."
+			((Said '/hello[/noword]')
+				(Print 156 10)
 			)
 			((Said 'turn<on/lamp,light')
-				(Print 156 11) ; "There's plenty of light in here already."
+				(Print 156 11)
 			)
 			((Said 'use,dial,pick[<up]/phone')
-				(Print 156 12) ; "Go to your desk to use a phone."
+				(Print 156 12)
 			)
 			((Said 'answer/phone')
-				(Print 156 13) ; "It isn't ringing."
+				(Print 156 13)
 			)
 			((Said 'turn/lamp')
-				(Print 156 14) ; "You're wasting your time."
+				(Print 156 14)
 			)
 			((Said 'climb/desk')
-				(Print 156 15) ; "There is no reason to climb the desk"
+				(Print 156 15)
 			)
 			((Said 'sat[<on]/bench,desk')
-				(Print 156 16) ; "There is a chair and desk especially designated for you, but this isn't it."
+				(Print 156 16)
 			)
 			((Said 'open/pane')
-				(Print 156 17) ; "The air conditioner works fine."
+				(Print 156 17)
 			)
 			((Said 'get/flyer,painting,book,newspaper,garbage,book')
-				(Print 156 18) ; "It wouldn't help you."
+				(Print 156 18)
 			)
-			((or (Said 'talk') (Said '/hello'))
-				(proc0_7) ; "You're not close enough."
+			((or (Said 'chat') (Said '/hello'))
+				(NotClose)
 			)
 		)
 	)
 )
-

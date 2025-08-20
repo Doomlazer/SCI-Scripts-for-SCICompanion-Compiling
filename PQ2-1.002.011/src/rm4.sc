@@ -1,9 +1,9 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 4)
-(include sci.sh)
+(include system.sh)
+(include game.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Sound)
 (use Motion)
 (use Game)
@@ -14,25 +14,23 @@
 (public
 	rm4 0
 )
-
 (synonyms
+	(cop detective)
 	(basket box)
 	(hall captain)
-	(cop detective)
 )
 
 (local
-	local0
-	local1
-	local2
-	local3
-	local4
-	local5
-	local6
-	local7
+	marieLetter
+	wallet
+	whereIsKeith
+	egoSitting
+	local4 ;which captain/keith comment to print based on gamePhaze?
+	onPhone
+	closedDrawer
+	captainCanTalk
 )
-
-(procedure (localproc_0)
+(procedure (LocPrint)
 	(Print &rest #at -1 124)
 )
 
@@ -70,83 +68,105 @@
 	)
 )
 
-(instance rm4 of Rm
+(instance rm4 of Room
 	(properties
 		picture 4
-		style 6
+		style IRISIN
 	)
-
-	(method (dispose)
-		(drawerScript dispose:)
-		(captainScript dispose:)
-		(keithScript dispose:)
-		(aTimer dispose: delete:)
-		(super dispose:)
-	)
-
+	
 	(method (init)
 		(super init:)
 		(HandsOn)
-		(Load rsVIEW 1)
-		(Load rsVIEW 0)
-		(Load rsVIEW 65)
-		(Load rsVIEW 62)
-		(Load rsVIEW 3)
-		(= global212 3)
+		(Load VIEW 1)
+		(Load VIEW 0)
+		(Load VIEW 65)
+		(Load VIEW 62)
+		(Load VIEW 3)
+		(= gunFireState gunPROHIBITED)
 		(NormalEgo)
 		(if
 			(and
-				(< global100 1)
+				(< gamePhase 1)
 				(or
-					(== global158 1)
-					(and global166 (not (IsItemAt 0 5)) (not (IsItemAt 10 2))) ; hand_gun, field_kit
-					(and (== global100 0) (== gPrevRoomNum 300))
+					(== captainWarningTimer 1)
+					(and
+						gunSightsAligned
+						(not (InRoom 0 5))
+						(not (InRoom 10 2))
+					)
+					(and (== gamePhase 0) (== prevRoomNum 300))
 				)
 			)
 			(= global162 0)
-			(= global164 0)
-			(SetFlag 32)
+			(= talkedToCaptain 0)
+			(Bset 32)
 		)
-		(if (< 5 global100 8)
-			(= global161 1)
+		(if (and (< 5 gamePhase) (< gamePhase 8))
+			(= marieWantsCall 1)
 		)
 		(= local4
-			(cond
-				((IsFlag 32)
-					(ClearFlag 32)
+			(cond 
+				((Btst fVisitedHomicideOffice)
+					(Bclr fVisitedHomicideOffice)
 					2
 				)
-				((and global127 (not (IsFlag 31))) 8)
-				((== global100 8) 4)
-				(global162 9)
-				((== global100 0) 1)
-				((== gPrevRoomNum 7) 9)
-				((== gPrevRoomNum 12) 9) ; phone
-				((== global138 1) 2)
-				((== global138 2) 2)
-				((== global100 12) 6)
-				(global161 3)
-				(else 0)
+				(
+					(and
+						global127
+						(not (Btst fReportedMarieMissingToCaptain)) ;fFlag31
+					)
+					8
+				)
+				((== gamePhase 8)
+					4
+				)
+				(global162
+					9
+				)
+				((== gamePhase 0) ;keith and captain mention bains exscape
+					1
+				)
+				((== prevRoomNum 7)
+					9
+				)
+				((== prevRoomNum 12)
+					9
+				)
+				((== isOnDuty 1)
+					2
+				)
+				((== isOnDuty 2)
+					2
+				)
+				((== gamePhase 12)
+					6
+				)
+				(marieWantsCall
+					3
+				)
+				(else
+					0
+				)
 			)
 		)
-		(= global212 3)
+		(= gunFireState 3)
 		(self setScript: rm4Script)
 		(self setLocales: 156)
-		(gEgo view: (if (not global204) 1 else 7))
-		(switch gPrevRoomNum
+		(ego view: (if (not gunDrawn) 1 else 7))
+		(switch prevRoomNum
 			(2
-				(gEgo posn: 120 162 init: setMotion: MoveTo 120 10)
+				(ego posn: 120 162 init: setMotion: MoveTo 120 10)
 				(User prevDir: 1)
 			)
 			(7
-				(gEgo posn: 238 148 loop: 3 init:)
+				(ego posn: 238 148 loop: 3 init:)
 			)
 			(300
-				(gEgo posn: 111 144 loop: 1 init:)
+				(ego posn: 111 144 loop: 1 init:)
 			)
-			(12 ; phone
+			(12
 				(HandsOff)
-				(gEgo
+				(ego
 					ignoreActors:
 					illegalBits: 0
 					view: 3
@@ -154,115 +174,159 @@
 					cel: 255
 					posn: 182 130
 					init:
-					setCycle: Beg
+					setCycle: BegLoop
 				)
 				(User canInput: 1)
-				(phone cel: 255 loop: 1 posn: 172 116 setCycle: Beg init:)
-				(= local3 1)
-				(if (and (!= global138 1) (== global100 7) (not (IsFlag 45)))
-					(SetFlag 45)
+				(phone
+					cel: 255
+					loop: 1
+					posn: 172 116
+					setCycle: BegLoop
+					init:
+				)
+				(= egoSitting 1)
+				(if
+					(and
+						(!= isOnDuty 1)
+						(== gamePhase 7)
+						(not (Btst 45)) ;fFlag45
+					)
+					(Bset 45)
 					(captainScript changeState: 14)
 				)
 			)
-			(else
-				(gEgo posn: 198 146 init: setMotion: MoveTo 198 946)
+			(else 
+				(ego
+					posn: 198 146
+					init:
+					setMotion: MoveTo 198 946
+				)
 			)
 		)
+	)
+	
+	(method (dispose)
+		(drawerScript dispose:)
+		(captainScript dispose:)
+		(keithScript dispose:)
+		(aTimer dispose: delete:)
+		(super dispose:)
 	)
 )
 
 (instance rm4Script of Script
 	(properties)
-
+	
 	(method (doit)
-		(cond
-			(local3 0)
-			((<= (gEgo y:) 126)
-				(if (!= (mod (gEgo view:) 2) 0)
-					(gEgo view: (- (gEgo view:) 1))
+		(cond 
+			(egoSitting 0)
+			((<= (ego y?) 126)
+				(if (!= (mod (ego view?) 2) 0)
+					(ego view: (- (ego view?) 1))
 				)
 			)
-			((!= (mod (gEgo view:) 2) 1)
-				(gEgo view: (+ (gEgo view:) 1))
+			((!= (mod (ego view?) 2) 1)
+				(ego view: (+ (ego view?) 1))
 			)
 		)
-		(cond
-			((>= (gEgo y:) 165)
-				(if (and (gEgo has: 3) (< 5 global100 8)) ; unmarked_car_keys
-					(localproc_0 4 0) ; "As you pass his desk, Captain Hall says, "Wait, Bonds, leave the unmarked car keys here.""
-					(localproc_0 4 1) ; "You drop the keys on his desk, and hurry out the door."
-					(PutItem 3) ; unmarked_car_keys
-					(= global133 1)
+		(cond 
+			((>= (ego y?) 165)
+				(if
+					(and
+						(ego has: 3)
+						(< 5 gamePhase)
+						(< gamePhase 8)
+					)
+					(LocPrint 4 0)
+					(LocPrint 4 1)
+					(PutInRoom iUnmarkedCarKeys)
+					(= workCarLocked 1)
 				)
-				(= global162
-					(if (and global164 (== global138 0))
-						(or
-							(== local4 2)
-							(== local4 1)
-							(== local4 6)
-							(== local4 8)
-							(== local4 9)
+				(= global162 ;player waiting for reply maybe?
+					(if
+						(and
+							talkedToCaptain
+							(== isOnDuty 0)
 						)
+						(cond 
+							((== local4 2)) ;returns 2?
+							((== local4 1))
+							((== local4 6))
+							((== local4 8))
+							(else (== local4 9))
+						)
+					else
+						0
 					)
 				)
-				(if (and (!= global138 1) (== global100 6))
-					(localproc_0 4 2) ; "You've done your work for today, Bonds," Captain Hall declares. "You're off duty as of now."
-					(= global138 1)
+				(if (!= isOnDuty 1)
+					(if (== gamePhase 6)
+						(LocPrint 4 2)
+						(= isOnDuty 1)
+					)
 				)
-				(gCurRoom newRoom: 2)
+				(curRoom newRoom: 2)
 			)
 			(
 				(and
 					(== local4 1)
-					(not global163)
-					(< (gEgo distanceTo: global112) 27)
+					(not talkedToKeith)
+					(< (ego distanceTo: keith) 27)
 				)
 				(keithScript changeState: 0)
 			)
 			(
 				(and
 					(== local4 1)
-					global163
-					(not global164)
-					(< (gEgo distanceTo: captain) 64)
+					talkedToKeith
+					(not talkedToCaptain)
+					(< (ego distanceTo: captain) 64)
 				)
 				(captainScript changeState: 0)
 			)
-			((and (== local4 8) (not (IsFlag 31)))
-				(captainScript changeState: 25)
-			)
+			(
+				(and
+					(== local4 8)
+					(not (Btst fReportedMarieMissingToCaptain))
+				)
+					(captainScript changeState: 25)
+				)
 		)
 		(super doit:)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(if (and local6 (> local4 3))
-					(= local4 9)
-					(= local6 0)
+				(if
+					(and
+						closedDrawer
+						(> local4 3)
+					)
+						(= local4 9)
+						(= closedDrawer 0)
 				)
 				(switch local4
 					(1
-						(= local2 2)
+						(= whereIsKeith 2)
 					)
 					(2
-						(= local2 3)
+						(= whereIsKeith 3)
 					)
 					(4
-						(= local2 2)
+						(= whereIsKeith 2)
 					)
 					(6
-						(= local2 5)
+						(= whereIsKeith 5)
 					)
 					(7
-						(= local2 3)
+						(= whereIsKeith 3)
 					)
 					(8
-						(= local2 1)
+						(= whereIsKeith 1)
 					)
-					(else
-						(= local2 (Random 1 6))
+					(else 
+						(= whereIsKeith (Random 1 6))
 					)
 				)
 				(phone
@@ -274,57 +338,98 @@
 					init:
 					stopUpd:
 				)
-				(captain view: 65 posn: 53 134 cel: 0 setPri: 9 init:)
-				(if (<= local2 3)
-					(captain loop: 3 stopUpd:)
+				(captain
+					view: 65
+					posn: 53 134
+					cel: 0
+					setPri: 9
+					init:
+				)
+				(if (<= whereIsKeith 3)
+					(captain
+						loop: 3
+						stopUpd:
+					)
 					(blab
 						view: 65
 						loop: 1
 						posn: 48 112
 						setPri: 12
-						setCycle: Fwd
+						setCycle: Forward
 						cycleSpeed: 2
 						init:
 					)
 				else
-					(captain loop: 4 setCycle: Fwd cycleSpeed: 7)
+					(captain
+						loop: 4
+						setCycle: Forward
+						cycleSpeed: 7
+					)
 				)
-				((= global112 (View new:)) view: 65 init:)
-				(switch local2
+				((= keith (View new:))
+					view: 65
+					init:
+				)
+				(switch whereIsKeith
 					(1
-						(global112 view: 62 posn: 213 134 loop: 0 cel: 0)
+						(keith
+							view: 62
+							posn: 213 134
+							loop: 0
+							cel: 0
+						)
 					)
 					(2
-						(global112 posn: 210 136 loop: 6 cel: 0)
+						(keith
+							posn: 210 136
+							loop: 6
+							cel: 0
+						)
 					)
 					(3
-						(global112 posn: 133 130 loop: 6 cel: 0)
+						(keith
+							posn: 133 130
+							loop: 6
+							cel: 0
+						)
 					)
 					(4
-						(global112 posn: 163 148 loop: 6 cel: 0)
+						(keith
+							posn: 163 148
+							loop: 6
+							cel: 0
+						)
 					)
 					(5
-						(global112 posn: 120 140 loop: 7 cel: 0)
+						(keith
+							posn: 120 140
+							loop: 7
+							cel: 0
+						)
 					)
 					(6
-						(global112 posn: 214 148 loop: 7 cel: 0)
+						(keith
+							posn: 214 148
+							loop: 7
+							cel: 0
+						)
 					)
 				)
-				(global112 stopUpd:)
-				(if (!= local2 1)
+				(keith stopUpd:)
+				(if (!= whereIsKeith 1)
 					(smoke
 						view: 65
 						loop: 2
 						posn:
-							(if (> local2 4)
-								(+ (global112 x:) 5)
+							(if (> whereIsKeith 4)
+								(+ (keith x?) 5)
 							else
-								(- (global112 x:) 5)
+								(- (keith x?) 5)
 							)
-							(- (global112 y:) 31)
+							(- (keith y?) 31)
 						setPri: 9
 						cycleSpeed: 3
-						setCycle: Fwd
+						setCycle: Forward
 						init:
 					)
 				)
@@ -332,16 +437,14 @@
 					view: 65
 					posn: 111 110
 					loop: 5
-					cel: (if (== (mod local2 2) 0) 0 else 1)
+					cel: (if (== (mod whereIsKeith 2) 0) 0 else 1)
 					setPri: 7
 					init:
 					addToPic:
 				)
 				(carKey
 					view: 65
-					posn:
-						(if (IsItemAt 3) 141 else 0) ; unmarked_car_keys
-						(if (IsItemAt 3) 110 else 0) ; unmarked_car_keys
+					posn: (if (InRoom 3) 141 else 0) (if (InRoom 3) 110 else 0)
 					loop: 5
 					cel: 2
 					init:
@@ -358,11 +461,11 @@
 				)
 				(switch local4
 					(2
-						(cond
-							((== global138 1)
+						(cond 
+							((== isOnDuty 1)
 								(captainScript changeState: 14)
 							)
-							((== global138 2)
+							((== isOnDuty 2)
 								(captainScript changeState: 12)
 							)
 							(else
@@ -379,102 +482,114 @@
 				)
 			)
 			(1
-				(gEgo loop: 2 cel: 0 setCycle: End self)
+				(ego
+					loop: 2
+					cel: 0
+					setCycle: EndLoop self
+				)
 			)
 			(2
 				(rm4 setScript: drawerScript)
 			)
 			(3
 				(HandsOff)
-				(gEgo
+				(ego
 					posn: 182 130
 					view: 3
 					loop: 2
 					cel: 3
-					setCycle: Beg self
+					setCycle: BegLoop self
 					setMotion: 0
 				)
-				(gCurRoom drawPic: 4)
+				(curRoom drawPic: 4)
 			)
 			(4
-				(gEgo loop: 0)
+				(ego loop: 0)
 				(User canInput: 1)
 			)
 			(5
-				(gEgo loop: 3 cel: 0 setCycle: End self)
-				(phone setCel: -1 setCycle: End startUpd:)
+				(ego
+					loop: 3
+					cel: 0
+					setCycle: EndLoop self
+				)
+				(phone
+					setCel: -1
+					setCycle: EndLoop
+					startUpd:
+				)
 			)
 			(6
-				(gCurRoom newRoom: 12) ; phone
+				(curRoom newRoom: 12)
 			)
 			(7
-				(gEgo setCycle: Beg self)
-				(phone setCycle: Beg)
+				(ego setCycle: BegLoop self)
+				(phone setCycle: BegLoop)
 			)
-			(8
-				(gEgo loop: 0 cel: 0)
+			(8 (ego
+					loop: 0
+					cel: 0
+				)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(switch (event type:)
-			(evSAID
-				(cond
+		(switch (event type?)
+			(saidEvent
+				(cond 
 					(
 						(or
+							(Said 'display,gave,tell/clue,list,note,threat,card,clue')
 							(Said
-								'show,give,tell/clue,list,note,threat,card,clue'
-							)
-							(Said
-								'show,give,tell/hall/clue,list,note,threat,card,clue'
+								'display,gave,tell/hall/clue,list,note,threat,card,clue'
 							)
 						)
-						(cond
-							((not (gEgo inRect: 70 131 122 156))
-								(proc0_7) ; "You're not close enough."
+						(cond 
+							((not (ego inRect: 70 131 122 156))
+								(NotClose)
 							)
-							((not local7)
-								(Print 4 3) ; "Captain Hall is too busy right now."
+							((not captainCanTalk)
+								(Print 4 3)
 							)
 							(
 								(or
-									(gEgo has: 13) ; hit_list
-									(gEgo has: 35) ; Colby_s_business_card
-									(IsFlag 136)
+									(ego has: iHitList)
+									(ego has: iColbyCard)
+									(Btst fBookedColbyCard)
 								)
-								(captainScript changeState: 28)
+									(captainScript changeState: 28)
 							)
 							(else
-								(Print 4 4) ; "The captain says, "It doesn't seem you have anything yet.""
+								(Print 4 4)
 							)
 						)
 					)
 					((Said 'look,read/file')
-						(if (gEgo inRect: 71 130 124 157)
-							(Print 4 5) ; "The folders are all closed, and you see nothing of interest."
+						(if (ego inRect: 71 130 124 157)
+							(Print 4 5)
 						else
-							(Print 4 6) ; "You see no folders here."
+							(Print 4 6)
 						)
 					)
 					((Said 'look,read/newspaper,flyer')
-						(cond
-							((gEgo inRect: 122 117 168 124)
-								(Print 4 7) ; "You scan the bulletin board and see the shooting schedule. Below the board, is a rack of car keys."
-								(Print 4 8) ; "The shooting schedule indicates you are behind on your scores."
-								(SetScore 1 123)
+						(cond 
+							((ego inRect: 122 117 168 124)
+								(Print 4 7)
+								(Print 4 8)
+								(SolvePuzzle 1 123)
 							)
 							(
 								(and
-									(gEgo inRect: 70 128 99 140)
-									(== (gEgo loop:) 1)
+									(ego inRect: 70 128 99 140)
+									(== (ego loop?) 1)
 								)
-								(Print 4 9) ; "The papers on the board are a year old."
+									(Print 4 9)
 							)
-							((gEgo inRect: 71 130 124 157)
-								(Print 4 10) ; "Among the many papers on Captain Hall's desk, one catches your interest. You read:"
-								(Print 4 11) ; "Passwords: MIAMI ICECREAM PISTACHIO"
-								(SetScore 1 124)
+							((ego inRect: 71 130 124 157)
+								(Print 4 10)
+								(Print 4 11)
+								(SolvePuzzle 1 124)
 							)
 							(else
 								(event claimed: 0)
@@ -483,392 +598,401 @@
 					)
 					(
 						(or
-							(Said 'look,read/*<you<thank')
+							(Said 'look,read/anyword<ya<thank')
 							(Said 'look,read/letter')
 						)
-						(if (and (gEgo has: 5) (!= local4 3)) ; thank_you_letter
-							((gInventory at: 5) showSelf:) ; thank_you_letter
+						(if
+							(and
+								(ego has: iThankYouLetter)
+								(!= local4 3)
+							)
+								((inventory at: iThankYouLetter) showSelf:)
 						else
 							(event claimed: 0)
 						)
 					)
-					((Said 'talk[/man,cop,person]')
-						(cond
-							((gEgo inRect: 70 131 122 156)
-								(Print 4 12) ; "Captain Hall doesn't like to be interrupted."
+					((Said 'chat[/dude,cop,person]')
+						(cond 
+							((ego inRect: 70 131 122 156)
+								(Print 4 12)
 							)
-							((gEgo inRect: 90 117 137 132)
-								(Print 4 13) ; "Jim is a muscular, quiet man. He has nothing to say to you."
+							((ego inRect: 90 117 137 132)
+								(Print 4 13)
 							)
-							((< (gEgo distanceTo: global112) 46)
-								(Print 4 14) ; "Keith smiles and says, "Take it easy, partner.""
+							((< (ego distanceTo: keith) 46)
+								(Print 4 14)
 							)
 							(else
-								(Print 4 15) ; "Get closer to him."
+								(Print 4 15)
 							)
 						)
 					)
-					((or (Said 'ask,get//order') (Said 'ask,get/order'))
-						(Print 4 16) ; "You've been given your orders."
+					(
+						(or
+							(Said 'ask,get//order')
+							(Said 'ask,get/order')
+						)
+							(Print 4 16)
 					)
-					((Said 'talk,ask/hall')
-						(if (!= global138 1)
-							(if (== (captain loop:) 3)
-								(Print 4 17) ; "The Captain is on the phone."
+					((Said 'chat,ask/hall')
+						(if (!= isOnDuty 1)
+							(if (== (captain loop?) 3)
+								(Print 4 17)
 							else
-								(Print 4 18) ; "With a slurp and a smack, the Captain says,"Not now please, I'm eating my ice cream!""
+								(Print 4 18)
 							)
 						else
 							(captainScript changeState: 14)
 						)
 					)
-					((Said 'talk,ask/james,pierson')
-						(if (gEgo inRect: 90 117 137 132)
-							(Print 4 19) ; "Yo, Sonny," mumbles Detective Jim (Rambo) Pierson, "I'm on the phone."
+					((Said 'chat,ask/james,pierson')
+						(if (ego inRect: 90 117 137 132)
+							(Print 4 19)
 						else
-							(proc0_7) ; "You're not close enough."
+							(NotClose)
 						)
 					)
-					((or (Said 'talk,get,ask/friend,friend') (Said 'let/go'))
-						(if (< (gEgo distanceTo: global112) 40)
-							(switch global138
+					(
+						(or
+							(Said 'chat,get,ask/friend,friend')
+							(Said 'let/go')
+						)
+						(if (< (ego distanceTo: keith) 40)
+							(switch isOnDuty
 								(2
-									(Print 4 20) ; "You go ahead, partner," Keith says, "I'll be right out."
+									(Print 4 20)
 								)
 								(1
-									(Print 4 21) ; "Have fun, partner," Keith says, "I'll see you tomorrow."
+									(Print 4 21)
 								)
 								(else
-									(Print 4 22) ; "Keith apparently is lost in thought - but you know better."
+									(Print 4 22)
 								)
 							)
 						else
-							(Print 4 23) ; "Keith doesn't appear to hear you. Maybe you should get closer?"
+							(Print 4 23)
 						)
 					)
 					((Said 'press,move/friend')
-						(Print 4 24) ; "You did that once. He fell off his chair, hit his head, and he's never been the same since."
+						(Print 4 24)
 					)
 					((Said 'get,remove,pick/')
-						(if (gEgo inRect: 70 131 122 153)
-							(Print 4 25) ; "The Captain doesn't like you messing with the things on his desk."
+						(if (ego inRect: 70 131 122 153)
+							(Print 4 25)
 						else
 							(event claimed: 0)
 						)
 					)
 					((Said '/briefcase')
-						(Print 4 26) ; "You can't use that right now."
+						(Print 4 26)
 					)
-					((or (Said '/shot<mug') (Said '/mugshot'))
-						(Print 4 27) ; "There are no mugshots here."
-					)
+					(
+						(or
+							(Said '/shot<mug')
+							(Said '/mugshot')
+						)
+							(Print 4 27))
 					((Said 'turn<on/computer')
-						(Print 4 28) ; "Look at it first."
+						(Print 4 28)
 					)
 					((Said 'look,use/computer')
 						(if
 							(or
-								(== (gEgo onControl:) 16384)
-								(== (gEgo onControl:) -16384)
+								(== (ego onControl:) cYELLOW) ;16384
+								(== (ego onControl:) -16384) ;not needed?
 							)
-							(gCurRoom newRoom: 8)
+								(curRoom newRoom: 8)
 						else
-							(proc0_7) ; "You're not close enough."
+							(NotClose)
 						)
 					)
 					((Said 'look,read,frisk>')
-						(cond
+						(cond 
 							((Said '/light,lamp')
-								(Print 4 29) ; "It's just a lamp."
+								(Print 4 29)
 							)
 							((Said '<in/drawer')
-								(Print 4 30) ; "Open the drawer first."
+								(Print 4 30)
 							)
 							((Said '/drawer')
-								(Print 4 31) ; "All the drawers around here look the same."
+								(Print 4 31)
 							)
 							((Said '/cone')
-								(if (== (captain loop:) 3)
-									(Print 4 32) ; "What ice cream? Captain Hall isn't eating ice cream."
+								(if (== (captain loop?) 3)
+									(Print 4 32)
 								else
-									(Print 4 33) ; "Captain Hall's favorite: pistachio."
+									(Print 4 33)
 								)
 							)
 							((Said '/locker')
-								(Print 4 34) ; "The locker belongs to the Captain."
+								(Print 4 34)
 							)
 							((Said '/key,coatrack')
-								(Print 4 35) ; "The keys are for the unmarked cars."
+								(Print 4 35)
 							)
 							((Said '/wall')
-								(Print 4 36) ; "On the wall you see a map, two bulletin boards, and some keys."
+								(Print 4 36)
 							)
 							((Said '/file,cabinet<in,in')
-								(Print 4 37) ; "That's easier to do if you open it first."
+								(Print 4 37)
 							)
 							((Said '/board[<bulletin]')
-								(cond
-									((gEgo inRect: 122 117 168 124)
-										(Print 4 7) ; "You scan the bulletin board and see the shooting schedule. Below the board, is a rack of car keys."
-										(Print 4 8) ; "The shooting schedule indicates you are behind on your scores."
-										(SetScore 1 123)
+								(cond 
+									((ego inRect: 122 117 168 124)
+										(Print 4 7)
+										(Print 4 8)
+										(SolvePuzzle 1 123)
 									)
 									(
 										(and
-											(gEgo inRect: 70 128 99 140)
-											(== (gEgo loop:) 1)
+											(ego inRect: 70 128 99 140)
+											(== (ego loop?) 1)
 										)
-										(Print 4 38) ; "The papers on the board are a year old, and of no interest."
+											(Print 4 38)
 									)
 									(else
-										(Print 4 39) ; "Go up to it and take a look."
+										(Print 4 39)
 									)
 								)
 							)
 							((Said '/score,schedule')
-								(SetScore 1 123)
-								(Print 4 8) ; "The shooting schedule indicates you are behind on your scores."
+								(SolvePuzzle 1 123)
+								(Print 4 8)
 							)
-							(
-								(Said
-									'[<at,around][/(!*,chamber,office,homicide)]'
-								)
-								(Print 4 40) ; "This is the Homicide Office."
-								(Print 4 41) ; "The Homicide Office is equipped with five desks, a file cabinet, a locker, and various other items hanging on the wall. On one of the desks is a computer."
+							((Said '[<at,around][/(!*,chamber,office,homicide)]')
+								(Print 4 40)
+								(Print 4 41)
 							)
 						)
 					)
 				)
-				(cond
-					(
-						(Said
-							'look,get,read,check/basket,subpoena,note,envelope,finding,newspaper'
-						)
+				(cond 
+					((Said 'look,get,read,check/basket,subpoena,note,envelope,finding,newspaper')
 						(event claimed: 0)
-						(if (or (gEgo inRect: 130 123 188 144) local3)
-							(cond
+						(if
+							(or
+								(ego inRect: 130 123 188 144)
+								egoSitting
+							)
+							(cond 
 								(
 									(and
-										(< global100 6)
-										(Said
-											'/basket,subpoena,envelope,newspaper'
-										)
+										(< gamePhase 6)
+										(Said '/basket,subpoena,envelope,newspaper')
 									)
-									(SetScore 1 64)
-									(localproc_0 4 42) ; "In the basket you see a subpoena."
-									(localproc_0 4 43) ; "You pick up and read the subpoena."
-									(localproc_0 4 44 70 240) ; "You are commanded to appear in Division 4, Superior Court of the City of Lytton, as a witness for the People in the retrial matter against the defendant, Jessie Bains. Notification of time and date will follow."
-									(Print 4 45 #at -1 120) ; "You can't believe what you just read! Just as the memory of this rat was passing into oblivion, he's back for a retrial."
+										(SolvePuzzle 1 64)
+										(LocPrint 4 42)
+										(LocPrint 4 43)
+										(LocPrint 4 44 70 240)
+										(Print 4 45 #at -1 120)
 								)
 								(
 									(and
-										(>= global100 8)
-										(Said
-											'/basket,envelope,finding,newspaper'
-										)
+										(>= gamePhase 8)
+										(Said '/basket,envelope,finding,newspaper')
 									)
 									(if
 										(or
-											(IsFlag 128)
-											(IsFlag 131)
-											(IsFlag 132)
-											(IsFlag 130)
-											(IsFlag 134)
-											(IsFlag 127)
-											(IsFlag 133)
-											(IsFlag 129)
+											(Btst fBookedFingerprint) ;128
+											(Btst fBookedCoveBlood) ;was 131, which never gets set. Confirm 146 is correct here.
+											(Btst fBookedPlasterCast) ;132
+											(Btst fBookedKnife) ;130
+											(Btst fBookedJailClothes) ;134
+											(Btst fBookedRevolver) ;127
+											(Btst fBookedBullets) ;133
+											(Btst fBppkedThumbprint) ;129
 										)
-										(SetScore 3 65)
-										(localproc_0 4 46) ; "In the basket you see a manila envelope."
-										(localproc_0 4 47) ; "You remove the envelope, which is marked: "Crime Lab.""
-										(Print 4 48 #at -1 40) ; "While opening the envelope, you think..."It's the test results on the evidence.""
-										(if (IsFlag 128)
-											(Print 4 49) ; "Fingerprint tape:   Location found:    Glove box of deceased jailer's car   Findings of forensic examination:    Positive match - Jessie H. Bains"
-										)
-										(if (IsFlag 129)
-											(Print 4 50) ; "Fingerprint tape:   Location found:    Rear view mirror of stolen car   Findings of forensic examination:    Positive match - Jessie H. Bains"
-										)
-										(cond
-											((IsFlag 131)
-												(Print 4 51) ; "Coagulated Blood:   Location found:    River bank   Findings of forensic examination:    Blood type: A+ (same as jailer's)"
+											(SolvePuzzle 3 65)
+											(LocPrint 4 46)
+											(LocPrint 4 47)
+											(Print 4 48 #at -1 40)
+											(if (Btst fBookedFingerprint)
+												(Print 4 49)
 											)
-											((IsFlag 132)
-												(Print 4 52) ; "Footprint cast:   Location found:    River bank   Findings of examination    Size 10d (new)"
+											(if (Btst fBppkedThumbprint)
+												(Print 4 50)
 											)
-											((IsFlag 130)
-												(Print 4 53) ; "Makeshift knife:   Location found:    Bottom of River   Findings of examination    Weapon made from spoon    "New Floral Design"    By "Superior Dinner Ware MFG CO."    Same pattern is used at Lytton Jail."
+											(cond 
+												((Btst fBookedCoveBlood) ;was 131. See above comment
+													(Print 4 51)
+												)
+												((Btst fBookedPlasterCast)
+													(Print 4 52)
+												)
+												((Btst fBookedKnife)
+													(Print 4 53)
+												)
+												((Btst fBookedJailClothes)
+													(Print 4 54)
+												)
+												((Btst fBookedRevolver)
+													(Print 4 55)
+												)
+												((Btst fBookedBullets)
+													(Print 4 56)
+												)
 											)
-											((IsFlag 134)
-												(Print 4 54) ; "Clothing:   Location found:    Approx. 300yds up river from footprints  Findings of examination    #1 shirt - jail issue. size, med.    #2 trousers - jail issue. size, 36"
-											)
-											((IsFlag 127)
-												(Print 4 55) ; "Hand gun: Ser. Num. S/W 5557763       4" Smith&Wesson 38cal K-38   Location found:    Airport rest room (toilet tank)   Registered to:    Luis Pate (jailer)   Findings of forensic examination:    Fingerprints - Inconclusive    Ballistics - test round      (from glove box of jailer's car)       fired from this weapon,       match with bullet removed       from Jailers head."
-											)
-											((IsFlag 133)
-												(Print 4 56) ; "Ammunition: (3 rounds)   Location found:    Glove box of jailer's car   Test findings:    Ballistics - (see above)      Lytton PD departmental issue      ammunition"
-											)
-										)
-										(Print 4 57) ; "...END OF REPORT."
+											(Print 4 57)
 									else
-										(Print 4 58) ; "Your basket is empty."
+										(Print 4 58)
 									)
 								)
 								(
 									(and
-										global161
+										marieWantsCall
 										(Said '/basket,note,letter,newspaper')
 									)
-									(localproc_0 4 59) ; "You see a note in your basket."
-									(localproc_0 4 60) ; "You pick up and read the note..."
-									(localproc_0 4 61) ; "Bonds, Marie called while you were out. She wants you to call her as soon as possible."
+									(LocPrint 4 59)
+									(LocPrint 4 60)
+									(LocPrint 4 61)
 								)
 								(else
-									(Print 4 62) ; "You don't see that in your basket."
+									(Print 4 62)
 									(event claimed: 1)
 								)
 							)
 						else
-							(Print 4 63) ; "It's not nice to look in other people's baskets."
+							(Print 4 63)
 							(event claimed: 1)
 						)
 					)
-					((Said 'look/man,person,cop')
-						(cond
-							((gEgo inRect: 75 131 122 153)
-								(Print 4 64) ; "Captain Fletcher Hall is a very large man with an over-powering presence."
+					((Said 'look/dude,person,cop')
+						(cond 
+							((ego inRect: 75 131 122 153)
+								(Print 4 64)
 							)
-							((gEgo inRect: 90 117 142 132)
-								(Print 4 65) ; "Although short, Detective Jim Pierson keeps himself in excellent physical condition. He rarely speaks unless spoken to."
+							((ego inRect: 90 117 142 132)
+								(Print 4 65)
 							)
-							((< (gEgo distanceTo: global112) 30)
-								(Print 4 66) ; "Your partner, Keith Robinson, is an easy-going, veteran detective. He doesn't let his job interfere with his relaxation."
+							((< (ego distanceTo: keith) 30)
+								(Print 4 66)
 							)
 							(else
-								(Print 4 67) ; "Get closer."
+								(Print 4 67)
 							)
 						)
 					)
 					((Said 'look/hall')
-						(Print 4 64) ; "Captain Fletcher Hall is a very large man with an over-powering presence."
+						(Print 4 64)
 					)
 					((Said 'look/james')
-						(if (gEgo inRect: 90 117 142 132)
-							(Print 4 65) ; "Although short, Detective Jim Pierson keeps himself in excellent physical condition. He rarely speaks unless spoken to."
+						(if (ego inRect: 90 117 142 132)
+							(Print 4 65)
 						)
 					)
 					((Said 'look/friend')
-						(Print 4 66) ; "Your partner, Keith Robinson, is an easy-going, veteran detective. He doesn't let his job interfere with his relaxation."
+						(Print 4 66)
 					)
 					((Said 'look/desk')
-						(cond
-							((gEgo inRect: 71 131 122 156)
-								(Print 4 68) ; "This is Captain Fletcher Hall's desk. On it, you see some folders and papers."
+						(cond 
+							((ego inRect: 71 131 122 156)
+								(Print 4 68)
 							)
-							((gEgo inRect: 90 117 140 132)
-								(Print 4 69) ; "This is Detective Jim Pierson's desk."
+							((ego inRect: 90 117 140 132)
+								(Print 4 69)
 							)
-							((gEgo inRect: 189 117 244 139)
-								(Print 4 70) ; "This is your partner, Keith Robinson's desk."
+							((ego inRect: 189 117 244 139)
+								(Print 4 70)
 							)
-							((gEgo inRect: 154 140 235 200)
-								(Print 4 71) ; "This desk is used for the computer, which is shared by everyone in the office."
+							((ego inRect: 154 140 235 200)
+								(Print 4 71)
 							)
 							(else
-								(Print 4 72) ; "Your desk is equipped with drawers, a phone, a message basket, and a lamp."
+								(Print 4 72)
 							)
 						)
 					)
 					((Said 'get,remove/subpoena')
-						(if (< global100 6)
-							(Print 4 73) ; "Leave it in the basket. The station's clerical staff is very good at filing these things away for you."
+						(if (< gamePhase 6)
+							(Print 4 73)
 						else
-							(Print 4 74) ; "The subpoena has been filed away."
+							(Print 4 74)
 						)
 					)
 					((Said 'get,remove/note')
-						(if (== global100 6)
-							(Print 4 75) ; "As you reach for the note, you think... "Nah, just one more piece of paper to carry around."
+						(if (== gamePhase 6)
+							(Print 4 75)
 						else
-							(Print 4 76) ; "The note is gone. Clerks periodically clean out your basket, so that important papers aren't allowed to sit."
+							(Print 4 76)
 						)
 					)
 					((Said 'get,remove/clue,finding,envelope')
-						(if (>= global100 8)
-							(Print 4 73) ; "Leave it in the basket. The station's clerical staff is very good at filing these things away for you."
+						(if (>= gamePhase 8)
+							(Print 4 73)
 						else
-							(Print 4 77) ; "What? You see nothing like that here."
+							(Print 4 77)
 						)
 					)
 					((Said 'read,look/schedule[<fire]')
-						(if (gEgo inRect: 122 117 168 124)
-							(Print 4 8) ; "The shooting schedule indicates you are behind on your scores."
+						(if (ego inRect: 122 117 168 124)
+							(Print 4 8)
 						else
-							(proc0_7) ; "You're not close enough."
+							(NotClose)
 						)
 					)
 					((Said 'open,close/locker')
-						(Print 4 78) ; "The Captain keeps it closed and locked."
+						(Print 4 78)
 					)
 					(
 						(or
 							(Said 'open/cabinet[<file]')
 							(and
-								(gEgo inRect: 227 138 260 152)
+								(ego inRect: 227 138 260 152)
 								(Said 'open/drawer<file')
 							)
 						)
-						(if (gEgo inRect: 232 138 260 152)
-							(gCast eachElementDo: #startUpd)
-							(gCurRoom newRoom: 7)
-						else
-							(proc0_7) ; "You're not close enough."
-						)
+							(if (ego inRect: 232 138 260 152)
+								(cast eachElementDo: #startUpd) ;why??
+								(curRoom newRoom: 7)
+							else
+								(NotClose)
+							)
 					)
 					((Said 'close/(cabinet[<file]),file')
-						(if (== gPrevRoomNum 7)
-							(Print 4 79) ; "You closed it yourself."
+						(if (== prevRoomNum 7)
+							(Print 4 79)
 						else
-							(Print 4 80) ; "It's already closed."
+							(Print 4 80)
 						)
 					)
 					((Said 'get,remove/key')
-						(if (gEgo inRect: 122 117 168 124)
-							(if (gEgo has: 3) ; unmarked_car_keys
-								(Print 4 81) ; "You already have them."
+						(if (ego inRect: 122 117 168 124)
+							(if (ego has: iUnmarkedCarKeys)
+								(Print 4 81)
 							else
-								(gEgo get: 3) ; unmarked_car_keys
+								(ego get: iUnmarkedCarKeys)
 								(carKey posn: 0 0)
-								(Print 4 82) ; "You remove the keys from the board."
-								(SetScore 1 104)
+								(Print 4 82)
+								(SolvePuzzle 1 104)
 							)
 						else
-							(proc0_7) ; "You're not close enough."
+							(NotClose)
 						)
 					)
-					((Said 'drop,replace/key')
-						(if (gEgo has: 3) ; unmarked_car_keys
-							(if (gEgo inRect: 122 117 168 124)
-								(PutItem 3) ; unmarked_car_keys
+					((Said 'deposit,replace/key')
+						(if (ego has: iUnmarkedCarKeys)
+							(if (ego inRect: 122 117 168 124)
+								(PutInRoom iUnmarkedCarKeys)
 								(carKey posn: 141 110)
-								(Print 4 83) ; "OK."
+								(Print 4 83)
 							else
-								(proc0_7) ; "You're not close enough."
+								(NotClose)
 							)
 						else
-							(proc0_9) ; "You don't have it."
+							(DontHave)
 						)
 					)
 					((Said 'sat')
-						(cond
-							(local3
-								(Print 4 84) ; "You're already sitting."
+						(cond 
+							(egoSitting
+								(Print 4 84)
 							)
-							((gEgo inRect: 170 122 196 141)
+							((ego inRect: 170 122 196 141)
 								(HandsOff)
 								(User canInput: 1)
-								(= local3 1)
-								(= global204 0)
-								(gEgo
+								(= egoSitting 1)
+								(= gunDrawn 0)
+								(ego
 									view: 3
 									loop: 0
 									cel: 0
@@ -880,102 +1004,118 @@
 								)
 							)
 							(else
-								(proc0_7) ; "You're not close enough."
+								(NotClose)
 							)
-						)
-					)
-					((or (Said 'stand[<up]') (Said 'get<up'))
-						(if local3
-							(HandsOn)
-							(NormalEgo)
-							(gEgo view: 1 loop: 1 cel: 9 posn: 192 136)
-							(= local3 0)
-						else
-							(Print 4 85) ; "You're standing already."
-						)
-					)
-					((Said 'open/drawer,desk')
-						(if local3
-							(if (not (IsFlag 12))
-								(self changeState: 1)
-							else
-								(Print 4 86) ; "You need to unlock it first."
-							)
-						else
-							(Print 4 87) ; "Sit at your desk to open your desk drawer."
-						)
-					)
-					((Said 'unlock/drawer,desk')
-						(if local3
-							(cond
-								((not (IsFlag 12))
-									(Print 4 88) ; "It's already unlocked."
-								)
-								((gEgo has: 2) ; key_ring
-									(Print 4 89) ; "You unlock and open your drawer."
-									(ClearFlag 12)
-									(self changeState: 1)
-								)
-								(else
-									(Print 4 90) ; "You don't have the key to the drawer."
-								)
-							)
-						else
-							(Print 4 91) ; "You must sit down first."
-						)
-					)
-					((Said 'lock/drawer,desk')
-						(if local3
-							(cond
-								((IsFlag 12)
-									(Print 4 92) ; "It's already locked."
-								)
-								((gEgo has: 2) ; key_ring
-									(Print 4 83) ; "OK."
-									(SetFlag 12)
-								)
-								(else
-									(Print 4 90) ; "You don't have the key to the drawer."
-								)
-							)
-						else
-							(Print 4 91) ; "You must sit down first."
-						)
-					)
-					((or (Said 'lock,close/drawer') (Said 'stand'))
-						(if local3
-							(if (== (rm4 script:) drawerScript)
-								(self changeState: 3)
-							else
-								(Print 4 93) ; "The drawer's already closed."
-							)
-						else
-							(Print 4 94) ; "You should sit down first."
-						)
-					)
-					((Said 'use,get,dial,(pick<up)/phone')
-						(if local3
-							(self changeState: 5)
-							(= local5 1)
-						else
-							(Print 4 95) ; "Sit at your desk to use the phone."
 						)
 					)
 					(
 						(or
-							(Said 'drop[<down]/phone')
+							(Said 'stand[<up]')
+							(Said 'get<up')
+						)
+							(if egoSitting
+								(HandsOn)
+								(NormalEgo)
+								(ego
+									view: 1
+									loop: 1
+									cel: 9
+									posn: 192 136
+								)
+								(= egoSitting 0)
+							else
+								(Print 4 85)
+							)
+					)
+					((Said 'open/drawer,desk')
+						(if egoSitting
+							(if (not (Btst fEgoDeskLocked)) ;renamed from fEgoDeskUnlocked
+								(self changeState: 1)
+							else
+								(Print 4 86)
+							)
+						else
+							(Print 4 87)
+						)
+					)
+					((Said 'unlock/drawer,desk')
+						(if egoSitting
+							(cond 
+								((not (Btst fEgoDeskLocked))
+									(Print 4 88)
+								)
+								((ego has: iKeyRing)
+									(Print 4 89)
+									(Bclr fEgoDeskLocked)
+									(self changeState: 1))
+								(else
+									(Print 4 90)
+								)
+							)
+						else
+							(Print 4 91)
+						)
+					)
+					((Said 'lock/drawer,desk')
+						(if egoSitting
+							(cond 
+								((Btst fEgoDeskLocked)
+									(Print 4 92)
+								)
+								((ego has: iKeyRing)
+									(Print 4 83)
+									(Bset fEgoDeskLocked)
+								)
+								(else
+									(Print 4 90)
+								)
+							)
+						else
+							(Print 4 91)
+						)
+					)
+					(
+						(or
+							(Said 'lock,close/drawer')
+							(Said 'stand')
+						)
+						(if egoSitting
+							(if (== (rm4 script?) drawerScript)
+								(self changeState: 3)
+							else
+								(Print 4 93)
+							)
+						else
+							(Print 4 94)
+						)
+					)
+					((Said 'use,get,dial,(pick<up)/phone')
+						(if egoSitting
+							(self changeState: 5)
+							(= onPhone 1)
+						else
+							(Print 4 95)
+						)
+					)
+					(
+						(or
+							(Said 'deposit[<down]/phone')
 							(Said 'replace/phone')
 							(Said 'hang<up[/phone]')
 						)
-						(if (and local5 local3)
-							(= local5 0)
+						(if (and onPhone egoSitting)
+							(= onPhone 0)
 							(self changeState: 7)
 						else
-							(Print 4 95) ; "Sit at your desk to use the phone."
+							(Print 4 95)
 						)
 					)
-					((and (Said 'call,phone/') (not local5))
-						(Print 4 96) ; "Better use the phone."
+					(
+						(and
+							(Said 'call,phone/')
+							(not onPhone)
+						)
+							(Print 4 96)
 					)
 				)
 			)
@@ -985,14 +1125,14 @@
 
 (instance drawerScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(gCast eachElementDo: #hide)
-				(gCurRoom drawPic: 12)
-				(if (IsItemAt 5 12) ; thank_you_letter
-					((= local0 (View new:))
+				(cast eachElementDo: #hide)
+				(curRoom drawPic: 12)
+				(if (InRoom iThankYouLetter 12)
+					((= marieLetter (View new:))
 						view: 59
 						loop: 0
 						cel: 2
@@ -1002,8 +1142,8 @@
 						stopUpd:
 					)
 				)
-				(if (IsItemAt 7 12) ; wallet
-					((= local1 (View new:))
+				(if (InRoom iWallet 12)
+					((= wallet (View new:))
 						view: 59
 						loop: 0
 						cel: 0
@@ -1016,41 +1156,41 @@
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(switch (event type:)
-			(evSAID
-				(cond
+		(switch (event type?)
+			(saidEvent
+				(cond 
 					((Said 'get,remove/letter,card')
-						(if (IsItemAt 5 12) ; thank_you_letter
-							(local0 dispose:)
-							(Print 4 83 #draw) ; "OK."
-							(gEgo get: 5) ; thank_you_letter
-							(SetScore 1 106)
+						(if (InRoom iThankYouLetter 12)
+							(marieLetter dispose:)
+							(Print 4 83 #draw)
+							(ego get: iThankYouLetter)
+							(SolvePuzzle 1 106)
 						else
-							(Print 4 97) ; "That isn't in the drawer."
+							(Print 4 97)
 						)
 					)
 					((Said 'get,remove/note')
-						(if (IsItemAt 5 12) ; thank_you_letter
-							(Print 4 98) ; "You see a letter, not a note in the drawer."
+						(if (InRoom iThankYouLetter 12)
+							(Print 4 98)
 						else
-							(Print 4 97) ; "That isn't in the drawer."
+							(Print 4 97)
 						)
 					)
 					((Said 'get/billfold')
-						(if (IsItemAt 7 12) ; wallet
-							(local1 dispose:)
-							(Print 4 83 #draw) ; "OK."
-							(gEgo get: 7) ; wallet
-							(SetScore 1 105)
+						(if (InRoom iWallet 12)
+							(wallet dispose:)
+							(Print 4 83 #draw)
+							(ego get: iWallet)
+							(SolvePuzzle 1 105)
 						else
-							(Print 4 97) ; "That isn't in the drawer."
+							(Print 4 97)
 						)
 					)
-					((Said 'drop,replace/letter,card')
-						(if (gEgo has: 5) ; thank_you_letter
-							((= local0 (View new:))
+					((Said 'deposit,replace/letter,card')
+						(if (ego has: iThankYouLetter)
+							((= marieLetter (View new:))
 								view: 59
 								posn: 146 115
 								loop: 0
@@ -1059,14 +1199,14 @@
 								ignoreActors:
 								stopUpd:
 							)
-							(gEgo put: 5 12) ; thank_you_letter
+							(ego put: iThankYouLetter 12)
 						else
-							(Print 4 99) ; "You don't have that."
+							(Print 4 99)
 						)
 					)
-					((Said 'drop,replace/billfold')
-						(if (gEgo has: 7) ; wallet
-							((= local1 (View new:))
+					((Said 'deposit,replace/billfold')
+						(if (ego has: iWallet)
+							((= wallet (View new:))
 								view: 59
 								posn: 190 105
 								loop: 0
@@ -1074,13 +1214,13 @@
 								init:
 								stopUpd:
 							)
-							(gEgo put: 7 12) ; wallet
+							(ego put: 7 12)
 						else
-							(proc0_9) ; "You don't have it."
+							(DontHave)
 						)
 					)
 					((Said 'look,frisk[/drawer]')
-						(gInventory
+						(inventory
 							carrying: {Your desk drawer contains:}
 							empty: {Your desk drawer is empty.}
 							showSelf: 12
@@ -1088,24 +1228,28 @@
 					)
 					(
 						(or
-							(Said 'look,read/*<you<thank')
+							(Said 'look,read/*<ya<thank')
 							(Said 'look,read/letter')
 						)
-						(if (IsItemAt 5 12) ; thank_you_letter
-							(Print 4 100) ; "You see it in the drawer."
+						(if (InRoom iThankYouLetter 12)
+							(Print 4 100)
 						else
 							(event claimed: 0)
 						)
 					)
-					((or (Said '/shot<mug') (Said '/mugshot'))
-						(Print 4 27) ; "There are no mugshots here."
-					)
+					(
+						(or
+							(Said '/shot<mug')
+							(Said '/mugshot')
+						)
+							(Print 4 27)
+						)
 					((Said 'close[/drawer]')
-						(gCurRoom drawPic: (gCurRoom picture:))
-						(gCast eachElementDo: #dispose)
-						(gCast eachElementDo: #delete)
-						(gEgo init:)
-						(= local6 1)
+						(curRoom drawPic: (curRoom picture?))
+						(cast eachElementDo: #dispose)
+						(cast eachElementDo: #delete)
+						(ego init:)
+						(= closedDrawer 1)
 						(rm4 setScript: rm4Script)
 						(rm4Script changeState: 3)
 					)
@@ -1117,279 +1261,271 @@
 
 (instance captainScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(HandsOff)
 				(User canInput: 0)
-				(gEgo stopUpd:)
-				(= global164 1)
-				(captain setCycle: End)
+				(ego stopUpd:)
+				(= talkedToCaptain 1)
+				(captain setCycle: EndLoop)
 				(aTimer setCycle: self 18)
 			)
 			(1
-				(localproc_0 4 101) ; "The Captain speaks up and says..."
+				(LocPrint 4 101)
 				(aTimer setCycle: self 18)
 			)
 			(2
-				(localproc_0 4 102) ; "Well Bonds, no doubt you heard about Jessie Bains by now."
+				(LocPrint 4 102)
 				(aTimer setCycle: self 18)
 			)
 			(3
-				(localproc_0 4 103) ; "The District Attorney told me that the reason this jackass won a retrial was some technical BS about improper jury instruction."
+				(LocPrint 4 103)
 				(aTimer setCycle: self 10)
 			)
 			(4
-				(localproc_0 4 104) ; "It's a real shame, but that's life."
-				(if local3
-					(User canInput: 1)
-				else
-					(HandsOn)
-				)
-				(gEgo startUpd:)
-				(captain setCycle: Beg)
+				(LocPrint 4 104)
+				(if egoSitting (User canInput: 1) else (HandsOn))
+				(ego startUpd:)
+				(captain setCycle: BegLoop)
 			)
-			(5
-				(aTimer setReal: self 3)
-			)
+			(5 (aTimer setReal: self 3))
 			(6
-				(if (not local3)
-					(gEgo loop: 1)
+				(if (not egoSitting)
+					(ego loop: 1)
 				)
 				(HandsOff)
 				(User canInput: 0)
-				(= global100 1)
-				(= global158 300)
-				(= global138 2)
-				(= global164 1)
-				(captain setCycle: End)
+				(= gamePhase 1)
+				(= captainWarningTimer 300)
+				(= isOnDuty 2)
+				(= talkedToCaptain 1)
+				(captain setCycle: EndLoop)
 				(aTimer setCycle: self 18)
 			)
 			(7
-				(Print 4 105 #at -1 130 #draw) ; "Bonds, we have bad news. Jessie Bains has escaped Lytton City Jail!"
+				(Print 4 105 #at -1 130 #draw)
 				(aTimer setCycle: self 18)
 				(bainsTheme play:)
 			)
 			(8
-				(localproc_0 4 106) ; "Not only has he escaped," the Captain says,"but he took the jailer as hostage!"
+				(LocPrint 4 106)
 				(aTimer setCycle: self 18)
 			)
 			(9
-				(localproc_0 4 107) ; ""Bonds, I've named you and your partner Keith, to a special task force with the code name of 'Target.'"
+				(LocPrint 4 107)
 				(aTimer setCycle: self 18)
 			)
 			(10
-				(localproc_0 4 108) ; "The Captain continues:"I want you boys to answer any and all calls that might be even remotely connected to this dirtbag!""
+				(LocPrint 4 108)
 				(aTimer setCycle: self 18)
 			)
 			(11
-				(localproc_0 4 109) ; "The Captain orders you: "Find a mug shot of that punk, and get on this immediately!""
-				(if local3
+				(LocPrint 4 109)
+				(if egoSitting
 					(User canInput: 1)
 				else
 					(HandsOn)
 				)
-				(= global138 2)
-				(captain setCycle: Beg)
+				(= isOnDuty 2)
+				(captain setCycle: BegLoop)
 			)
 			(12
 				(HandsOff)
 				(User canInput: 0)
-				(if (not local3)
-					(gEgo loop: 1)
+				(if (not egoSitting)
+					(ego loop: 1)
 				)
-				(= global164 1)
-				(captain setCycle: End)
+				(= talkedToCaptain 1)
+				(captain setCycle: EndLoop)
 				(aTimer setCycle: self 18)
 			)
 			(13
 				(switch (Random 0 2)
 					(0
-						(localproc_0 4 110) ; "You have your orders, Bonds!"
+						(LocPrint 4 110)
 					)
 					(1
-						(localproc_0 4 111) ; "You're wasting valuable time, Bonds!"
+						(LocPrint 4 111)
 					)
 					(2
-						(localproc_0 4 112) ; "You're a detective. Start earning your money!"
+						(LocPrint 4 112)
 					)
 				)
-				(if local3
+				(if egoSitting
 					(User canInput: 1)
 				else
 					(HandsOn)
 				)
-				(gEgo startUpd:)
-				(captain setCycle: Beg)
+				(ego startUpd:)
+				(captain setCycle: BegLoop)
 			)
 			(14
 				(HandsOff)
 				(User canInput: 0)
-				(if (not local3)
-					(gEgo loop: 1)
+				(if (not egoSitting)
+					(ego loop: 1)
 				)
-				(= global164 1)
-				(= global138 1)
-				(captain setCycle: End)
+				(= talkedToCaptain 1)
+				(= isOnDuty 1)
+				(captain setCycle: EndLoop)
 				(aTimer setCycle: self 18)
 			)
 			(15
 				(switch (Random 0 1)
 					(0
-						(localproc_0 4 113) ; "Bonds," says the Captain, "go ahead and take off. You've earned your daily dollar."
+						(LocPrint 4 113)
 					)
 					(1
-						(localproc_0 4 114) ; "You're on your own time boy....Go somewhere!"
+						(LocPrint 4 114)
 					)
 				)
-				(if local3
+				(if egoSitting
 					(User canInput: 1)
 				else
 					(HandsOn)
 				)
-				(captain setCycle: Beg)
+				(captain setCycle: BegLoop)
 			)
 			(16
 				(HandsOff)
 				(User canInput: 0)
-				(gEgo setMotion: MoveTo 60 134)
-				(= global164 1)
-				(= global138 2)
-				(= global100 10)
-				(= global158 600)
-				(captain setCycle: End)
+				(ego setMotion: MoveTo 60 134)
+				(= talkedToCaptain 1)
+				(= isOnDuty 2)
+				(= gamePhase 10)
+				(= captainWarningTimer 600)
+				(captain setCycle: EndLoop)
 				(aTimer setCycle: self 18)
 			)
 			(17
-				(gEgo loop: 1)
-				(Print 4 115 #at -1 130 #draw) ; "Hey Bonds!" the Captain blurts. "We have a traffic cop standing by down in the old warehouse district with a 187 victim."
-				(localproc_0 4 116) ; "Continuing, the Captain says: "The victim took it in the back of the head. Looks like it could be a professional hit.""
-				(gEgo startUpd:)
+				(ego loop: 1)
+				(Print 4 115 #at -1 130 #draw)
+				(LocPrint 4 116)
+				(ego startUpd:)
 				(aTimer setCycle: self 18)
 			)
 			(18
-				(localproc_0 4 117) ; "Sonny! The address is 160 West Rose. Take Keith and get over there!"
-				(captain setCycle: Beg)
-				(if local3
+				(LocPrint 4 117)
+				(captain setCycle: BegLoop)
+				(if egoSitting
 					(User canInput: 1)
 				else
 					(HandsOn)
 				)
-				(gEgo setMotion: 0)
+				(ego setMotion: 0)
 			)
 			(19
 				(HandsOff)
-				(= global164 1)
-				(captain setCycle: Beg)
+				(= talkedToCaptain 1)
+				(captain setCycle: BegLoop)
 				(blab
 					view: 65
 					loop: 1
 					posn: 48 112
 					setPri: 12
-					setCycle: Fwd
+					setCycle: Forward
 					cycleSpeed: 2
 					init:
 				)
 				(aTimer setCycle: self 18)
 			)
 			(20
-				(gEgo loop: 1)
-				(Print 4 118 #at -1 130 #draw) ; ""Keith just told me about the motel incident!" the Captain says in an excited voice."
-				(localproc_0 4 119) ; "Good thing Keith was there with you, keeping a cool head and following procedures."
+				(ego loop: 1)
+				(Print 4 118 #at -1 130 #draw)
+				(LocPrint 4 119)
 				(aTimer setCycle: self 18)
 			)
 			(21
-				(localproc_0 4 120) ; "The Captain continues... "I've been thinking....I don't like what I see.""
-				(localproc_0 4 121) ; "Point #1:" says Fletch, "The murder victim, Woody Roberts, testified against Bains at his trial last year."
+				(LocPrint 4 120)
+				(LocPrint 4 121)
 				(aTimer setCycle: self 18)
 			)
 			(22
-				(localproc_0 4 122) ; "Point #2:" he continues, "Bonds, you also testified against Bains last year."
+				(LocPrint 4 122)
 				(aTimer setCycle: self 18)
 			)
 			(23
-				(localproc_0 4 123) ; "Point #3: You were led into a booby trap at the motel. If you ask me," he says, "this whole thing is shaping up as a vendetta!"
+				(LocPrint 4 123)
 				(aTimer setCycle: self 18)
 			)
 			(24
-				(localproc_0 4 124) ; "In a worried tone of voice, the Captain says,"You boys better start digging. We appear to have a vengeful maniac on our hands!""
+				(LocPrint 4 124)
 				(blab dispose:)
-				(captain setCycle: Fwd)
+				(captain setCycle: Forward)
 				(HandsOn)
 			)
 			(25
-				(SetFlag 31)
+				(Bset fReportedMarieMissingToCaptain)
 				(bainsTheme play:)
 				(HandsOff)
-				(gEgo loop: 1)
-				(if (not (IsFlag 27))
-					(Print 4 125 #at -1 130 #draw) ; "Barely able to contain your emotions, you quickly tell Captain Hall about the signs of a struggle at Marie's."
+				(ego loop: 1)
+				(if (not (Btst fKidnappingReported))
+					(Print 4 125 #at -1 130 #draw)
 				)
-				(captain setCycle: End)
+				(captain setCycle: EndLoop)
 				(aTimer setCycle: self 18)
 			)
 			(26
-				(gEgo loop: 1)
-				(Print 4 126 #at -1 130 #draw) ; ""Sorry to hear about Marie, Sonny," Captain Fletcher offers."
+				(ego loop: 1)
+				(Print 4 126 #at -1 130 #draw)
 				(aTimer setCycle: self 8)
 			)
 			(27
-				(localproc_0 4 127) ; "If you boys have a solid lead, now's the time to bring it up."
+				(LocPrint 4 127)
 				(blab hide:)
 				(HandsOn)
-				(= local7 1)
+				(= captainCanTalk 1)
 			)
 			(28
-				(blab show: setCycle: Fwd)
+				(blab show: setCycle: Forward)
 				(aTimer setCycle: self 9)
 			)
 			(29
-				(if (gEgo has: 13) ; hit_list
-					(localproc_0 4 128) ; "The Captain takes the victim list from you and begins to read."
+				(if (ego has: iHitList)
+					(LocPrint 4 128)
 				else
-					(localproc_0 4 129) ; "Captain Fletcher Hall says, "While you were out, I dug around in the files and came up with a list of folks who testified against Bains.""
-					(localproc_0 4 130) ; "They are..." he says, reading the list, "Woody Roberts, Don Colby, Marie Wilkans, and Sonny Bonds."
+					(LocPrint 4 129)
+					(LocPrint 4 130)
 				)
 				(aTimer setCycle: self 12)
 			)
 			(30
-				(Print 4 131 #at -1 120) ; "Huummm," the Captain mumbles. "Everyone on this list testified against Bains, and are now either dead or missing. Except you and Colby."
-				(localproc_0 4 132) ; "The question is, Sonny: will he go after you or Colby next?"
+				(Print 4 131 #at -1 120)
+				(LocPrint 4 132)
 				(aTimer setCycle: self 18)
 			)
 			(31
-				(cond
-					((gEgo has: 35) ; Colby_s_business_card
-						(localproc_0 4 133) ; "Captain Hall takes the card from you. "So, Bains knows where Colby is!""
-						(localproc_0 4 134) ; "This chump Bains," he continues, "most likely has kidnapped Marie to use her as a hostage. He's trying to sucker you into another set-up, Bonds."
-						(localproc_0 4 135) ; "A maniac like Bains is hard to read, boys," Captain Hall muses. "You've got a blank check to proceed however you feel is best."
+				(cond 
+					((ego has: iColbyCard)
+						(LocPrint 4 133)
+						(LocPrint 4 134)
+						(LocPrint 4 135)
 					)
-					((IsFlag 136)
-						(localproc_0 4 136) ; "I've looked over the evidence and see that Bains now knows where Colby is."
-						(localproc_0 4 134) ; "This chump Bains," he continues, "most likely has kidnapped Marie to use her as a hostage. He's trying to sucker you into another set-up, Bonds."
-						(localproc_0 4 135) ; "A maniac like Bains is hard to read, boys," Captain Hall muses. "You've got a blank check to proceed however you feel is best."
+					((Btst fBookedColbyCard)
+						(LocPrint 4 136)
+						(LocPrint 4 134)
+						(LocPrint 4 135)
 					)
-					(else
-						(localproc_0 4 137) ; "Colby's where-abouts are unknown to Bains," Captain Hall thinks aloud, "so Bains will probably stick around to take another crack at you, Sonny."
-					)
+					(else (LocPrint 4 137))
 				)
 				(aTimer setCycle: self 18)
 			)
 			(32
-				(if (or (gEgo has: 35) (IsFlag 136)) ; Colby_s_business_card
-					(= global100 13)
+				(if (or (ego has: iColbyCard) (Btst fBookedColbyCard))
+					(= gamePhase 13)
 				)
-				(if (or (gEgo has: 35) (gEgo has: 13)) ; Colby_s_business_card, hit_list
-					(if (gEgo has: 35) ; Colby_s_business_card
-						(PutItem 35 2) ; Colby_s_business_card
+				(if (or (ego has: iColbyCard) (ego has: iHitList))
+					(if (ego has: iColbyCard)
+						(PutInRoom iColbyCard 2)
 					)
-					(if (gEgo has: 13) ; hit_list
-						(PutItem 13 2) ; hit_list
+					(if (ego has: iHitList)
+						(PutInRoom iHitList 2)
 					)
-					(localproc_0 4 138) ; "I'll book this evidence for you. You'd better decide what to do next... and FAST!"
+					(LocPrint 4 138)
 				)
-				(captain setCycle: Beg)
+				(captain setCycle: BegLoop)
 			)
 		)
 	)
@@ -1397,19 +1533,18 @@
 
 (instance keithScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(User canInput: 0 canControl: 0)
-				(= global163 1)
-				(Print 4 139 #at 110 40 #draw) ; "Your partner Keith takes a deep puff and says:"
-				(Print 4 140 #at 110 40) ; "Say, Sonny...I heard that dirtbag you sent up the river last year is back in town for retrial. Isn't his name Bains, or something like that?"
-				(Print 4 141 #at 110 40) ; "Maybe this time you can put him away for the duration."
-				(Print 4 142 #at 110 40) ; "It just seems like the garbage of this world gets every chance known to man."
+				(= talkedToKeith 1)
+				(Print 4 139 #at 110 40 #draw)
+				(Print 4 140 #at 110 40)
+				(Print 4 141 #at 110 40)
+				(Print 4 142 #at 110 40)
 				(User canInput: 1 canControl: 1)
 			)
 		)
 	)
 )
-

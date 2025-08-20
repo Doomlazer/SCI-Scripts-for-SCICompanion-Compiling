@@ -1,11 +1,10 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 77)
 (include sci.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Wander)
-(use Avoid)
+(use Avoider)
 (use Sound)
 (use Motion)
 (use User)
@@ -17,36 +16,48 @@
 )
 
 (local
-	local0
-	local1
-	local2
+	keithIsHere
+	muggerGone
+	mugger
 	local3
-	local4
-	local5
-	local6
+	toldMuggerToHalt
+	calledKeith
+	muggerScared
 	local7
 	local8
 	local9
-	local10
+	newProp
 	local11
 	local12
-	local13
-	local14
+	egoX
+	egoY
 	local15
-	local16
+	readMuggerRights
 	local17
 )
-
-(procedure (localproc_0)
+(procedure (localproc_0036)
 	(Print &rest #at -1 15)
 )
 
-(procedure (localproc_1 param1 param2)
-	(DirLoop param1 (GetAngle (param1 x:) (param1 y:) (param2 x:) (param2 y:)))
+(procedure (localproc_0045 param1 param2)
+	(DirLoop
+		param1
+		(GetAngle
+			(param1 x?)
+			(param1 y?)
+			(param2 x?)
+			(param2 y?)
+		)
+	)
 	(if (== argc 3)
 		(DirLoop
 			param2
-			(GetAngle (param2 x:) (param2 y:) (param1 x:) (param1 y:))
+			(GetAngle
+				(param2 x?)
+				(param2 y?)
+				(param1 x?)
+				(param1 y?)
+			)
 		)
 	)
 )
@@ -59,205 +70,43 @@
 
 (instance muggerScript of Script
 	(properties)
-
+	
 	(method (doit)
-		(if (and (or global204 local4 local5) local8 (not local6))
-			(= local6 1)
+		(if
+			(and
+				(or gunDrawn toldMuggerToHalt calledKeith)
+				local8
+				(not muggerScared)
+			)
+			(= muggerScared 1)
 			(= local12 1)
 			(muggerScript changeState: 9)
 		)
 		(super doit:)
 	)
-
+	
 	(method (dispose)
 		(DisposeScript 77)
 	)
-
-	(method (handleEvent event)
-		(switch (event type:)
-			(evSAID
-				(cond
-					((Said 'look>')
-						(cond
-							((Said '/man,mugger,punk,suspect,hair')
-								(localproc_0 77 0) ; "He sure is UGLY!"
-							)
-							((Said '/friend')
-								(localproc_0 77 1) ; "Good old Keith!"
-							)
-							((Said '/*')
-								(localproc_0 77 2) ; "You keep your eyes on the unusual-looking individual."
-							)
-						)
-					)
-					((Said 'talk/friend')
-						(if local0
-							(localproc_0 77 3) ; "Good going, partner!"
-						else
-							(localproc_0 77 4) ; "He's not here."
-						)
-					)
-					((Said 'freeze')
-						(if (gCast contains: local2)
-							(if (<= (local2 distanceTo: gEgo) 50)
-								(= local4 1)
-								(localproc_0 77 5) ; "Acting fast, you whip out your badge and identify yourself."
-							else
-								(localproc_0 77 6) ; "The man just runs at you."
-							)
-						else
-							(localproc_0 77 7) ; "Your voice is lost in the vastness of the park."
-						)
-					)
-					((Said 'show/badge,badge')
-						(if
-							(and
-								(gCast contains: local2)
-								(<= (local2 distanceTo: gEgo) 50)
-							)
-							(= local4 1)
-							(localproc_0 77 5) ; "Acting fast, you whip out your badge and identify yourself."
-						else
-							(localproc_0 77 8) ; "Nobody can see your badge right now."
-						)
-					)
-					(
-						(or
-							(Said 'call,extender/backup,friend')
-							(Said '(key<up),use/(extender,talkie)')
-						)
-						(if (gEgo has: 30) ; walkie_talkie
-							(cond
-								(local0
-									(localproc_0 77 9) ; "Who're you calling? Keith's here."
-								)
-								((and local3 (not local6))
-									(if (not local5)
-										(SetScore 5)
-										(gContinuousMusic stop:)
-									)
-									(= local5 1)
-									(localproc_0 77 10) ; "You key up your walkie-talkie and radio for help from Keith."
-									(localproc_0 77 11) ; "The man sees you using the walkie-talkie. It scares him, so he runs off."
-								)
-								((and local3 local6 (not global237))
-									(if (not local5)
-										(SetScore 5)
-										(gContinuousMusic stop:)
-									)
-									(= local5 1)
-									(localproc_0 77 10) ; "You key up your walkie-talkie and radio for help from Keith."
-								)
-								(local1
-									(localproc_0 77 12) ; "The mugger's gone, Sonny. What's your story?"
-								)
-								(global237
-									(switch (Random 1 4)
-										(1
-											(localproc_0 77 13) ; "You key the walkie-talkie trying to raise Keith....you pause to listen, and then you hear..."
-											(localproc_0 77 14) ; "SCReech, SQuawk, SQuelch, SQuawk, SCReech..."
-											(localproc_0 77 15) ; "A lot of noise and no answer...you can't seem to get him."
-										)
-										(2
-											(localproc_0 77 16) ; "The only thing you hear is..."Shhhh! Don't call unless you need me!""
-										)
-										(3
-											(localproc_0 77 17) ; "You listen but he doesn't answer."
-										)
-										(4
-											(localproc_0 77 18) ; "After trying to raise Keith and getting a lot of static, you think to yourself.... "WHEW! This is one sorry radio.""
-										)
-									)
-								)
-								((not global237)
-									(localproc_0 77 19) ; "Calling for backup, already? What're you scared of, the flowers?"
-								)
-							)
-						else
-							(localproc_0 77 20) ; "You don't have a radio."
-						)
-					)
-					((Said 'extender/dispatch')
-						(localproc_0 77 21) ; "You only have walkie-talkies designed for local use."
-					)
-					((Said 'arrest,book,arrest/man,mugger,punk,suspect')
-						(if local0
-							(localproc_0 77 22) ; "Looks like he's in the bag already."
-						else
-							(localproc_0 77 23) ; "You have to stop him first."
-						)
-					)
-					((Said 'read,give/right,miranda')
-						(if local0
-							(if (not local16)
-								(SetScore 2)
-								(= local16 1)
-							)
-							(localproc_0 77 24) ; "Keith's already done that."
-						else
-							(localproc_0 77 25) ; "There's nobody there."
-						)
-					)
-					((Said 'give/cash')
-						(cond
-							((or (not local3) (not global237))
-								(localproc_0 77 25) ; "There's nobody there."
-							)
-							((and local3 (not local6))
-								(localproc_0 77 26) ; "Your a policeman! You shouldn't give in to criminals."
-							)
-							(else
-								(localproc_0 77 27) ; "You don't need to."
-							)
-						)
-					)
-					((Said 'interrogate,talk/man,mugger,punk,suspect')
-						(cond
-							((not local3)
-								(localproc_0 77 25) ; "There's nobody there."
-							)
-							(local1
-								(localproc_0 77 28) ; "He's off to jail, now. Besides, he wasn't a brilliant conversationalist the first time, anyway."
-							)
-							((and local0 (not local7))
-								(if (not local17)
-									(= local17 1)
-									(SetScore 2)
-								)
-								(localproc_0 77 29) ; "The mugger looks at you and says..."Listen, Pig, I ain't talking to nobody! You understand that?""
-								(= local7 1)
-							)
-							((and local0 local7)
-								(localproc_0 77 30) ; ""Talk's cheap, man!" the mugger says."
-							)
-							((and local3 (not local0))
-								(localproc_0 77 31) ; "It doesn't look like talking is this guy's specialty."
-							)
-						)
-					)
-				)
-			)
-		)
-	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(= global212 3)
+				(= gunFireState 3)
 				(= local8 1)
-				(if (!= (gContinuousMusic state:) 3)
-					(gContinuousMusic number: 40 loop: 1 play:)
+				(if (!= (cSound state?) 3)
+					(cSound number: 40 loop: 1 play:)
 				)
-				((= local2 (Act new:))
+				((= mugger (Actor new:))
 					view: 52
 					posn:
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 142)
 							(80 319)
 							(81 0)
 							(82 259)
 						)
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 219)
 							(80 133)
 							(81 185)
@@ -265,85 +114,85 @@
 						)
 					init:
 					setCycle: Walk
-					setMotion: Chase gEgo 18 self
-					setAvoider: (Avoid new:)
+					setMotion: Chase ego 18 self
+					setAvoider: (Avoider new:)
 					setStep: 6 4
 				)
 				(if global236
-					(switch gCurRoomNum
+					(switch curRoomNum
 						(80
-							(= local13 (+ (gEgo x:) 35))
-							(= local14 (gEgo y:))
+							(= egoX (+ (ego x?) 35))
+							(= egoY (ego y?))
 						)
 						(81
-							(= local13 (- (gEgo x:) 35))
-							(= local14 (gEgo y:))
+							(= egoX (- (ego x?) 35))
+							(= egoY (ego y?))
 						)
 						(82
-							(= local14 (+ (gEgo y:) 35))
-							(= local13 (gEgo x:))
+							(= egoY (+ (ego y?) 35))
+							(= egoX (ego x?))
 						)
 						(79
-							(switch gPrevRoomNum
+							(switch prevRoomNum
 								(80
-									(= local13 (- (gEgo x:) 35))
-									(= local14 (gEgo y:))
+									(= egoX (- (ego x?) 35))
+									(= egoY (ego y?))
 								)
 								(81
-									(= local13 (+ (gEgo x:) 35))
-									(= local14 (gEgo y:))
+									(= egoX (+ (ego x?) 35))
+									(= egoY (ego y?))
 								)
-								(else
-									(= local13 40)
-									(= local14 125)
+								(else 
+									(= egoX 40)
+									(= egoY 125)
 								)
 							)
 						)
 					)
-					(local2 posn: local13 local14)
+					(mugger posn: egoX egoY)
 				)
 				(if (not global236)
-					(localproc_0 77 32) ; "You notice that a man is approaching you."
-					(gEgo setMotion: 0)
-					(localproc_1 gEgo local2)
+					(localproc_0036 77 32)
+					(ego setMotion: 0)
+					(localproc_0045 ego mugger)
 					(= global236 1)
 				)
 				(= local3 1)
 			)
 			(1
 				(= local9 1)
-				(local2 view: 32)
+				(mugger view: 32)
 				(self cue:)
 			)
 			(2
-				(if (not (IsFlag 140))
-					(localproc_0 77 33 83) ; "Threatening you, the man says..."Give me all your money, dude, or I'll rip you apart with my bare hands.""
-					(SetFlag 140)
+				(if (not (Btst 140))
+					(localproc_0036 77 33 83)
+					(Bset 140)
 				)
-				(gEgo setMotion: 0)
-				(localproc_1 gEgo local2)
+				(ego setMotion: 0)
+				(localproc_0045 ego mugger)
 				(User canControl: 0)
 				(= cycles 70)
 			)
 			(3
 				(HandsOff)
-				(localproc_0 77 34 25 4) ; ""Let's have some fun, pal!" the mugger says."
+				(localproc_0036 77 34 25 4)
 				(self cue:)
 			)
 			(4
-				(gEgo dispose:)
-				(local2 hide:)
-				(gContinuousMusic fade:)
-				((= local10 (Prop new:))
+				(ego dispose:)
+				(mugger hide:)
+				(cSound fade:)
+				((= newProp (Prop new:))
 					view: 88
-					loop: (if (< (gEgo x:) (local2 x:)) 0 else 1)
+					loop: (if (< (ego x?) (mugger x?)) 0 else 1)
 					init:
-					posn: (gEgo x:) (gEgo y:)
-					setCycle: End self
+					posn: (ego x?) (ego y?)
+					setCycle: EndLoop self
 				)
 			)
 			(5
-				(local10 loop: 2 setCycle: Fwd)
+				(newProp loop: 2 setCycle: Forward)
 				(mugMusic play: self)
 			)
 			(6
@@ -351,181 +200,179 @@
 					view: 88
 					loop: 3
 					cel: 0
-					posn: (+ (local10 x:) 20) (local10 y:)
+					posn: (+ (newProp x?) 20) (newProp y?)
 					init:
 				)
-				(local2 show:)
-				(local10 dispose:)
+				(mugger show:)
+				(newProp dispose:)
 				(= cycles 20)
 			)
 			(7
-				(localproc_0 77 35 83) ; "The mugger seems to have had a little extra adrenaline pumping. He has managed to slap you into a deep coma."
+				(localproc_0036 77 35 83)
 				(self cue:)
 			)
-			(8
-				(EgoDead 77 36) ; "Next time, try to react a little faster. Use your equipment."
-			)
+			(8 (EgoDead 77 36))
 			(9
 				(User canControl: 1)
-				(local2
+				(mugger
 					view: 52
 					setStep: 6 4
 					setMotion:
 						MoveTo
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 142)
 							(80 319)
 							(81 0)
 							(82
-								(if (> (gEgo y:) 142) 121 else 259)
+								(if (> (ego y?) 142) 121 else 259)
 							)
 						)
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 219)
 							(80 133)
 							(81 167)
 							(82
-								(if (> (gEgo y:) 142) 215 else 125)
+								(if (> (ego y?) 142) 215 else 125)
 							)
 						)
 						self
 				)
 			)
 			(10
-				(if local5
-					(local2 hide:)
+				(if calledKeith
+					(mugger hide:)
 					(HandsOff)
 					(User canInput: 1)
 				else
-					(= global237 1)
-					(local2 dispose:)
+					(= muggerFleeing 1)
+					(mugger dispose:)
 				)
 				(= cycles 2)
 			)
 			(11
-				(localproc_0 77 37 83) ; "Evidently, the mugger doesn't like cops."
-				(if local5
+				(localproc_0036 77 37 83)
+				(if calledKeith
 					(= cycles 10)
 				else
 					(= local12 0)
-					(= global212 1)
+					(= gunFireState 1)
 					(= global236 0)
-					(gContinuousMusic fade:)
+					(cSound fade:)
 					(client setScript: 0)
 				)
 			)
 			(12
-				(localproc_0 77 38 83 25 10) ; "You hear heavy breathing, hacking, and coughing as Keith escorts the would-be mugger back to you."
+				(localproc_0036 77 38 83 25 10)
 				(self cue:)
 			)
 			(13
-				(gEgo
+				(ego
 					setMotion:
 						MoveTo
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 107)
 							(80 217)
 							(81 154)
 							(82
-								(if (> (gEgo y:) 150) 199 else 170)
+								(if (> (ego y?) 150) 199 else 170)
 							)
 						)
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 154)
 							(80 151)
 							(81 173)
 							(82
-								(if (> (gEgo y:) 150) 173 else 127)
+								(if (> (ego y?) 150) 173 else 127)
 							)
 						)
 						self
 				)
 			)
 			(14
-				(localproc_1 gEgo local2)
-				(local2
+				(localproc_0045 ego mugger)
+				(mugger
 					posn:
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 82)
 							(80 324)
 							(81 -9)
 							(82
-								(if (> (gEgo y:) 150) 86 else 261)
+								(if (> (ego y?) 150) 86 else 261)
 							)
 						)
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 234)
 							(80 149)
 							(81 170)
 							(82
-								(if (> (gEgo y:) 150) 232 else 130)
+								(if (> (ego y?) 150) 232 else 130)
 							)
 						)
 					view: 46
 					setStep: 3 2
 					setMotion:
 						MoveTo
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 97)
 							(80 240)
 							(81 126)
 							(82
-								(if (> (gEgo y:) 150) 172 else 189)
+								(if (> (ego y?) 150) 172 else 189)
 							)
 						)
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 164)
 							(80 149)
 							(81 170)
 							(82
-								(if (> (gEgo y:) 150) 169 else 130)
+								(if (> (ego y?) 150) 169 else 130)
 							)
 						)
 					show:
 				)
-				(= local0 1)
+				(= keithIsHere 1)
 				(= cycles 10)
 			)
 			(15
-				((= global112 (Act new:))
+				((= keith (Actor new:))
 					view: 20
 					illegalBits: 0
 					posn:
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 90)
 							(80 324)
 							(81 -9)
 							(82
-								(if (> (gEgo y:) 150) 83 else 261)
+								(if (> (ego y?) 150) 83 else 261)
 							)
 						)
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 238)
 							(80 157)
 							(81 178)
 							(82
-								(if (> (gEgo y:) 150) 233 else 124)
+								(if (> (ego y?) 150) 233 else 124)
 							)
 						)
 					init:
 					setCycle: Walk
-					setAvoider: (Avoid new:)
+					setAvoider: (Avoider new:)
 					setMotion:
 						MoveTo
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 112)
 							(80 247)
 							(81 136)
 							(82
-								(if (> (gEgo y:) 150) 182 else 200)
+								(if (> (ego y?) 150) 182 else 200)
 							)
 						)
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 172)
 							(80 157)
 							(81 178)
 							(82
-								(if (> (gEgo y:) 150) 175 else 124)
+								(if (> (ego y?) 150) 175 else 124)
 							)
 						)
 					ignoreActors:
@@ -535,78 +382,203 @@
 			)
 			(16
 				(User canInput: 1)
-				(localproc_0 77 39 83) ; "Breathing heavily, Keith says..."Sonny, I'm getting too old for this kind of stuff.""
+				(localproc_0036 77 39 83)
 				(= cycles 100)
 			)
 			(17
 				(if (not local7)
-					(localproc_0 77 40 25 8) ; "Well," Keith says, "if you won't talk to him, I will!"
-					(localproc_0 77 41) ; "The mugger says..."Listen, Pig, I ain't talking to nobody! You understand that?""
-					(localproc_0 77 42 25 8) ; "Keith pipes up and says..."I'll take our little mugger friend and turn him over to Steelton PD.""
+					(localproc_0036 77 40 25 8)
+					(localproc_0036 77 41)
+					(localproc_0036 77 42 25 8)
 					(self cue:)
 				else
-					(localproc_0 77 42 25 10) ; "Keith pipes up and says..."I'll take our little mugger friend and turn him over to Steelton PD.""
+					(localproc_0036 77 42 25 10)
 					(self cue:)
 				)
 			)
 			(18
-				(global112
+				(keith
 					setMotion:
 						MoveTo
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 85)
 							(80 324)
 							(81 -9)
 							(82
-								(if (> (gEgo y:) 150) 83 else 261)
+								(if (> (ego y?) 150) 83 else 261)
 							)
 						)
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 234)
 							(80 157)
 							(81 178)
 							(82
-								(if (> (gEgo y:) 150) 233 else 124)
+								(if (> (ego y?) 150) 233 else 124)
 							)
 						)
 						self
 				)
-				(local2
+				(mugger
 					setMotion:
 						MoveTo
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 78)
 							(80 324)
 							(81 -9)
 							(82
-								(if (> (gEgo y:) 150) 86 else 261)
+								(if (> (ego y?) 150) 86 else 261)
 							)
 						)
-						(switch gCurRoomNum
+						(switch curRoomNum
 							(79 234)
 							(80 149)
 							(81 170)
 							(82
-								(if (> (gEgo y:) 150) 232 else 130)
+								(if (> (ego y?) 150) 232 else 130)
 							)
 						)
 				)
 			)
 			(19
-				(= local0 0)
-				(gEgo illegalBits: $8000)
-				(global112 dispose:)
-				(local2 dispose:)
-				(= global212 1)
+				(= keithIsHere 0)
+				(ego illegalBits: -32768)
+				(keith dispose:)
+				(mugger dispose:)
+				(= gunFireState 1)
 				(client setScript: 0)
 				(= global236 0)
-				(= global237 1)
-				(= global238 1)
-				(gContinuousMusic fade:)
+				(= muggerFleeing 1)
+				(= muggerArrested 1)
+				(cSound fade:)
 				(HandsOn)
-				(= local1 1)
+				(= muggerGone 1)
+			)
+		)
+	)
+	
+	(method (handleEvent event)
+		(switch (event type?)
+			(evSAID
+				(cond 
+					((Said 'look>')
+						(cond 
+							((Said '/dude,mugger,punk,suspect,hair') (localproc_0036 77 0))
+							((Said '/friend') (localproc_0036 77 1))
+							((Said '/*') (localproc_0036 77 2))
+						)
+					)
+					((Said 'chat/friend')
+						(if keithIsHere
+							(localproc_0036 77 3)
+						else
+							(localproc_0036 77 4)
+						)
+					)
+					((Said 'freeze')
+						(if (cast contains: mugger)
+							(if (<= (mugger distanceTo: ego) 50)
+								(= toldMuggerToHalt 1)
+								(localproc_0036 77 5)
+							else
+								(localproc_0036 77 6)
+							)
+						else
+							(localproc_0036 77 7)
+						)
+					)
+					((Said 'display/badge,badge')
+						(if
+							(and
+								(cast contains: mugger)
+								(<= (mugger distanceTo: ego) 50)
+							)
+							(= toldMuggerToHalt 1)
+							(localproc_0036 77 5)
+						else
+							(localproc_0036 77 8)
+						)
+					)
+					(
+						(or
+							(Said 'call,extender/backup,friend')
+							(Said '(key<up),use/(extender,talkie)')
+						)
+						(if (ego has: 30)
+							(cond 
+								(keithIsHere (localproc_0036 77 9))
+								((and local3 (not muggerScared))
+									(if (not calledKeith) (SolvePuzzle 5) (cSound stop:))
+									(= calledKeith 1)
+									(localproc_0036 77 10)
+									(localproc_0036 77 11)
+								)
+								((and local3 muggerScared (not muggerFleeing))
+									(if (not calledKeith) (SolvePuzzle 5) (cSound stop:))
+									(= calledKeith 1)
+									(localproc_0036 77 10)
+								)
+								(muggerGone (localproc_0036 77 12))
+								(muggerFleeing
+									(switch (Random 1 4)
+										(1
+											(localproc_0036 77 13)
+											(localproc_0036 77 14)
+											(localproc_0036 77 15)
+										)
+										(2 (localproc_0036 77 16))
+										(3 (localproc_0036 77 17))
+										(4 (localproc_0036 77 18))
+									)
+								)
+								((not muggerFleeing) (localproc_0036 77 19))
+							)
+						else
+							(localproc_0036 77 20)
+						)
+					)
+					((Said 'extender/dispatch') (localproc_0036 77 21))
+					(
+					(Said 'arrest,book,arrest/dude,mugger,punk,suspect')
+						(if keithIsHere
+							(localproc_0036 77 22)
+						else
+							(localproc_0036 77 23)
+						)
+					)
+					((Said 'read,gave/right,miranda')
+						(if keithIsHere
+							(if (not readMuggerRights)
+								(SolvePuzzle 2)
+								(= readMuggerRights 1)
+							)
+							(localproc_0036 77 24)
+						else
+							(localproc_0036 77 25)
+						)
+					)
+					((Said 'gave/cash')
+						(cond 
+							((or (not local3) (not muggerFleeing)) (localproc_0036 77 25))
+							((and local3 (not muggerScared)) (localproc_0036 77 26))
+							(else (localproc_0036 77 27))
+						)
+					)
+					(
+					(Said 'interrogate,chat/dude,mugger,punk,suspect')
+						(cond 
+							((not local3) (localproc_0036 77 25))
+							(muggerGone (localproc_0036 77 28))
+							((and keithIsHere (not local7))
+								(if (not local17) (= local17 1) (SolvePuzzle 2))
+								(localproc_0036 77 29)
+								(= local7 1)
+							)
+							((and keithIsHere local7) (localproc_0036 77 30))
+							((and local3 (not keithIsHere)) (localproc_0036 77 31))
+						)
+					)
+				)
 			)
 		)
 	)
 )
-

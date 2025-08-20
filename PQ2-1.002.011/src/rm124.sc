@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 124)
 (include sci.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Sound)
 (use Motion)
 (use Game)
@@ -16,13 +15,12 @@
 )
 
 (local
-	local0
-	local1
-	local2
-	local3
-	[local4 3]
+	climbedUpLadder
+	triedToOpenManhole
+	bainsIsHere
+	bains
+	[sewage 3]
 )
-
 (instance bainsMusic of Sound
 	(properties
 		number 10
@@ -37,29 +35,27 @@
 	)
 )
 
-(instance rm124 of Rm
+(instance rm124 of Room
 	(properties
 		picture 203
-		style 0
+		style $0000
 	)
-
+	
 	(method (init)
 		(super init:)
-		(self setRegions: 205) ; sewer
+		(self setRegions: 205)
 		(Load rsVIEW 295)
 		(Load rsVIEW 15)
 		(Load rsVIEW 298)
-		(gEgo
+		(ego
 			x:
-				(cond
-					((== gPrevRoomNum 122)
-						(if (<= (gEgo x:) 220) 60 else 133)
-					)
-					((<= (gEgo x:) 120) 163)
+				(cond 
+					((== prevRoomNum 122) (if (<= (ego x?) 220) 60 else 133))
+					((<= (ego x?) 120) 163)
 					(else 292)
 				)
-			y: (if (== gPrevRoomNum 122) 87 else 180)
-			view: (if (not global204) 0 else 6)
+			y: (if (== prevRoomNum 122) 87 else 180)
+			view: (if (not gunDrawn) 0 else 6)
 			init:
 		)
 		(HandsOn)
@@ -82,123 +78,113 @@
 			init:
 			addToPic:
 		)
-		((= [local4 0] (Prop new:))
+		((= [sewage 0] (Prop new:))
 			view: 99
 			loop: 2
 			cel: 0
 			posn: 205 189
 			setPri: 0
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 3
 			ignoreActors: 1
 			init:
 		)
-		((= [local4 1] (Prop new:))
+		((= [sewage 1] (Prop new:))
 			view: 99
 			loop: 2
 			cel: 2
 			posn: 96 113
 			setPri: 0
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 3
 			ignoreActors: 1
 			init:
 		)
-		((= [local4 2] (Prop new:))
+		((= [sewage 2] (Prop new:))
 			view: 99
 			loop: 2
 			cel: 1
 			posn: 175 177
 			setPri: 0
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 3
 			ignoreActors: 1
 			init:
 		)
-		(if (< global110 60)
-			([local4 0] stopUpd:)
-			([local4 1] stopUpd:)
+		(if (< howFast 60)
+			([sewage 0] stopUpd:)
+			([sewage 1] stopUpd:)
 		)
-		(if (< global110 30)
-			([local4 2] stopUpd:)
-		)
-		(gRatObj
+		(if (< howFast 30) ([sewage 2] stopUpd:))
+		(sewerRat
 			name: 6
 			setLoop: 4
 			illegalBits: 0
 			posn: 232 93
 			ignoreActors: 1
 			init:
-			setMotion: MoveTo 400 149 gRatObj
+			setMotion: MoveTo 400 149 sewerRat
 		)
-		(gLightObj posn: 75 29 ignoreActors: 1 setPri: 14 init: stopUpd:)
-		(global115 posn: 155 59 ignoreActors: 1 init: stopUpd:)
+		(sewerLight
+			posn: 75 29
+			ignoreActors: 1
+			setPri: 14
+			init:
+			stopUpd:
+		)
+		(sewerLight2 posn: 155 59 ignoreActors: 1 init: stopUpd:)
 	)
-
+	
 	(method (doit)
-		(cond
-			(global139 0)
-			((<= (gEgo y:) 85)
-				(gCurRoom newRoom: 122)
-			)
-			((>= (gEgo y:) 190)
-				(gCurRoom newRoom: 127)
-			)
+		(cond 
+			(sewerCutscene 0)
+			((<= (ego y?) 85) (curRoom newRoom: 122))
+			((>= (ego y?) 190) (curRoom newRoom: 127))
 		)
 		(super doit:)
 	)
-
+	
 	(method (handleEvent event)
-		(switch (event type:)
+		(switch (event type?)
 			(evSAID
-				(cond
-					((Said 'look/ladder')
-						(Print 124 0) ; "It is an ordinary ladder."
-					)
+				(cond 
+					((Said 'look/ladder') (Print 124 0))
 					((Said 'open,remove,press,move/cover')
-						(if (not local0)
-							(Print 124 1) ; "You don't see that here."
+						(if (not climbedUpLadder)
+							(Print 124 1)
 						else
-							(Print 124 2) ; "You strain to open the heavy cover, but you only succeed in making a lot of noise."
-							(= local1 1)
+							(Print 124 2)
+							(= triedToOpenManhole 1)
 						)
 					)
 					((Said 'climb[/ladder]>')
-						(cond
+						(cond 
 							((Said '<down')
-								(if (not local0)
-									(Print 124 3) ; "You aren't on the ladder."
+								(if (not climbedUpLadder)
+									(Print 124 3)
 								else
-									(gEgo setScript: ladderScript)
+									(ego setScript: ladderScript)
 									(ladderScript changeState: 3)
 								)
 							)
 							((Said '<up')
-								(cond
-									((!= local0 0)
-										(Print 124 4) ; "You can't go up any farther."
-									)
-									((& (gEgo onControl: 1) $0080)
-										(gEgo setScript: ladderScript)
+								(cond 
+									((!= climbedUpLadder 0) (Print 124 4))
+									((& (ego onControl: 1) $0080)
+										(ego setScript: ladderScript)
 										(ladderScript changeState: 1)
 									)
-									(else
-										(proc0_7) ; "You're not close enough."
-									)
+									(else (NotClose))
 								)
 							)
 							((Said '[<!*]')
-								(cond
-									(local0
-										(gEgo setScript: ladderScript)
+								(cond 
+									(climbedUpLadder
+										(ego setScript: ladderScript)
 										(ladderScript changeState: 3)
 									)
-									((& (gEgo onControl: 1) $0080)
-										(ladderScript changeState: 1)
-									)
-									(else
-										(proc0_7) ; "You're not close enough."
-									)
+									((& (ego onControl: 1) $0080) (ladderScript changeState: 1))
+									(else (NotClose))
 								)
 							)
 						)
@@ -211,50 +197,50 @@
 
 (instance ladderScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(1
 				(HandsOff)
-				(= local0 1)
-				(= global204 0)
-				(gEgo
+				(= climbedUpLadder 1)
+				(= gunDrawn 0)
+				(ego
 					view: 295
 					loop: 1
 					cel: 0
 					ignoreActors: 1
 					illegalBits: 0
 					posn: 176 104
-					setCycle: CT 11 1 self
+					setCycle: CycleTo 11 1 self
 					setMotion: 0
 				)
 			)
 			(2
-				(Print 124 5) ; "Climbing the ladder, you come to a heavy steel manhole cover."
+				(Print 124 5)
 				(User canInput: 1)
 			)
 			(3
-				(gEgo loop: 3 setCycle: CT 7 1 self)
+				(ego loop: 3 setCycle: CycleTo 7 1 self)
 				(User canInput: 0)
 			)
 			(4
 				(HandsOn)
-				(gEgo
-					view: (if (not global204) 0 else 6)
+				(ego
+					view: (if (not gunDrawn) 0 else 6)
 					posn: 152 100
 					loop: 2
 					cel: 0
 					setCycle: Walk
-					illegalBits: $8000
+					illegalBits: -32768
 					ignoreActors: 0
 				)
-				(= local0 0)
+				(= climbedUpLadder 0)
 				(self changeState: 0)
-				(if (and (not local2) local1)
-					(= local1 0)
-					(= local2 1)
+				(if (and (not bainsIsHere) triedToOpenManhole)
+					(= triedToOpenManhole 0)
+					(= bainsIsHere 1)
 					(bainsMusic play:)
-					((= local3 (Act new:))
+					((= bains (Actor new:))
 						view: 14
 						setLoop: 1
 						cel: 0
@@ -267,7 +253,7 @@
 						setScript: ambushScript
 					)
 				)
-				(gEgo setScript: 0)
+				(ego setScript: 0)
 			)
 		)
 	)
@@ -275,46 +261,44 @@
 
 (instance ambushScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
-			(0
-				(= cycles (Random 20 30))
-			)
+			(0 (= cycles (Random 20 30)))
 			(1
-				(if global106
+				(if isHandsOff
 					(= cycles 4)
 					(-- state)
 				else
 					(HandsOff)
-					(local3 setMotion: MoveTo 290 190 self)
-					(gEgo setCycle: 0)
+					(bains setMotion: MoveTo 290 190 self)
+					(ego setCycle: 0)
 				)
 			)
 			(2
-				(local3 view: 15 cel: 0 setCycle: End self)
+				(bains view: 15 cel: 0 setCycle: EndLoop self)
 				(bainsGunFire play:)
 			)
 			(3
-				(if (or global204 (>= (Random 0 10) 5))
+				(if (or gunDrawn (>= (Random 0 10) 5))
 					(self changeState: 10)
 				else
 					(self changeState: 4)
 				)
 			)
 			(4
-				(gEgo
+				(ego
 					illegalBits: 0
 					view: 298
 					loop: 1
-					posn: (- (gEgo x:) 5) (gEgo y:)
+					posn: (- (ego x?) 5) (ego y?)
 				)
-				(local3 view: 13)
+				(bains view: 13)
 				(RedrawCast)
-				(EgoDead 124 6) ; "Unfortunately the noise alerted Bains, and you were caught by his ambush."
+				(EgoDead 124 6)
 			)
 			(10
-				(local3
+				(bains
 					view: 14
 					setLoop: 0
 					setCycle: Walk
@@ -327,11 +311,10 @@
 			)
 			(12
 				(HandsOn)
-				(gEgo setMotion: 0 setCycle: Walk)
-				(Print 124 7) ; "The noise you made alerted Bains, but fortunately he missed and fled."
-				(local3 dispose:)
+				(ego setMotion: 0 setCycle: Walk)
+				(Print 124 7)
+				(bains dispose:)
 			)
 		)
 	)
 )
-

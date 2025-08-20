@@ -1,10 +1,10 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 17)
-(include sci.sh)
+(include system.sh)
+(include game.sh)
 (use Main)
-(use Interface)
-(use Avoid)
+(use Intrface)
+(use Avoider)
 (use Motion)
 (use Game)
 (use User)
@@ -16,47 +16,40 @@
 )
 
 (local
-	local0
-	local1
-	local2
+	escalator1
+	escalator2
+	nearCounter
 	local3
-	local4
-	local5
+	whichAgent ;female: 1, male: 2
+	scruffy
 	local6
-	local7
+	seenList
 	local8
-	local9
+	wrongEscalator
 	local10
 	local11
 )
-
-(procedure (localproc_0)
+(procedure (LocPrint)
 	(Print &rest #at -1 15)
 )
 
-(instance rm17 of Rm
+(instance rm17 of Room
 	(properties
 		picture 17
-		style 0
+		style HWIPE
 	)
-
-	(method (dispose)
-		(scruffyScript dispose:)
-		(agentScript dispose:)
-		(super dispose:)
-	)
-
+	
 	(method (init)
 		(super init:)
-		(= gPerspective 70)
+		(= perspective 70)
 		(User canInput: 1 canControl: 1)
-		(= global212 3)
-		(= global211 1)
-		(Load rsVIEW 1)
-		(Load rsVIEW 20)
-		(Load rsVIEW 78)
-		(Load rsVIEW 77)
-		((= local5 (Act new:))
+		(= gunFireState gunPROHIBITED)
+		(= gunNotNeeded 1)
+		(Load VIEW 1)
+		(Load VIEW 20)
+		(Load VIEW 78)
+		(Load VIEW 77)
+		((= scruffy (Actor new:))
 			view: 78
 			setLoop: 1
 			init:
@@ -81,22 +74,22 @@
 			setPri: 6
 			addToPic:
 		)
-		((= local0 (Prop new:))
+		((= escalator1 (Prop new:))
 			view: 78
 			loop: 3
 			posn: 80 125
 			setPri: 5
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 1
 			ignoreActors:
 			init:
 		)
-		((= local1 (Prop new:))
+		((= escalator2 (Prop new:))
 			view: 78
 			loop: 4
 			posn: 54 139
 			setPri: 9
-			setCycle: Rev
+			setCycle: Reverse
 			cycleSpeed: 1
 			init:
 			ignoreActors:
@@ -137,92 +130,136 @@
 			setPri: 7
 			addToPic:
 		)
-		((View new:) view: 78 loop: 0 cel: 6 posn: 158 119 init: addToPic:)
-		((View new:) view: 77 loop: 8 cel: 0 posn: 267 116 init: addToPic:)
-		((View new:) view: 77 loop: 8 cel: 1 posn: 282 115 init: addToPic:)
+		((View new:)
+			view: 78
+			loop: 0
+			cel: 6
+			posn: 158 119
+			init:
+			addToPic:
+		)
+		((View new:)
+			view: 77
+			loop: 8
+			cel: 0
+			posn: 267 116
+			init:
+			addToPic:
+		)
+		((View new:)
+			view: 77
+			loop: 8
+			cel: 1
+			posn: 282 115
+			init:
+			addToPic:
+		)
 		(self setLocales: 153)
 		(self setScript: rm17Script)
+	)
+	
+	(method (dispose)
+		(scruffyScript dispose:)
+		(agentScript dispose:)
+		(super dispose:)
 	)
 )
 
 (instance rm17Script of Script
 	(properties)
-
+	
 	(method (doit)
-		(cond
-			((>= (gEgo x:) 320)
-				(= gPerspective 0)
-				(gCurRoom newRoom: 16)
+		(cond 
+			((>= (ego x?) 320)
+				(= perspective 0)
+				(curRoom newRoom: 16)
 			)
-			((and (< (gEgo x:) 31) (> (gEgo y:) 150))
-				(localproc_0 17 0) ; "There's nothing to be seen back here."
-				(gEgo setMotion: MoveTo 150 (gEgo y:))
+			(
+				(and
+					(< (ego x?) 31)
+					(> (ego y?) 150)
+				)
+				(LocPrint 17 0)
+				(ego setMotion: MoveTo 150 (ego y?))
 			)
-			((> (gEgo y:) 180)
-				(localproc_0 17 0) ; "There's nothing to be seen back here."
-				(gEgo setMotion: MoveTo (gEgo x:) 150)
+			((> (ego y?) 180)
+				(LocPrint 17 0)
+				(ego setMotion: MoveTo (ego x?) 150)
 			)
-			((and local11 (not local9) (== (gEgo onControl: 1) 8192))
-				(localproc_0 17 1) ; "When you were a kid, it was fun to go up the down escalator, but now you realize that it could be dangerous, so you back off."
-				(= local9 1)
-				(gEgo cel: 6)
+			(
+				(and
+					local11
+					(not wrongEscalator)
+					(== (ego onControl: 1) cLMAGENTA)
+				)
+				(LocPrint 17 1)
+				(= wrongEscalator 1)
+				(ego cel: 6)
 			)
-			((and local9 (!= (gEgo onControl: 1) 8192))
-				(= local9 0)
+			(
+				(and
+					wrongEscalator
+					(!= (ego onControl: 1) cLMAGENTA)
+				)
+				(= wrongEscalator 0)
 			)
-			((and (== (gEgo onControl: 1) 16384) local11)
+			(
+				(and
+					(== (ego onControl: 1) cYELLOW)
+					local11
+				)
 				(= local10 1)
 				(self changeState: 5)
 			)
 		)
-		(cond
-			((gEgo inRect: 134 116 185 124)
-				(if (!= local4 1)
-					(= local4 1)
+		(cond 
+			((ego inRect: 134 116 185 124)
+				(if (!= whichAgent 1)
+					(= whichAgent 1)
 				)
 			)
-			((gEgo inRect: 185 116 226 124)
-				(if (!= local4 2)
-					(= local4 2)
+			((ego inRect: 185 116 226 124)
+				(if (!= whichAgent 2)
+					(= whichAgent 2)
 				)
 			)
 			(else
-				(= local4 0)
+				(= whichAgent 0)
 			)
 		)
 		(super doit:)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(SL enable:)
-				(if (== gPrevRoomNum 16)
+				(StatusLine enable:)
+				(if (== prevRoomNum 16)
 					(User prevDir: 7)
-					(gEgo
-						view: (if global204 7 else 1)
+					(ego
+						view: (if gunDrawn 7 else 1)
 						posn: 318 145
 						init:
 						setMotion: MoveTo 50 145
 					)
 					(= local11 1)
-					(if (IsFlag 40)
-						((= global112 (Act new:))
+					(if (Btst fKeithFollows)
+						((= keith (Actor new:))
 							view: 20
 							loop: 0
 							cel: 7
-							posn: (+ (gEgo x:) 42) (gEgo y:)
-							setAvoider: (Avoid new:)
+							posn: (+ (ego x?) 42) (ego y?)
+							setAvoider: (Avoider new:)
 							setCycle: Walk
-							illegalBits: $9000
+							illegalBits: -28672
 							init:
-							setMotion: Follow gEgo 40
+							setMotion: Follow ego 40
 						)
 					)
 				else
 					(HandsOff)
-					(gEgo
-						view: (if global204 7 else 1)
+					(ego
+						view: (if gunDrawn 7 else 1)
 						setLoop: 0
 						cel: 7
 						posn: 20 98
@@ -236,7 +273,7 @@
 				)
 			)
 			(1
-				(gEgo
+				(ego
 					setLoop: -1
 					setCel: -1
 					setCycle: Walk
@@ -244,17 +281,17 @@
 				)
 			)
 			(2
-				(gEgo
+				(ego
 					ignoreActors: 0
-					illegalBits: $8000
+					illegalBits: -32768
 					setPri: -1
 					setMotion: MoveTo 700 134
 				)
 				(= local11 1)
 				(HandsOn)
 				(User prevDir: 3)
-				(if (IsFlag 40)
-					((= global112 (Act new:))
+				(if (Btst fKeithFollows)
+					((= keith (Actor new:))
 						view: 20
 						setLoop: 0
 						cel: 7
@@ -269,16 +306,16 @@
 			)
 			(3
 				(if local10
-					(global112
+					(keith
 						setLoop: -1
 						setCel: -1
 						setCycle: Walk
 						setPri: -1
-						illegalBits: $8000
-						setMotion: Follow gEgo 30
+						illegalBits: cWHITE ;-32768
+						setMotion: Follow ego 30
 					)
 				else
-					(global112
+					(keith
 						setLoop: -1
 						setCel: -1
 						setCycle: Walk
@@ -287,11 +324,14 @@
 				)
 			)
 			(4
-				(global112 illegalBits: $9000 setMotion: Follow gEgo 40)
+				(keith
+					illegalBits: cWHITE ;also cWhite I guess? was -28672
+					setMotion: Follow ego 40
+				)
 			)
 			(5
 				(HandsOff)
-				(gEgo
+				(ego
 					setStep: 4 4
 					setPri: 8
 					illegalBits: 0
@@ -301,100 +341,108 @@
 				)
 			)
 			(6
-				(= gPerspective 0)
-				(gCurRoom newRoom: 20)
-				(gContinuousMusic fade:)
+				(= perspective 0)
+				(curRoom newRoom: 20)
+				(cSound fade:)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(switch (event type:)
-			(evSAID
-				(cond
-					((Said 'show/mugshot,painting,(shot<mug)')
+		(switch (event type?)
+			(saidEvent
+				(cond 
+					((Said 'display/mugshot,painting,(shot<mug)')
 						(agentScript changeState: 2)
 					)
 					((Said 'look,read/sign')
-						(localproc_0 17 2) ; "In big letters, the rental agency's name is 'SIVA'."
+						(LocPrint 17 2)
 					)
 					((Said 'look>')
-						(cond
+						(cond 
 							((Said '/flyer,ad,schedule,law')
-								(localproc_0 17 3) ; "The usual advertisement posters, rate schedules, and rules and regulations. Nothing special."
+								(LocPrint 17 3)
 							)
 							((Said '/escalator')
-								(localproc_0 17 4) ; "Nothing unusual about it. You ride up one side, and down the other."
+								(LocPrint 17 4)
 							)
 							((Said '/stair')
-								(localproc_0 17 5) ; "That's an escalator."
+								(LocPrint 17 5)
 							)
-							((or (Said '<up') (Said '/ceiling,light'))
-								(localproc_0 17 6) ; "No problem with the lights."
+							(
+								(or
+									(Said '<up')
+									(Said '/ceiling,light')
+								)
+								(LocPrint 17 6)
 							)
-							((or (Said '<down') (Said '/floor'))
-								(localproc_0 17 7) ; "You think to yourself, "Nice floor.""
+							(
+								(or
+									(Said '<down')
+									(Said '/floor')
+								)
+								(LocPrint 17 7)
 							)
 							((Said '/pane')
-								(if (== (gEgo loop:) 2)
-									(localproc_0 17 8) ; "Through the window and across the street, the parking lot seems to go on forever."
+								(if (== (ego loop?) 2)
+									(LocPrint 17 8)
 								else
-									(localproc_0 17 9) ; "You see an airliner parked in the passenger loading zone."
+									(LocPrint 17 9)
 								)
 							)
 							((Said '/rope')
-								(localproc_0 17 10) ; "It's a velveteen braided rope similar to the ones found in some movie theaters."
+								(LocPrint 17 10)
 							)
 							((Said '[<at,around][/!*,chamber,building]')
-								(localproc_0 17 11) ; "Looking around you see see a car rental agency near the escalator."
+								(LocPrint 17 11)
 							)
-							((Said '/man,person')
-								(cond
-									((<= (local5 distanceTo: gEgo) 50)
-										(localproc_0 17 12) ; "He sure is scruffy-looking for a businessman."
+							((Said '/dude,person')
+								(cond 
+									((<= (scruffy distanceTo: ego) 50)
+										(LocPrint 17 12)
 									)
-									((== local4 1)
-										(localproc_0 17 13) ; "The customer sure is a well-tailored fellow....Why, isn't that Donald Trump?!?"
+									((== whichAgent 1)
+										(LocPrint 17 13)
 									)
-									((== local4 0)
-										(localproc_0 17 14) ; "You look at nothing in particular."
+									((== whichAgent 0)
+										(LocPrint 17 14)
 									)
-									((gEgo inRect: 143 117 185 124)
-										(localproc_0 17 13) ; "The customer sure is a well-tailored fellow....Why, isn't that Donald Trump?!?"
+									((ego inRect: 143 117 185 124)
+										(LocPrint 17 13)
 									)
 									(else
-										(localproc_0 17 15) ; "The car rental agent kind of looks like your ex-girlfriend's husband."
+										(LocPrint 17 15)
 									)
 								)
 							)
 							((Said '/agency,auto,rental,counter')
-								(localproc_0 17 16) ; "There are two agents behind the counter at the Siva Car Rental agency."
+								(LocPrint 17 16)
 							)
 							((Said '/agent')
-								(cond
-									((== local4 1)
-										(localproc_0 17 17) ; "The girl who works at at the car rental counter is pleasingly plump."
+								(cond 
+									((== whichAgent 1)
+										(LocPrint 17 17)
 									)
-									((== local4 2)
-										(localproc_0 17 15) ; "The car rental agent kind of looks like your ex-girlfriend's husband."
+									((== whichAgent 2)
+										(LocPrint 17 15)
 									)
 									(else
-										(localproc_0 17 16) ; "There are two agents behind the counter at the Siva Car Rental agency."
+										(LocPrint 17 16)
 									)
 								)
 							)
-							((Said '/woman,woman')
-								(if (< (gEgo y:) 137)
-									(localproc_0 17 17) ; "The girl who works at at the car rental counter is pleasingly plump."
+							((Said '/broad,broad')
+								(if (< (ego y?) 137)
+									(LocPrint 17 17)
 								else
-									(localproc_0 17 14) ; "You look at nothing in particular."
+									(LocPrint 17 14)
 								)
 							)
 							((Said '/passenger,customer[<rental]')
-								(if (< (gEgo y:) 137)
-									(localproc_0 17 13) ; "The customer sure is a well-tailored fellow....Why, isn't that Donald Trump?!?"
+								(if (< (ego y?) 137)
+									(LocPrint 17 13)
 								else
-									(localproc_0 17 14) ; "You look at nothing in particular."
+									(LocPrint 17 14)
 								)
 							)
 							(
@@ -403,143 +451,149 @@
 									(Said '/agreement[<rental]')
 									(Said '/rental')
 								)
-								(if (gEgo inRect: 124 116 218 124)
+								(if (ego inRect: 124 116 218 124)
 									(agentScript changeState: 1)
 								else
-									(localproc_0 17 14) ; "You look at nothing in particular."
+									(LocPrint 17 14)
 								)
 							)
 						)
 					)
 					((Said 'ask/auto')
-						(localproc_0 17 18) ; "There are lots of cars outside."
+						(LocPrint 17 18)
 					)
 					(
 						(or
-							(Said
-								'show,get,see,ask/list[<customer,rental,auto]'
-							)
-							(Said '[show,get,see,ask]/list,agreement,rental')
-							(Said 'show,get,see,ask/me/list,rental,agreement')
-							(Said 'talk,ask/agent/customer,rental,list,auto')
+							(Said 'display,get,see,ask/list[<customer,rental,auto]')
+							(Said '[display,get,see,ask]/list,agreement,rental')
+							(Said 'display,get,see,ask/i/list,rental,agreement')
+							(Said 'chat,ask/agent/customer,rental,list,auto')
 						)
-						(if (gEgo inRect: 124 116 218 124)
+						(if (ego inRect: 124 116 218 124)
 							(agentScript changeState: 1)
 						else
-							(localproc_0 17 19) ; "No one can hear you from where you're standing."
+							(LocPrint 17 19)
 						)
 					)
-					((Said 'talk>')
-						(cond
-							((or (Said '/agent[<rental]') (Said '/woman,woman'))
-								(cond
-									((== local4 0)
-										(localproc_0 17 19) ; "No one can hear you from where you're standing."
+					((Said 'chat>')
+						(cond 
+							(
+								(or
+									(Said '/agent[<rental]')
+									(Said '/broad,broad')
+								)
+								(cond 
+									((== whichAgent 0)
+										(LocPrint 17 19)
 									)
-									((and (not local2) (not local3))
+									(
+										(and
+											(not nearCounter)
+											(not local3)
+										)
 										(agentScript changeState: 0)
 									)
 									(else
-										(localproc_0 17 20) ; ""Is there anything in particular you wanted to talk about?" the rental agent says."
+										(LocPrint 17 20)
 									)
 								)
 							)
-							((Said '/man,men')
-								(cond
+							((Said '/dude,men')
+								(cond 
 									(
 										(or
-											(gEgo inRect: 143 117 185 124)
-											(== local4 1)
+											(ego inRect: 143 117 185 124)
+											(== whichAgent 1)
 										)
-										(localproc_0 17 21) ; "The suave-looking customer says, "Have you seen what I've done with Manhattan Island? It's pure quality...pure quality!""
+										(LocPrint 17 21)
 									)
-									((== local4 2)
-										(if (and (not local2) (not local3))
+									((== whichAgent 2)
+										(if
+											(and
+												(not nearCounter)
+												(not local3)
+											)
 											(agentScript changeState: 0)
 										else
-											(localproc_0 17 20) ; ""Is there anything in particular you wanted to talk about?" the rental agent says."
+											(LocPrint 17 20)
 										)
 									)
 									(
 										(and
-											(< (gEgo y:) 134)
-											(> (gEgo x:) 226)
+											(< (ego y?) 134)
+											(> (ego x?) 226)
 										)
-										(localproc_0 17 22) ; "These guys don't seem to be listening."
+										(LocPrint 17 22)
 									)
-									((<= (local5 distanceTo: gEgo) 50)
-										(localproc_0 17 23) ; ""Mmpf..spst..lousy connecting flights..spfts..call my boss.. grmbl..spft" the scruffy-looking man mutters under his breath."
+									((<= (scruffy distanceTo: ego) 50)
+										(LocPrint 17 23)
 									)
 									(else
-										(localproc_0 17 19) ; "No one can hear you from where you're standing."
+										(LocPrint 17 19)
 									)
 								)
 							)
 							((Said '/passenger,customer[<rental]')
-								(if (gEgo inRect: 143 117 185 124)
-									(localproc_0 17 21) ; "The suave-looking customer says, "Have you seen what I've done with Manhattan Island? It's pure quality...pure quality!""
+								(if (ego inRect: 143 117 185 124)
+									(LocPrint 17 21)
 								else
-									(localproc_0 17 19) ; "No one can hear you from where you're standing."
+									(LocPrint 17 19)
 								)
 							)
 						)
 					)
-					((Said 'show,flash/badge')
-						(if (gEgo has: 7) ; wallet
-							(if (gEgo inRect: 124 116 218 124)
-								(= local2 1)
+					((Said 'display,flash/badge')
+						(if (ego has: iWallet)
+							(if (ego inRect: 124 116 218 124)
+								(= nearCounter 1)
 							)
-							(cond
-								((== local4 1)
-									(localproc_0 17 24) ; "You show your badge to the car rental agent, and she says... "Yes sir, Officer Bonds! What can I do for you?""
+							(cond 
+								((== whichAgent 1)
+									(LocPrint 17 24)
 								)
-								((== local4 2)
-									(localproc_0 17 25) ; "You show your badge to the car rental agent, and he says... "Yes sir, Officer Bonds! What can I do for you?""
+								((== whichAgent 2)
+									(LocPrint 17 25)
 								)
-								((<= (local5 distanceTo: gEgo) 50)
-									(localproc_0 17 26) ; "So you're a cop....ask me if I care! I'm too tired to care!"
+								((<= (scruffy distanceTo: ego) 50)
+									(LocPrint 17 26)
 								)
 								(else
-									(localproc_0 17 27) ; "No one can see your shield from where you're standing."
+									(LocPrint 17 27)
 								)
 							)
 						else
-							(localproc_0 17 28) ; "You don't have your identification with you."
+							(LocPrint 17 28)
 						)
-					)
-					((Said 'arrest/agent,man,woman,customer,passenger,woman')
-						(localproc_0 17 29) ; "You're losing it, friend. Better back off."
 					)
 					(
-						(Said
-							'frisk,arrest/agent,man,woman,woman,customer,passenger'
-						)
-						(localproc_0 17 30) ; "You have no reason to do that. Try to conduct yourself in a professional manner."
+					(Said 'arrest/agent,dude,broad,customer,passenger,broad')
+						(LocPrint 17 29)
 					)
 					(
-						(Said
-							'kill,fire,hit/agent,man,customer,passenger,woman,woman'
-						)
-						(localproc_0 17 31) ; "That's a good way for you to wind up making license plates."
+						(Said 'frisk,arrest/agent,dude,broad,broad,customer,passenger')
+						(LocPrint 17 30)
+					)
+					((Said 'kill,fire,beat/agent,dude,customer,passenger,broad,broad')
+						(LocPrint 17 31)
 					)
 					((Said 'rent[/auto,bus,bicycle]')
-						(localproc_0 17 32) ; "Why in the world would you want to do that?? Your own car is outside."
+						(LocPrint 17 32)
 					)
-					((Said 'yes')
-						(localproc_0 17 33) ; "You're very agreeable."
+					((Said 'affirmative')
+						(LocPrint 17 33)
 					)
 					((Said 'no')
-						(localproc_0 17 34) ; "Probably not, huh."
+						(LocPrint 17 34)
 					)
-					((Said 'thank[/you,man,woman,agent]')
-						(if (gEgo inRect: 124 116 218 124)
+					((Said 'thank[/ya,dude,broad,agent]')
+						(if (ego inRect: 124 116 218 124)
 							(agentScript changeState: 3)
 						else
-							(localproc_0 17 19) ; "No one can hear you from where you're standing."
+							(LocPrint 17 19)
 						)
 					)
 					((Said '[*]/bains')
-						(localproc_0 17 35) ; "Just thinking about Bains makes your blood boil."
+						(LocPrint 17 35)
 					)
 				)
 			)
@@ -549,59 +603,59 @@
 
 (instance scruffyScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(if (< global110 30)
+				(if (< howFast 30)
 					(client setScript: 0)
 					(return)
 				)
 				(= cycles (Random 100 300))
 			)
 			(1
-				(if (== gPrevRoomNum 16)
-					(local5
+				(if (== prevRoomNum 16)
+					(scruffy
 						posn: 26 102
 						setPri: 10
 						cel: 3
 						setCycle: 0
 						setMotion: MoveTo 50 134 self
-						setAvoider: (Avoid new:)
+						setAvoider: (Avoider new:)
 						ignoreActors: 1
 					)
 				else
-					(local5
+					(scruffy
 						posn: -15 168
 						setCycle: Walk
-						setAvoider: (Avoid new:)
+						setAvoider: (Avoider new:)
 					)
 					(self changeState: 3)
 				)
 			)
 			(2
-				(local5
+				(scruffy
 					setCycle: Walk
 					setMotion: MoveTo 82 134 self
 					ignoreActors: 0
 				)
 			)
 			(3
-				(local5
+				(scruffy
 					setPri: -1
 					setMotion: MoveTo 362 178 self
 					ignoreActors: 0
 				)
 			)
 			(4
-				(local5 stopUpd:)
+				(scruffy stopUpd:)
 				(= cycles (Random 100 300))
 			)
 			(5
-				(local5 setLoop: 2 setMotion: MoveTo -15 168 self)
+				(scruffy setLoop: 2 setMotion: MoveTo -15 168 self)
 			)
 			(6
-				(local5 setLoop: 1)
+				(scruffy setLoop: 1)
 				(self changeState: 3)
 			)
 		)
@@ -610,121 +664,125 @@
 
 (instance agentScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(switch (Random 0 5)
 					(0
-						(localproc_0 17 36) ; ""How may I help you?" asks the agent."
+						(LocPrint 17 36)
 					)
 					(1
-						(localproc_0 17 37) ; ""We have wheels and we make deals," cracks the agent."
+						(LocPrint 17 37)
 					)
 					(2
-						(localproc_0 17 38) ; ""We live up to our name!" says the agent in all seriousness."
+						(LocPrint 17 38)
 					)
 					(3
-						(localproc_0 17 39) ; "The agent tells you: "We handle everything from bicycles to Mack trucks.""
+						(LocPrint 17 39)
 					)
 					(4
-						(localproc_0 17 40) ; ""We have the lowest prices in town. Of course, wheels are extra!" cracks the agent."
+						(LocPrint 17 40)
 					)
 					(5
-						(localproc_0 17 41) ; "The agent pipes up, "At Siva rent-a-car, we try softer!""
+						(LocPrint 17 41)
 					)
 				)
 			)
 			(1
 				(= local3 1)
-				(if local2
-					(if (== local4 2)
-						(if local7
-							(localproc_0 17 42) ; "The agent says, "I already showed you my list of rental customers, but if you insist.....""
+				(if nearCounter
+					(if (== whichAgent 2)
+						(if seenList
+							(LocPrint 17 42)
 						else
-							(localproc_0 17 43) ; "Here you are, sir. Be my guest."
+							(LocPrint 17 43)
 						)
-						(= local7 1)
-						(localproc_0 17 44) ; "The Siva representative hands you his car rental agreements."
-						(localproc_0 17 45) ; "You carefully look over each car rental agreement, but you find nothing of interest."
+						(= seenList 1)
+						(LocPrint 17 44)
+						(LocPrint 17 45)
 					else
 						(if local8
-							(localproc_0 17 42) ; "The agent says, "I already showed you my list of rental customers, but if you insist.....""
+							(LocPrint 17 42)
 						else
-							(localproc_0 17 43) ; "Here you are, sir. Be my guest."
+							(LocPrint 17 43)
 						)
 						(= local8 1)
-						(localproc_0 17 46) ; "Flashing a smile, the agent gives you her list of car rentals."
-						(if (>= global100 6)
+						(LocPrint 17 46)
+						(if (>= gamePhase 6)
 							(agentScript changeState: 4)
 						else
-							(localproc_0 17 45) ; "You carefully look over each car rental agreement, but you find nothing of interest."
+							(LocPrint 17 45)
 						)
 					)
 				else
-					(localproc_0 17 47) ; "Who do you think you are?" asks the agent. "We don't go around showing our rental agreements to people!"
+					(LocPrint 17 47)
 				)
 			)
 			(2
-				(cond
-					(local2
-						(cond
-							((gEgo has: 12) ; new_mug_shot
-								(switch local4
+				(cond 
+					(nearCounter
+						(cond 
+							((ego has: iNewMugShot)
+								(switch whichAgent
 									(1
-										(if (>= global100 6)
-											(localproc_0 17 48 82 112) ; "The agent looks at the mug shot and says..."Matter of fact, I do remember renting a car to this guy.""
-											(SetScore 1 83)
+										(if (>= gamePhase 6)
+											(LocPrint 17 48 82 112)
+											(SolvePuzzle 1 fAgentRecognizedBains)
 										else
-											(localproc_0 17 49 82 112) ; "You show the mug shot of Bains, and the agent says..."Nope, never seen the man before.""
+											(LocPrint 17 49 82 112)
 										)
 									)
 									(2
-										(localproc_0 17 49 82 112) ; "You show the mug shot of Bains, and the agent says..."Nope, never seen the man before.""
+										(LocPrint 17 49 82 112)
 									)
 								)
 							)
-							((gEgo has: 23) ; old_mug_shot
-								(localproc_0 17 49 82 123) ; "You show the mug shot of Bains, and the agent says..."Nope, never seen the man before.""
+							((ego has: iOldMugShot)
+								(LocPrint 17 49 82 123)
 							)
 							(else
-								(localproc_0 17 50) ; "You don't have a mug shot of Bains to show."
+								(LocPrint 17 50)
 							)
 						)
 					)
-					((or (gEgo has: 12) (gEgo has: 23)) ; new_mug_shot, old_mug_shot
-						(localproc_0 ; "The Siva rental agent says softly, "That's very nice, sir. Would you like to see a picture of my son?.""
-							17
-							51
-							82
-							(if (gEgo has: 12) 112 else 123) ; new_mug_shot
+					(
+						(or
+							(ego has: iNewMugShot)
+							(ego has: iOldMugShot)
+						)
+						(LocPrint 17 51 82
+							(if (ego has: iNewMugShot)
+								112
+							else
+								123
+							)
 						)
 					)
 					(else
-						(localproc_0 17 50) ; "You don't have a mug shot of Bains to show."
+						(LocPrint 17 50)
 					)
 				)
 			)
 			(3
-				(if local2
-					(localproc_0 17 52) ; "Anytime, Officer. Glad to help."
+				(if nearCounter
+					(LocPrint 17 52)
 				else
-					(localproc_0 17 53) ; "You're welcome, and remember: Siva tries softer!"
+					(LocPrint 17 53)
 				)
 			)
 			(4
-				(SetScore 3 84)
-				(localproc_0 17 54 25 8) ; "Looking at the rental agreements, you come across a familiar name...."Luis Pate.""
-				(localproc_0 17 55 25 8) ; "You think to yourself: "That punk has rented a car using the jailer's ID. I'd better jot down the information.""
-				(localproc_0 17 56 25 8) ; "You write down the vehicle information: 1988 green "CMG" sedan. License #C43256."
+				(SolvePuzzle 3 fReadCarRentals)
+				(LocPrint 17 54 25 8)
+				(LocPrint 17 55 25 8)
+				(LocPrint 17 56 25 8)
 				(self cue:)
 			)
 			(5
-				(if (!= (gContinuousMusic state:) 3)
-					(gContinuousMusic number: 29 loop: -1 play:)
+				(if (!= (cSound state?) 3)
+					(cSound number: 29 loop: -1 play:)
 				)
 			)
 		)
 	)
 )
-

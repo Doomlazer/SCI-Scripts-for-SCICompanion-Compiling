@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 100)
 (include sci.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Sound)
 (use Motion)
 (use Game)
@@ -15,23 +14,22 @@
 )
 
 (local
-	local0
-	local1
-	local2
+	chopper
+	printObj
+	oldSpeed
 )
-
 (instance chopperMusic of Sound
 	(properties
 		number 4
 	)
 )
 
-(instance rm100 of Rm
+(instance rm100 of Room
 	(properties
 		picture 100
-		style 8
+		style $0008
 	)
-
+	
 	(method (init)
 		(HandsOff)
 		(Load rsVIEW 273)
@@ -119,17 +117,15 @@
 			addToPic:
 		)
 		(super init:)
-		(= local2 gSpeed)
-		(if (< gSpeed 4)
-			(gGame setSpeed: 4)
-		)
+		(= oldSpeed speed)
+		(if (< speed 4) (theGame setSpeed: 4))
 		(self setScript: rm100Script)
 	)
 )
 
 (instance rm100Script of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -137,13 +133,13 @@
 				(= seconds 1)
 			)
 			(1
-				((= local0 (Act new:))
+				((= chopper (Actor new:))
 					view: 275
 					setLoop: 9
 					cel: 7
 					posn: 210 77
 					cycleSpeed: 2
-					setCycle: Beg self
+					setCycle: BegLoop self
 					setMotion: MoveTo 216 74
 					init:
 					ignoreActors:
@@ -151,22 +147,26 @@
 				)
 			)
 			(2
-				(local0 setLoop: 7 setCycle: Beg setMotion: MoveTo 218 74 self)
+				(chopper
+					setLoop: 7
+					setCycle: BegLoop
+					setMotion: MoveTo 218 74 self
+				)
 			)
 			(3
-				(local0
+				(chopper
 					setLoop: 5
 					setStep: 8 4
-					setCycle: Fwd
+					setCycle: Forward
 					setMotion: MoveTo 330 100 self
 				)
 			)
 			(4
-				(= local1 (Print 100 0 #mode 1 #at -1 140 #dispose)) ; "Yeee - ha - ha!! Lemme show you what this baby can DO!"
+				(= printObj (Print 100 0 #mode 1 #at -1 140 #dispose))
 				(self cue:)
 			)
 			(5
-				(local0
+				(chopper
 					setLoop: 4
 					setPri: 0
 					posn: 331 80
@@ -176,7 +176,7 @@
 				)
 			)
 			(6
-				(local0
+				(chopper
 					setLoop: 5
 					setStep: 8
 					posn: -11 136
@@ -185,41 +185,38 @@
 				)
 			)
 			(7
-				(local0
+				(chopper
 					setLoop: 3
-					setCycle: Fwd
+					setCycle: Forward
 					ignoreHorizon: 1
 					setMotion: MoveTo 255 -11 self
 				)
 			)
 			(8
-				(local0
+				(chopper
 					posn: 131 -11
 					setLoop: 8
 					setStep: 1 1
-					setCycle: Fwd
+					setCycle: Forward
 					setMotion: MoveTo 131 28 self
 				)
 			)
 			(9
-				(clr)
-				(local0 stopUpd:)
-				(Print 100 1 #at -1 140 #mode 1 #dispose) ; "Your pilot leads you and a still-shaken Keith to Steelton PD's Homicide Lieutenant's office."
+				(cls)
+				(chopper stopUpd:)
+				(Print 100 1 #at -1 140 #mode 1 #dispose)
 				(= seconds 5)
 			)
 			(10
-				(if (!= (chopperMusic prevSignal:) -1)
+				(if (!= (chopperMusic prevSignal?) -1)
 					(-- state)
 					(= cycles 2)
 				else
-					(clr)
-					(if (< local2 4)
-						(gGame setSpeed: local2)
-					)
-					(gCurRoom newRoom: 101)
+					(cls)
+					(if (< oldSpeed 4) (theGame setSpeed: oldSpeed))
+					(curRoom newRoom: 101)
 				)
 			)
 		)
 	)
 )
-

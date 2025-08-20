@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
-(script# 155)
-(include sci.sh)
+(script# regCove)
+(include game.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Game)
 
 (public
@@ -11,141 +10,130 @@
 )
 
 (instance rgCove of Locale
-	(properties)
-
 	(method (handleEvent event)
-		(switch (event type:)
-			(evSAID
-				(cond
-					((Said 'talk/friend')
-						(if
-							(and
-								(gCast contains: global112)
-								(global112 inRect: 0 0 320 200)
-							)
-							(if (> global186 800)
-								(Print 155 0) ; "Keith stammers, "S-Sonny! Bains... he was SHOOTING at you!""
+		(switch (event type?)
+			(saidEvent
+				(cond 
+					((Said 'chat/friend')
+						(if (and (cast contains: keith) (keith inRect: 0 0 320 200))
+							(if (> bainsInCoveTimer 800)
+								(Print 155 0)
 							else
-								(Print 155 1) ; ""I'm with you, Sonny!" Keith responds."
+								(Print 155 1)
 							)
 						else
-							(Print 155 2) ; "Keith's not here."
+							(Print 155 2)
 						)
 					)
-					((Said 'talk,tell>')
-						(Print 155 3) ; "Who are you talking to?"
-						(event claimed: 1)
+					((Said 'chat,tell>')
+						(Print 155 3)
+						(event claimed: TRUE)
 					)
 					((Said 'follow')
-						(Print 155 4) ; "Go ahead."
+						(Print 155 4)
 					)
 					((Said 'look,frisk/blood,mark,clue')
-						(Print 155 5) ; "That's a good idea. Do that."
+						(Print 155 5)
 					)
 					((Said 'look>')
-						(cond
-							((Said '/woman<bag')
-								(Print 155 6) ; "She looks awfully mean, and you decide to stay here where it's safe."
+						(cond 
+							((Said '/woman<purse')
+								(Print 155 6)
 							)
-							((or (Said '/willow[<cunt]') (Said '/ass<cat'))
-								(Print 155 7) ; "These are of a species known as "Gargantium Pussiwilliums""
+							((or (Said '/willow[<pussy]') (Said '/tail<cat'))
+								(Print 155 7)
 							)
 							((Said '/tree')
-								(Print 155 8) ; "The trees provide shade in the summer, and drop a lot of leaves in the fall."
+								(Print 155 8)
 							)
 							((Said '/bush')
-								(Print 155 9) ; "Although you admire the beauty of the shrubbery, you see nothing out of the ordinary."
+								(Print 155 9)
 							)
 							((Said '[<up,at][/air,cloud]')
-								(Print 155 10) ; "You gaze into the expanses of the upper atmosphere, and ponder the wonder of it all. More relaxed now, you return your attention to Cotton Cove."
+								(Print 155 10)
 							)
 							((Said '[<at,down][/dirt,grass,path,dirt]')
-								(if (< (gEgo y:) 163)
-									(Print 155 11) ; "The grass is green, and the ants are waiting to be invited to a picnic. Many shoes have left their impressions in the sandy soil."
+								(if (< (ego y?) 163)
+									(Print 155 11)
 								else
-									(Print 155 12) ; "Broken, black asphalt is all you see beneath your feet."
+									(Print 155 12)
 								)
 							)
 							((Said '/lake')
-								(Print 155 13) ; "The nearest lake is 40 miles away. Clearwater River is nearby, however."
+								(Print 155 13)
 							)
 							((Said '/rock')
-								(Print 155 14) ; "You see nothing special about the rocks, but it's nice you don't take them for granite."
+								(Print 155 14)
 							)
 							((Said '[<at,across][/bank,cliff,(side<other)]')
-								(if (== (gEgo loop:) 3)
-									(Print 155 15) ; "You see nothing unusual about the bank across the river."
+								(if (== (ego loop?) 3)
+									(Print 155 15)
 								else
-									(Print 155 16) ; "How can you see it? You aren't looking at it."
+									(Print 155 16)
 								)
 							)
 							((Said '/clearwater,water')
-								(if (== (gEgo loop:) 3)
-									(if (< (gEgo y:) 95)
-										(Print 155 17) ; "Clearwater River deserves its name. Fed by mountain streams, its water is icy cold, and flows very rapidly through the rocks."
+								(if (== (ego loop?) 3)
+									(if (< (ego y?) 95)
+										(Print 155 17)
 									else
-										(Print 155 18) ; "To really see why Clearwater River got its name, you must get closer."
+										(Print 155 18)
 									)
 								else
-									(Print 155 16) ; "How can you see it? You aren't looking at it."
+									(Print 155 16)
 								)
 							)
 							((Said '/culdesac,ave')
-								(if
-									(or
-										(== (gEgo loop:) 2)
-										(> (gEgo y:) 158)
-									)
-									(Print 155 19) ; "The pavement doesn't hold your interest."
+								(if (or (== (ego loop?) 2) (> (ego y?) 158))
+									(Print 155 19)
 								else
-									(Print 155 16) ; "How can you see it? You aren't looking at it."
+									(Print 155 16)
 								)
 							)
-							((Said '/man,person')
-								(Print 155 20) ; "Who are you looking for?"
+							((Said '/dude,person')
+								(Print 155 20)
 							)
-							((Said '[<around,up][/!*,cove,chamber]')
-								(event claimed: 1)
+							((Said '[<around,up][/noword,cove,chamber]')
+								(event claimed: TRUE)
 								(if (Random 0 1)
-									(Print 155 21) ; "Cotton Cove with its greenery, is a quiet recreational area, with the Clearwater River flowing in the background."
+									(Print 155 21)
 								else
-									(Print 155 22) ; "You're in Cotton Cove. You remember the care-free days of your youth when you played cops and robbers here. Now, however, it's very real...and much more serious."
+									(Print 155 22)
 								)
-								(if (and (== global100 5) (not global183))
-									(Print 155 23) ; "You have an unneasy feeling, as though you are being watched."
+								(if (and (== gamePhase 5) (not shotAtBainsInCove))
+									(Print 155 23)
 								)
 							)
 						)
 					)
 					((Said 'climb/tree')
-						(Print 155 24) ; "Unless you're a monkey, bear, squirrel, chipmunk, or some other tree dwelling animal, you don't need to do that."
+						(Print 155 24)
 					)
 					((Said 'cross,(jump<in)/water,clearwater')
-						(Print 155 25) ; "Not a good idea."
+						(Print 155 25)
 					)
 					((Said 'get,hoist,move/rock')
-						(Print 155 26) ; "You don't need it."
+						(Print 155 26)
 					)
 					((Said 'get/grass')
-						(Print 155 27) ; "No where in the game will grass help you."
+						(Print 155 27)
 					)
 					((Said 'enter,swim,fish[/clearwater,water]')
-						(if (< (gEgo y:) 97)
-							(Print 155 28) ; "It is tempting, but you're not on vacation."
+						(if (< (ego y?) 97)
+							(Print 155 28)
 						else
-							(Print 155 29) ; "From way over here?"
+							(Print 155 29)
 						)
 					)
 					((Said 'frisk[/billfold]')
-						(event claimed: 0)
+						(event claimed: FALSE)
 					)
 					((Said 'frisk>')
-						(event claimed: 1)
-						(Print 155 30) ; "Just look around."
+						(event claimed: TRUE)
+						(Print 155 30)
 					)
 				)
 			)
 		)
 	)
 )
-

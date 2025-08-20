@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 12)
-(include sci.sh)
+(include system.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Sound)
 (use Motion)
 (use Game)
@@ -14,16 +13,15 @@
 (public
 	phone 0
 )
-
 (synonyms
-	(talk tell interrogate ask talk)
+	(chat tell interrogate ask chat)
 )
 
 (local
-	local0
-	local1
-	local2
-	local3
+	sonny
+	sonnyMouth
+	person
+	personMouth
 	local4
 	local5
 	local6
@@ -31,82 +29,81 @@
 	local8
 	local9
 	local10
-	[local11 160]
+	[str 160]
 	[local171 10]
-	local181
+	infoLocation
 )
-
-(procedure (localproc_0 param1)
+(procedure (RingPhone param1)
 	(Ring loop: param1 play:)
 )
 
-(procedure (localproc_1)
+(procedure (BusySignal)
 	(Busy loop: 6 play:)
 )
 
-(procedure (localproc_2 param1 &tmp temp0)
+(procedure (localproc_1a28 param1 &tmp temp0)
 	(if (== argc 1)
 		(= temp0 param1)
 	else
 		(= temp0 (Random 0 100))
 	)
-	(cond
+	(cond 
 		((<= temp0 40)
-			(localproc_1)
-			(Print 12 104) ; "The phone is busy."
+			(BusySignal)
+			(Print 12 104) ;the phone is busy
 			(Busy stop:)
 		)
 		((<= temp0 95)
-			(localproc_0 5)
-			(Print 12 105) ; "You suspect no one is there and hang up."
+			(RingPhone 5)
+			(Print 12 105) ;no one is there to answer.
 			(Ring stop:)
 		)
 		(else
-			(Print 12 106) ; "....We're sorry. That number cannot be completed as dialed. Please try again."
-		)
+			(Print 12 106) ;call cannot be completed as dialed
+		) 
 	)
-	(gCurRoom setScript: phoneNumber)
+	(curRoom setScript: phoneNumber)
 )
 
-(procedure (localproc_3)
-	(local2 posn: 30 1000)
-	(local3 posn: 60 1000)
+(procedure (PersonHangUp)
+	(person posn: 30 1000)
+	(personMouth posn: 60 1000)
 	(RedrawCast)
-	(clr)
+	(cls)
 	(= local9 4)
-	(Format @local11 12 107) ; "CLICK"
-	(proc0_19 local2 doTalk 2)
+	(Format @str 12 107) ;click
+	(AssignObjectToScript person doTalk 2)
 )
 
-(procedure (localproc_4)
-	(clr)
-	(Format @local11 &rest)
-	(proc0_19 local1 doEgoTalk)
+(procedure (BondsSpeak)
+	(cls)
+	(Format @str &rest)
+	(AssignObjectToScript sonnyMouth doEgoTalk)
 )
 
-(procedure (localproc_5)
-	(clr)
+(procedure (PersonSpeak) ;(localproc_1af6)
+	(cls)
 	(= local9 0)
-	(Format @local11 &rest)
-	(proc0_19 local2 doTalk)
+	(Format @str &rest)
+	(AssignObjectToScript person doTalk)
 )
 
-(procedure (localproc_6 param1)
-	(= local11 0)
+(procedure (localproc_1b13 param1)
+	(= str 0)
 	(if (> (param1 message:) 32)
-		(Format @local11 12 108 (param1 message:)) ; "%c"
+		(Format @str 12 108 (param1 message:)) ; "%c"
 	)
 	(repeat
-		(if (Print 12 109 #at 20 120 #edit @local11 25) ; "Enter input: (ESC to disconnect)"
-			(if (Parse @local11 myEvent)
+		(if (Print 12 109 #at 20 120 #edit @str 25) ; "Enter input: (ESC to disconnect)"
+			(if (Parse @str myEvent)
 				(param1 type: 128)
 				(param1 claimed: 0)
-				(gCurRoom handleEvent: param1)
+				(curRoom handleEvent: param1)
 				(break)
 			)
 		else
-			(localproc_4 12 107)
-			((gCurRoom script:) changeState: 999)
+			(BondsSpeak 12 107)
+			((curRoom script:) changeState: 999)
 			(break)
 		)
 	)
@@ -128,20 +125,20 @@
 	)
 )
 
-(instance phone of Rm
+(instance phone of Room
 	(properties
 		picture 444
-		style 6
+		style IRISIN
 	)
-
+	
 	(method (init)
-		(Load rsVIEW 444)
-		(Load rsVIEW 445)
-		(Load rsSOUND 44)
-		(Load rsSOUND 45)
+		(Load VIEW 444)
+		(Load VIEW 445)
+		(Load SOUND 44)
+		(Load SOUND 45)
 		(super init:)
 		(= local171 0)
-		((= local0 (Act new:))
+		((= sonny (Actor new:))
 			view: 444
 			setLoop: 0
 			cel: 0
@@ -150,7 +147,7 @@
 			ignoreActors:
 			init:
 		)
-		((= local1 (Act new:))
+		((= sonnyMouth (Actor new:))
 			view: 445
 			setLoop: 0
 			cel: 0
@@ -158,7 +155,7 @@
 			posn: 240 151
 			init:
 		)
-		((= local2 (Act new:))
+		((= person (Actor new:))
 			view: 444
 			loop: 1
 			cel: 0
@@ -167,7 +164,7 @@
 			posn: 60 1000
 			init:
 		)
-		((= local3 (Act new:))
+		((= personMouth (Actor new:))
 			view: 445
 			loop: 1
 			cel: 0
@@ -176,42 +173,28 @@
 			init:
 		)
 		(HandsOff)
-		(gCurRoom setScript: phoneNumber)
+		(curRoom setScript: phoneNumber)
 	)
-
+	
 	(method (handleEvent event)
-		(if (event claimed:)
-			(return)
-		)
-		(switch (event type:)
-			(evKEYBOARD
+		(if (event claimed?) (return))
+		(switch (event type?)
+			(keyDown
 				(super handleEvent: event)
 			)
-			(evSAID
-				(cond
+			(saidEvent
+				(cond 
 					((Said '/bye')
 						(switch (Random 0 2)
-							(0
-								(localproc_4 12 0)
-							)
-							(1
-								(localproc_4 12 1)
-							)
-							(else
-								(localproc_4 12 2)
-							)
+							(0 (BondsSpeak 12 0))
+							(1 (BondsSpeak 12 1))
+							(else  (BondsSpeak 12 2))
 						)
-						((gCurRoom script:) changeState: 999)
+						((curRoom script?) changeState: 999)
 					)
-					((Said '(hang<up),disconnect')
-						((gCurRoom script:) changeState: 999)
-					)
-					((or (Said 'fuck,shit') (Said '/fuck,shit'))
-						((gCurRoom script:) changeState: 999)
-					)
-					(else
-						(super handleEvent: event)
-					)
+					((Said '(hang<up),disconnect') ((curRoom script?) changeState: 999))
+					((or (Said 'fuck,crap') (Said '/fuck,crap')) ((curRoom script?) changeState: 999))
+					(else (super handleEvent: event))
 				)
 			)
 		)
@@ -220,7 +203,7 @@
 
 (instance phoneNumber of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -229,16 +212,16 @@
 			)
 			(1
 				(User canInput: 1)
-				(= local11 0)
+				(= str 0)
 				(repeat
-					(if (not (Print 12 3 #at 20 120 #edit @local11 18)) ; "Number to dial: (ESC to hang up) (xxx-xxxx) or (xxx-xxx-xxxx)"
+					(if (not (Print 12 3 #at 20 120 #edit @str 18)) ; "Number to dial: (ESC to hang up) (xxx-xxxx) or (xxx-xxx-xxxx)"
 						(self changeState: 999)
 						(break)
 					else
 						(if
 							(and
-								(== (StrLen @local11) 1)
-								(== 35 (StrAt @local11 0))
+								(== (StrLen @str) 1)
+								(== 35 (StrAt @str 0))
 								(Parse @local171 myEvent)
 							)
 							(myEvent type: 128)
@@ -247,19 +230,19 @@
 						)
 						(if
 							(and
-								(< (StrLen @local11) 7)
-								(!= (StrCmp @local11 {0}) 0)
-								(!= (StrCmp @local11 {411}) 0)
+								(< (StrLen @str) 7)
+								(!= (StrCmp @str {0}) 0)
+								(!= (StrCmp @str {411}) 0)
 							)
 							(Print 12 4) ; "Please use the proper format: (xxx-xxx-xxxx) or (xxx-xxxx)"
 							(continue)
 						)
 						(cond
-							((== (StrAt @local11 0) 49)
+							((== (StrAt @str 0) 49)
 								(Print 12 5) ; "You do not need to put a '1' first."
 							)
-							((Parse @local11 myEvent)
-								(StrCpy @local171 @local11)
+							((Parse @str myEvent)
+								(StrCpy @local171 @str)
 								(myEvent type: 128)
 								(phoneNumber handleEvent: myEvent)
 								(break)
@@ -270,267 +253,199 @@
 			)
 			(999
 				(HandsOn)
-				(gCurRoom newRoom: gPrevRoomNum)
+				(curRoom newRoom: prevRoomNum)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(if (or (event claimed:) (!= (event type:) evSAID))
+		(if
+		(or (event claimed?) (!= (event type?) saidEvent))
 			(return)
 		)
-		(cond
-			((Said '/411,0')
-				(gCurRoom setScript: Information)
-			)
+		(cond 
+			((Said '/411,0') (curRoom setScript: Information))
 			((Said '/5558723')
-				(localproc_5 12 6)
-				(localproc_5 12 7)
-				(localproc_3)
-				(gCurRoom setScript: phoneNumber)
+				(PersonSpeak 12 6)
+				(PersonSpeak 12 7)
+				(PersonHangUp)
+				(curRoom setScript: phoneNumber)
 			)
-			((Said '/5552222')
-				(localproc_2)
-			)
-			((Said '/4075556844')
-				(localproc_2)
-			)
-			((Said '/5551699')
-				(localproc_2)
-			)
-			((Said '/5552052')
-				(localproc_2)
-			)
+			((Said '/5552222') (localproc_1a28))
+			((Said '/4075556844') (localproc_1a28))
+			((Said '/5551699') (localproc_1a28))
+			((Said '/5552052') (localproc_1a28))
 			((Said '/5554495')
-				(localproc_5 12 8)
-				(localproc_3)
-				(gCurRoom setScript: phoneNumber)
+				(PersonSpeak 12 8)
+				(PersonHangUp)
+				(curRoom setScript: phoneNumber)
 			)
 			((Said '/5554169')
-				(cond
-					((== gPrevRoomNum 32)
-						(localproc_2 40)
-					)
-					((!= global100 6)
-						(localproc_2 95)
-					)
-					(else
-						(gCurRoom setScript: talkingToMarie)
-					)
+				(cond 
+					((== prevRoomNum 32) (localproc_1a28 40))
+					((!= gamePhase 6) (localproc_1a28 95))
+					(else (curRoom setScript: talkingToMarie))
 				)
 			)
 			((Said '/5553344')
-				(if (== gPrevRoomNum 61)
-					(localproc_2 40)
+				(if (== prevRoomNum 61)
+					(localproc_1a28 40)
 				else
-					(localproc_2)
+					(localproc_1a28)
 				)
 			)
 			((Said '/4075553323')
-				(if (or (< global100 8) (IsFlag 95))
-					(localproc_2)
+				(if (or (< gamePhase 8) (Btst 95))
+					(localproc_1a28)
 				else
-					(gCurRoom setScript: talkingToColby)
+					(curRoom setScript: talkingToColby)
 				)
 			)
 			((Said '/5555432')
-				(if (== gPrevRoomNum 4)
-					(localproc_2 40)
+				(if (== prevRoomNum 4)
+					(localproc_1a28 40)
 				else
-					(gCurRoom setScript: lyttonPD)
+					(curRoom setScript: lyttonPD)
 				)
 			)
 			((Said '/4075552677')
-				(if (<= global100 8)
-					(localproc_2 40)
+				(if (<= gamePhase 8)
+					(localproc_1a28 40)
 				else
-					(gCurRoom setScript: steeltonPD)
+					(curRoom setScript: steeltonPD)
 				)
 			)
-			((Said '/5550001')
-				(localproc_2 40)
-			)
+			((Said '/5550001') (localproc_1a28 40))
 			((Said '/2096834463')
 				(if (== (Random 1 2) 1)
-					(localproc_5 12 9)
-					(localproc_5 12 10)
-					(localproc_3)
-					(gCurRoom setScript: phoneNumber)
+					(PersonSpeak 12 9)
+					(PersonSpeak 12 10)
+					(PersonHangUp)
+					(curRoom setScript: phoneNumber)
 				else
-					(localproc_5 12 11)
-					(localproc_5 12 12)
-					(localproc_5 12 13)
-					(localproc_3)
-					(gCurRoom setScript: phoneNumber)
+					(PersonSpeak 12 11)
+					(PersonSpeak 12 12)
+					(PersonSpeak 12 13)
+					(PersonHangUp)
+					(curRoom setScript: phoneNumber)
 				)
 			)
 			((Said '/2096836858')
 				(if (< (Random 1 10) 4)
-					(gCurRoom setScript: alLowe)
+					(curRoom setScript: alLowe)
 				else
-					(gCurRoom setScript: sierra)
+					(curRoom setScript: sierra)
 				)
 			)
 			((Said '/unknownnumber')
 				(if (< (Random 1 10) 3)
-					(gCurRoom setScript: sicko)
+					(curRoom setScript: sicko)
 				else
-					(localproc_2)
+					(localproc_1a28)
 				)
 			)
-			(else
-				(Print 12 14) ; "Please enter a number."
-				(self changeState: 0)
-			)
+			(else (Print 12 14) (self changeState: 0))
 		)
 	)
 )
 
 (instance Information of Script
 	(properties)
-
+	
 	(method (init param1)
 		(super init: param1)
-		(local2 loop: 6 cel: 0 posn: 63 80 stopUpd:)
-		(local3 loop: 6 cel: 0 posn: 74 65 setCycle: End)
+		(person loop: 6 cel: 0 posn: 63 80 stopUpd:)
+		(personMouth loop: 6 cel: 0 posn: 74 65 setCycle: EndLoop)
 		(RedrawCast)
 		(self changeState: 1)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(1
-				(= local11 0)
-				(= local181 0)
-				(localproc_5 12 15)
+				(= str 0)
+				(= infoLocation 0)
+				(PersonSpeak 12 15)
 			)
 			(2
-				(= local11 0)
-				(localproc_5 12 16)
+				(= str 0)
+				(PersonSpeak 12 16)
 			)
 			(3
-				(localproc_5 12 17)
+				(PersonSpeak 12 17)
 				(= state 1)
 				(= cycles 2)
 			)
 			(4
-				(localproc_5 12 18)
+				(PersonSpeak 12 18)
 				(= state 0)
 				(= cycles 2)
 			)
 			(999
-				(localproc_3)
+				(PersonHangUp)
 				(client setScript: phoneNumber)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(if (event claimed:)
+		(if (event claimed?) (return))
+		(if (== (event type?) keyDown)
+			(localproc_1b13 event)
 			(return)
 		)
-		(if (== (event type:) evKEYBOARD)
-			(localproc_6 event)
-			(return)
-		)
-		(if (!= (event type:) evSAID)
-			(return)
-		)
+		(if (!= (event type?) saidEvent) (return))
 		(switch state
 			(1
-				(cond
-					((Said '/steelton')
-						(= local181 1)
-						(self changeState: 2)
-					)
-					((Said '/lytton')
-						(= local181 2)
-						(self changeState: 2)
-					)
-					((Said '/coarsegold')
-						(= local181 3)
-						(self changeState: 2)
-					)
-					((Said '/houston')
-						(= local181 4)
-						(self changeState: 2)
-					)
+				(cond 
+					((Said '/steelton') (= infoLocation 1) (self changeState: 2))
+					((Said '/lytton') (= infoLocation 2) (self changeState: 2))
+					((Said '/coarsegold') (= infoLocation 3) (self changeState: 2))
+					((Said '/houston') (= infoLocation 4) (self changeState: 2))
 					(else
 						(event claimed: 1)
-						(localproc_5 12 19)
-						(localproc_5 12 20)
+						(PersonSpeak 12 19)
+						(PersonSpeak 12 20)
 						(self changeState: 999)
 					)
 				)
 			)
 			(2
-				(switch local181
+				(switch infoLocation
 					(2
-						(cond
-							((Said '/police')
-								(localproc_5 12 21)
-							)
-							((Said '/cheeks<cheeks')
-								(localproc_5 12 22)
-							)
-							((Said '/cheeks,(cheeks<!*)')
-								(self changeState: 3)
-								(return)
-							)
-							((Said '/cove<cotton')
-								(localproc_5 12 23)
-							)
-							((Said '/arnie,cafe')
-								(localproc_5 12 24)
-							)
-							((Said '/jail')
-								(localproc_5 12 25)
-							)
-							((Said '/airport')
-								(localproc_5 12 26)
-							)
-							((Said '/inn')
-								(localproc_5 12 27)
-							)
-							(else
-								(event claimed: 1)
-								(self changeState: 4)
-								(return)
-							)
+						(cond 
+							((Said '/police') (PersonSpeak 12 21))
+							((Said '/cheeks<cheeks') (PersonSpeak 12 22))
+							((Said '/cheeks,(cheeks<!*)') (self changeState: 3) (return))
+							((Said '/cove<cotton') (PersonSpeak 12 23))
+							((Said '/arnie,cafe') (PersonSpeak 12 24))
+							((Said '/jail') (PersonSpeak 12 25))
+							((Said '/airport') (PersonSpeak 12 26))
+							((Said '/inn') (PersonSpeak 12 27))
+							(else (event claimed: 1) (self changeState: 4) (return))
 						)
-						(if (== state 2)
-							(self changeState: 999)
-						)
+						(if (== state 2) (self changeState: 999))
 					)
 					(1
-						(cond
-							((Said '/police,lpd,(department<police)')
-								(localproc_5 12 28)
-							)
-							((Said '/park<burt')
-								(localproc_5 12 29)
-							)
-							(else
-								(event claimed: 1)
-								(self changeState: 4)
-								(return)
-							)
+						(cond 
+							((Said '/police,lpd,(department<police)') (PersonSpeak 12 28))
+							((Said '/park<burt') (PersonSpeak 12 29))
+							(else (event claimed: 1) (self changeState: 4) (return))
 						)
-						(if (== state 2)
-							(self changeState: 999)
-						)
+						(if (== state 2) (self changeState: 999))
 					)
 					(3
-						(if (Said '/sierra,(online<sierra),(line<on<sierra)')
-							(localproc_5 12 30)
-							(localproc_5 12 31)
+						(if
+						(Said '/sierra,(online<sierra),(line<on<sierra)')
+							(PersonSpeak 12 30)
+							(PersonSpeak 12 31)
 							(self changeState: 999)
 						else
 							(event claimed: 1)
 							(self changeState: 4)
 						)
 					)
-					(else
+					(else 
 						(event claimed: 1)
 						(self changeState: 4)
 					)
@@ -542,109 +457,87 @@
 
 (instance talkingToColby of Script
 	(properties)
-
+	
 	(method (init param1)
 		(super init: param1)
-		(local2 setLoop: 2 cel: 0 posn: 63 80 stopUpd:)
-		(local3 setLoop: 2 cel: 0 posn: 69 63 setCycle: End)
+		(person setLoop: 2 cel: 0 posn: 63 80 stopUpd:)
+		(personMouth setLoop: 2 cel: 0 posn: 69 63 setCycle: EndLoop)
 		(RedrawCast)
 		(= local6 0)
 		(self changeState: 1)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
-			(1
-				(localproc_5 12 32)
-			)
-			(2
-				(localproc_5 12 33)
-			)
+			(1 (PersonSpeak 12 32))
+			(2 (PersonSpeak 12 33))
 			(999
-				(localproc_3)
+				(PersonHangUp)
 				(client setScript: phoneNumber)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(if (event claimed:)
+		(if (event claimed?) (return))
+		(if (== (event type?) keyDown)
+			(localproc_1b13 event)
 			(return)
 		)
-		(if (== (event type:) evKEYBOARD)
-			(localproc_6 event)
-			(return)
-		)
-		(if (!= (event type:) evSAID)
-			(return)
-		)
-		(cond
+		(if (!= (event type?) saidEvent) (return))
+		(cond 
 			(
 				(or
 					(Said '/hello')
-					(and (== state 1) (or (Said 'talk') (Said '//bonds')))
+					(and (== state 1) (or (Said 'chat') (Said '//bonds')))
 				)
 				(switch state
 					(1
-						(localproc_4 12 34)
+						(BondsSpeak 12 34)
 						(self changeState: 2)
 					)
-					(else
-						(localproc_4 12 32)
-					)
+					(else  (BondsSpeak 12 32))
 				)
 			)
 			(
 				(or
-					(Said 'talk/bains,escape,death,(list<hit)')
-					(Said 'talk//bains,escape,death,(list<hit)')
+					(Said 'chat/bains,escape,death,(list<beat)')
+					(Said 'chat//bains,escape,death,(list<beat)')
 					(Said 'warn/bains,colby')
 				)
 				(switch state
-					(1
-						(localproc_5 12 35)
-					)
-					(else
-						(localproc_4 12 36)
-						(localproc_5 12 37)
-						(localproc_5 12 38)
-						(SetScore 4 95)
+					(1 (PersonSpeak 12 35))
+					(else 
+						(BondsSpeak 12 36)
+						(PersonSpeak 12 37)
+						(PersonSpeak 12 38)
+						(SolvePuzzle 4 95)
 						(self changeState: 999)
 					)
 				)
 			)
 			(else
-				(if (Said 'talk')
+				(if (Said 'chat')
 					(switch (Random 0 1)
-						(0
-							(localproc_4 12 39)
-						)
-						(1
-							(localproc_4 12 40)
-						)
+						(0 (BondsSpeak 12 39))
+						(1 (BondsSpeak 12 40))
 					)
 				else
 					(event claimed: 1)
 				)
 				(switch state
 					(1
-						(localproc_5 12 41)
+						(PersonSpeak 12 41)
 						(++ local6)
 					)
 					(2
 						(switch (Random 0 4)
-							(0
-								(localproc_5 12 42)
-							)
-							(1
-								(localproc_5 12 43)
-							)
-							(else
-								(localproc_5 12 44)
-							)
+							(0 (PersonSpeak 12 42))
+							(1 (PersonSpeak 12 43))
+							(else  (PersonSpeak 12 44))
 						)
 						(if (> (++ local6) 2)
-							(localproc_5 12 45)
+							(PersonSpeak 12 45)
 							(self changeState: 999)
 						)
 					)
@@ -656,75 +549,64 @@
 
 (instance talkingToMarie of Script
 	(properties)
-
+	
 	(method (init param1)
 		(super init: param1)
-		(local2 loop: 1 cel: 0 posn: 63 80 stopUpd:)
-		(local3 loop: 1 cel: 0 posn: 71 63 setCycle: End)
+		(person loop: 1 cel: 0 posn: 63 80 stopUpd:)
+		(personMouth loop: 1 cel: 0 posn: 71 63 setCycle: EndLoop)
 		(RedrawCast)
 		(self changeState: 1)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
-			(1
-				(localproc_5 12 32)
-			)
+			(1 (PersonSpeak 12 32))
 			(2
-				(localproc_5 12 46)
-				(localproc_5 12 47)
+				(PersonSpeak 12 46)
+				(PersonSpeak 12 47)
 			)
 			(999
-				(localproc_5 12 48)
-				(localproc_3)
-				(= global100 7)
-				(SetScore 3)
+				(PersonSpeak 12 48)
+				(PersonHangUp)
+				(= gamePhase 7)
+				(SolvePuzzle 3)
 				(client setScript: phoneNumber)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(if (event claimed:)
+		(if (event claimed?) (return))
+		(if (== (event type?) keyDown)
+			(localproc_1b13 event)
 			(return)
 		)
-		(if (== (event type:) evKEYBOARD)
-			(localproc_6 event)
-			(return)
-		)
-		(if (!= (event type:) evSAID)
-			(return)
-		)
-		(cond
-			((or (Said '/hello,bonds,cheeks') (Said '//bonds'))
-				(localproc_4 12 49)
-				(self changeState: 2)
-			)
-			((or (Said 'talk') (Said 'yes'))
+		(if (!= (event type?) saidEvent) (return))
+		(cond 
+			(
+			(or (Said '/hello,bonds,cheeks') (Said '//bonds')) (BondsSpeak 12 49) (self changeState: 2))
+			((or (Said 'chat') (Said 'affirmative'))
 				(if (== state 2)
 					(self changeState: 999)
 				else
-					(localproc_4 12 49)
+					(BondsSpeak 12 49)
 					(self changeState: 2)
 				)
 			)
-			((Said 'no')
+			((Said 'n')
 				(if (== state 2)
-					(localproc_5 12 50)
-					(localproc_3)
+					(PersonSpeak 12 50)
+					(PersonHangUp)
 					(client setScript: phoneNumber)
 				else
-					(localproc_5 12 51)
+					(PersonSpeak 12 51)
 				)
 			)
-			((== state 1)
-				(event claimed: 1)
-				(self changeState: 1)
-			)
+			((== state 1) (event claimed: 1) (self changeState: 1))
 			(else
 				(event claimed: 1)
-				(localproc_5 12 52)
-				(localproc_5 12 53)
+				(PersonSpeak 12 52)
+				(PersonSpeak 12 53)
 			)
 		)
 	)
@@ -732,110 +614,100 @@
 
 (instance steeltonPD of Script
 	(properties)
-
+	
 	(method (init param1)
 		(super init: param1)
-		(local2 loop: 4 cel: 0 posn: 63 80 stopUpd:)
-		(local3 loop: 4 cel: 0 posn: 65 64 setCycle: End)
+		(person loop: 4 cel: 0 posn: 63 80 stopUpd:)
+		(personMouth loop: 4 cel: 0 posn: 65 64 setCycle: EndLoop)
 		(= local7 0)
 		(= local5 0)
 		(RedrawCast)
 		(self changeState: 1)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
-			(1
-				(localproc_5 12 54)
-			)
+			(1 (PersonSpeak 12 54))
 			(999
-				(localproc_3)
+				(PersonHangUp)
 				(client setScript: phoneNumber)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(if (event claimed:)
+		(if (event claimed?) (return))
+		(if (== (event type?) keyDown)
+			(localproc_1b13 event)
 			(return)
 		)
-		(if (== (event type:) evKEYBOARD)
-			(localproc_6 event)
-			(return)
-		)
-		(if (!= (event type:) evSAID)
-			(return)
-		)
-		(cond
+		(if (!= (event type?) saidEvent) (return))
+		(cond 
 			(
 				(or
 					(Said '/hello')
-					(and (== state 1) (or (Said 'talk') (Said '//bonds')))
+					(and (== state 1) (or (Said 'chat') (Said '//bonds')))
 				)
 				(if (== state 1)
-					(localproc_4 12 55)
-					(localproc_5 12 56)
+					(BondsSpeak 12 55)
+					(PersonSpeak 12 56)
 					(= local5 1)
 					(= state 2)
 				else
-					(localproc_5 12 57)
+					(PersonSpeak 12 57)
 				)
 			)
 			(
 				(or
-					(Said '(talk,warn)[/bains,colby,death]')
-					(Said '(talk,warn)/*[/bains,colby,death]')
+					(Said '(chat,warn)[/bains,colby,death]')
+					(Said '(chat,warn)/*[/bains,colby,death]')
 				)
 				(= local5 0)
 				(switch state
-					(1
-						(localproc_5 12 58)
-					)
+					(1 (PersonSpeak 12 58))
 					(2
-						(if (IsFlag 94)
-							(localproc_5 12 59)
-							(localproc_5 12 60)
+						(if (Btst 94)
+							(PersonSpeak 12 59)
+							(PersonSpeak 12 60)
 							(self changeState: 999)
 						else
-							(localproc_4 12 61)
-							(localproc_4 12 62)
-							(localproc_5 12 63)
-							(SetScore 4 94)
+							(BondsSpeak 12 61)
+							(BondsSpeak 12 62)
+							(PersonSpeak 12 63)
+							(SolvePuzzle 4 94)
 							(self changeState: 999)
 						)
 					)
 				)
 			)
-			((Said 'yes')
+			((Said 'affirmative')
 				(if (and (== state 2) local5)
-					(localproc_5 12 64)
+					(PersonSpeak 12 64)
 				else
-					(localproc_5 12 51)
+					(PersonSpeak 12 51)
 				)
 			)
-			((Said 'no')
+			((Said 'n')
 				(if (and (== state 2) local5)
-					(localproc_5 12 65)
+					(PersonSpeak 12 65)
 				else
-					(localproc_5 12 51)
+					(PersonSpeak 12 51)
 				)
 			)
 			(else
 				(event claimed: 1)
 				(= local5 0)
 				(switch state
-					(1
-						(localproc_5 12 41)
-					)
+					(1 (PersonSpeak 12 41))
 					(2
 						(if local7
-							(localproc_4 12 66)
-							(localproc_5 12 67)
-							(localproc_3)
+							(BondsSpeak 12 66)
+							(PersonSpeak 12 67)
+							(PersonHangUp)
 							(client setScript: phoneNumber)
 						else
-							(localproc_4 12 68)
-							(localproc_5 12 69)
+							(BondsSpeak 12 68)
+							(PersonSpeak 12 69)
 							(++ local7)
 						)
 					)
@@ -847,92 +719,79 @@
 
 (instance lyttonPD of Script
 	(properties)
-
+	
 	(method (init param1)
 		(super init: param1)
-		(local2 loop: 5 cel: 0 posn: 63 80 stopUpd:)
-		(local3 loop: 5 cel: 0 posn: 77 67 setCycle: End)
+		(person loop: 5 cel: 0 posn: 63 80 stopUpd:)
+		(personMouth loop: 5 cel: 0 posn: 77 67 setCycle: EndLoop)
 		(RedrawCast)
 		(self changeState: 1)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
-			(1
-				(localproc_5 12 70)
-			)
+			(1 (PersonSpeak 12 70))
 			(3
-				(localproc_5 12 71)
-				(local2 posn: 30 1000)
-				(local3 posn: 60 1000)
+				(PersonSpeak 12 71)
+				(person posn: 30 1000)
+				(personMouth posn: 60 1000)
 				(RedrawCast)
 				(= seconds 20)
 			)
 			(4
-				(Print 12 72) ; "You have a feeling that somehow you were forgotten."
+				(Print 12 72)
 				(-- state)
 				(= seconds 15)
 			)
 			(999
-				(localproc_3)
+				(PersonHangUp)
 				(= seconds 0)
 				(client setScript: phoneNumber)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(if (event claimed:)
+		(if (event claimed?) (return))
+		(if (== (event type?) keyDown)
+			(localproc_1b13 event)
 			(return)
 		)
-		(if (== (event type:) evKEYBOARD)
-			(localproc_6 event)
-			(return)
-		)
-		(if (!= (event type:) evSAID)
-			(return)
-		)
-		(cond
-			((or (== state 3) (== state 4))
-				(event claimed: 1)
-				(Print 12 73) ; "No one is listening to you."
-			)
+		(if (!= (event type?) saidEvent) (return))
+		(cond 
+			((or (== state 3) (== state 4)) (event claimed: 1) (Print 12 73))
 			((Said '/burglary,narcotics,homicide')
 				(if (== state 1)
 					(switch (Random 0 1)
-						(0
-							(localproc_5 12 74)
-						)
-						(else
-							(localproc_5 12 75)
-						)
+						(0 (PersonSpeak 12 74))
+						(else  (PersonSpeak 12 75))
 					)
-					(localproc_5 12 76)
+					(PersonSpeak 12 76)
 					(= local5 1)
 				else
-					(localproc_5 12 57)
+					(PersonSpeak 12 57)
 				)
 			)
-			((Said 'yes,yes')
+			((Said 'affirmative,affirmative')
 				(if (== local5 1)
 					(= local5 0)
 					(self changeState: 3)
 				else
-					(localproc_5 12 51)
+					(PersonSpeak 12 51)
 				)
 			)
-			((Said 'no')
+			((Said 'n')
 				(if (== local5 1)
 					(= local5 0)
-					(localproc_5 12 77)
+					(PersonSpeak 12 77)
 					(self changeState: 999)
 				else
-					(localproc_5 12 51)
+					(PersonSpeak 12 51)
 				)
 			)
 			((== state 1)
 				(event claimed: 1)
-				(localproc_5 12 78)
+				(PersonSpeak 12 78)
 				(self changeState: 1)
 			)
 		)
@@ -941,44 +800,40 @@
 
 (instance sierra of Script
 	(properties)
-
+	
 	(method (init param1)
 		(super init: param1)
-		(local2 loop: 8 cel: 0 posn: 63 80 stopUpd:)
-		(local3 loop: 8 cel: 0 posn: 73 60 setCycle: End)
+		(person loop: 8 cel: 0 posn: 63 80 stopUpd:)
+		(personMouth loop: 8 cel: 0 posn: 73 60 setCycle: EndLoop)
 		(RedrawCast)
 		(self changeState: 1)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(1
-				(localproc_5 12 79)
-				(localproc_5 12 80)
+				(PersonSpeak 12 79)
+				(PersonSpeak 12 80)
 			)
 			(2
-				(localproc_5 12 81)
-				(localproc_5 12 82)
+				(PersonSpeak 12 81)
+				(PersonSpeak 12 82)
 				(self changeState: 999)
 			)
 			(999
-				(localproc_3)
+				(PersonHangUp)
 				(client setScript: phoneNumber)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(if (event claimed:)
+		(if (event claimed?) (return))
+		(if (== (event type?) keyDown)
+			(localproc_1b13 event)
 			(return)
 		)
-		(if (== (event type:) evKEYBOARD)
-			(localproc_6 event)
-			(return)
-		)
-		(if (!= (event type:) evSAID)
-			(return)
-		)
+		(if (!= (event type?) saidEvent) (return))
 		(if (and (== state 1) (Said '/hello'))
 			(self changeState: 1)
 		else
@@ -990,58 +845,52 @@
 
 (instance alLowe of Script
 	(properties)
-
+	
 	(method (init param1)
 		(super init: param1)
-		(local2 loop: 7 cel: 0 posn: 63 80 stopUpd:)
-		(local3 loop: 7 cel: 0 posn: 74 69 setCycle: End)
+		(person loop: 7 cel: 0 posn: 63 80 stopUpd:)
+		(personMouth loop: 7 cel: 0 posn: 74 69 setCycle: EndLoop)
 		(RedrawCast)
 		(self changeState: 1)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
-			(1
-				(localproc_5 12 83)
-			)
+			(1 (PersonSpeak 12 83))
 			(2
-				(localproc_5 12 84)
-				(localproc_5 12 85)
-				(localproc_5 12 86)
-				(localproc_5 12 87)
-				(localproc_5 12 88)
+				(PersonSpeak 12 84)
+				(PersonSpeak 12 85)
+				(PersonSpeak 12 86)
+				(PersonSpeak 12 87)
+				(PersonSpeak 12 88)
 			)
 			(3
-				(localproc_5 12 89)
-				(localproc_5 12 90)
-				(localproc_5 12 91)
-				(localproc_5 12 92)
-				(localproc_5 12 93)
+				(PersonSpeak 12 89)
+				(PersonSpeak 12 90)
+				(PersonSpeak 12 91)
+				(PersonSpeak 12 92)
+				(PersonSpeak 12 93)
 				(self changeState: 999)
 			)
 			(999
-				(localproc_3)
+				(PersonHangUp)
 				(client setScript: phoneNumber)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(if (event claimed:)
+		(if (event claimed?) (return))
+		(if (== (event type?) keyDown)
+			(localproc_1b13 event)
 			(return)
 		)
-		(if (== (event type:) evKEYBOARD)
-			(localproc_6 event)
-			(return)
-		)
-		(if (!= (event type:) evSAID)
-			(return)
-		)
+		(if (!= (event type?) saidEvent) (return))
 		(if (Said '/dumb,dumb')
-			(localproc_5 12 94)
-			(localproc_5 12 95)
-			(localproc_5 12 96)
-			(localproc_3)
+			(PersonSpeak 12 94)
+			(PersonSpeak 12 95)
+			(PersonSpeak 12 96)
+			(PersonHangUp)
 			(client setScript: phoneNumber)
 		else
 			(event claimed: 1)
@@ -1052,105 +901,91 @@
 
 (instance sicko of Script
 	(properties)
-
+	
 	(method (init param1)
 		(super init: param1)
-		(local2 loop: 9 cel: 0 posn: 63 80 stopUpd:)
-		(local3 loop: 9 cel: 0 posn: 71 58 setCycle: End)
+		(person loop: 9 cel: 0 posn: 63 80 stopUpd:)
+		(personMouth loop: 9 cel: 0 posn: 71 58 setCycle: EndLoop)
 		(= local8 (Random 0 2))
 		(RedrawCast)
 		(self changeState: 1)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(1
 				(switch local8
 					(0
-						(localproc_5 12 97)
-						(localproc_5 12 97)
+						(PersonSpeak 12 97)
+						(PersonSpeak 12 97)
 					)
-					(1
-						(localproc_5 12 98)
-					)
-					(2
-						(localproc_5 12 99)
-					)
+					(1 (PersonSpeak 12 98))
+					(2 (PersonSpeak 12 99))
 				)
 			)
 			(2
 				(switch local8
-					(0
-						(= cycles 1)
-						(= state 0)
-					)
+					(0 (= cycles 1) (= state 0))
 					(1
-						(localproc_5 12 100)
+						(PersonSpeak 12 100)
 						(self changeState: 999)
 					)
 					(2
-						(localproc_5 12 101)
+						(PersonSpeak 12 101)
 						(self changeState: 999)
 					)
 				)
 			)
 			(999
-				(localproc_3)
+				(PersonHangUp)
 				(client setScript: phoneNumber)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(if (event claimed:)
+		(if (event claimed?) (return))
+		(if (== (event type?) keyDown)
+			(localproc_1b13 event)
 			(return)
 		)
-		(if (== (event type:) evKEYBOARD)
-			(localproc_6 event)
-			(return)
-		)
-		(if (!= (event type:) evSAID)
-			(return)
-		)
-		(cond
-			((Said 'is<who')
-				(localproc_5 12 102)
-			)
-			((Said 'fuck')
-				(localproc_5 12 103)
-			)
-			(else
-				(event claimed: 1)
-				(self changeState: (++ state))
-			)
+		(if (!= (event type?) saidEvent) (return))
+		(cond 
+			((Said 'is<who') (PersonSpeak 12 102))
+			((Said 'fuck') (PersonSpeak 12 103))
+			(else (event claimed: 1) (self changeState: (++ state)))
 		)
 	)
 )
 
 (instance doTalk of Script
 	(properties)
-
+	
 	(method (changeState newState &tmp [temp0 4] temp4 temp5 temp6)
 		(switch (= state newState)
 			(0
-				(if (local3 inRect: 0 0 320 200)
-					(local3 setCycle: End self)
+				(if (personMouth inRect: 0 0 320 200)
+					(personMouth setCycle: EndLoop self)
 				else
 					(= cycles 1)
 				)
 			)
 			(1
-				(if (and (> (StrLen @local11) 15) (local3 inRect: 0 0 320 200))
-					(local3 setCycle: End self)
+				(if
+					(and
+						(> (StrLen @str) 15)
+						(personMouth inRect: 0 0 320 200)
+					)
+					(personMouth setCycle: EndLoop self)
 				else
 					(= cycles 1)
 				)
 			)
 			(2
 				(= temp4 120)
-				(TextSize @[temp0 0] @local11 gSmallFont)
+				(TextSize @[temp0 0] @str smallFont)
 				(if (<= [temp0 2] 10)
-					(+= temp4 (- 86 (/ [temp0 3] 2)))
+					(= temp4 (+ temp4 (- 86 (/ [temp0 3] 2))))
 					(= temp6 -1)
 				else
 					(= temp6 180)
@@ -1158,10 +993,10 @@
 				(= temp5 (- 50 (/ (- [temp0 2] 8) 2)))
 				(switch local9
 					(0
-						(Print @local11 #width temp6 #at temp4 temp5 #font gSmallFont)
+						(Print @str #width temp6 #at temp4 temp5 #font smallFont)
 					)
-					(else
-						(Print @local11 #width temp6 #at temp4 temp5 #font gSmallFont)
+					(else 
+						(Print @str #width temp6 #at temp4 temp5 #font smallFont)
 					)
 				)
 				(client setScript: 0)
@@ -1172,15 +1007,15 @@
 
 (instance doEgoTalk of Script
 	(properties)
-
+	
 	(method (changeState newState &tmp [temp0 4] temp4 temp5 temp6)
 		(switch (= state newState)
 			(0
-				(local1 setCycle: End self)
+				(sonnyMouth setCycle: EndLoop self)
 			)
 			(1
-				(if (> (StrLen @local11) 15)
-					(local1 setCycle: End self)
+				(if (> (StrLen @str) 15)
+					(sonnyMouth setCycle: EndLoop self)
 				else
 					(= cycles 1)
 				)
@@ -1188,16 +1023,15 @@
 			(2
 				(= temp4 15)
 				(= temp6 180)
-				(TextSize @[temp0 0] @local11 gSmallFont)
+				(TextSize @[temp0 0] @str smallFont)
 				(if (<= [temp0 2] 10)
-					(+= temp4 (- 86 (/ [temp0 3] 2)))
+					(= temp4 (+ temp4 (- 86 (/ [temp0 3] 2))))
 					(= temp6 -1)
 				)
 				(= temp5 (- 130 (/ (- [temp0 2] 8) 2)))
-				(Print @local11 #width temp6 #at temp4 temp5 #font gSmallFont)
+				(Print @str #width temp6 #at temp4 temp5 #font smallFont)
 				(client setScript: 0)
 			)
 		)
 	)
 )
-

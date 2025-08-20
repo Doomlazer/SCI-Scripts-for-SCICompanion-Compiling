@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 32)
 (include sci.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Sound)
 (use Motion)
 (use Game)
@@ -16,7 +15,7 @@
 )
 
 (local
-	local0
+	newProp
 	local1
 	local2
 	local3
@@ -24,12 +23,11 @@
 	local5
 	local6
 )
-
-(procedure (localproc_0)
+(procedure (localproc_000c)
 	(Print &rest #at -1 130)
 )
 
-(procedure (localproc_1)
+(procedure (localproc_001c)
 	(Print &rest #at -1 114)
 )
 
@@ -45,12 +43,12 @@
 	)
 )
 
-(instance rm32 of Rm
+(instance rm32 of Room
 	(properties
 		picture 32
-		style 8
+		style $0008
 	)
-
+	
 	(method (init)
 		(super init:)
 		(User canInput: 1 canControl: 1)
@@ -59,7 +57,7 @@
 		(= local2 0)
 		(= local3 0)
 		(= local6 0)
-		(if (< global100 8)
+		(if (< gamePhase 8)
 			((View new:)
 				view: 271
 				posn: 252 106
@@ -101,7 +99,7 @@
 				stopUpd:
 				addToPic:
 			)
-			(if (IsItemAt 13) ; hit_list
+			(if (InRoom 13)
 				((View new:)
 					view: 271
 					posn: 247 127
@@ -169,7 +167,7 @@
 			stopUpd:
 			addToPic:
 		)
-		((= local0 (Prop new:))
+		((= newProp (Prop new:))
 			view: 271
 			loop: 3
 			cel: 0
@@ -177,52 +175,53 @@
 			init:
 			stopUpd:
 		)
-		(lampBlock top: 119 bottom: 127 left: 247 right: 288 init:)
+		(lampBlock
+			top: 119
+			bottom: 127
+			left: 247
+			right: 288
+			init:
+		)
 		(self setScript: rm32Script)
 	)
 )
 
 (instance rm32Script of Script
 	(properties)
-
+	
 	(method (doit)
-		(cond
-			((<= (gEgo y:) 120)
-				(if (!= (mod (gEgo view:) 2) 0)
-					(gEgo view: (- (gEgo view:) 1))
+		(cond 
+			((<= (ego y?) 120)
+				(if (!= (mod (ego view?) 2) 0)
+					(ego view: (- (ego view?) 1))
 				)
 			)
-			((!= (mod (gEgo view:) 2) 1)
-				(gEgo view: (+ (gEgo view:) 1))
-			)
+			((!= (mod (ego view?) 2) 1) (ego view: (+ (ego view?) 1)))
 		)
-		(cond
+		(cond 
 			(
 				(and
-					(> (gEgo y:) 160)
-					(gCast contains: global112)
+					(> (ego y?) 160)
+					(cast contains: keith)
 					(not local4)
 				)
 				(= local4 1)
-				(gEgo setMotion: 0)
+				(ego setMotion: 0)
 				(User canControl: 0)
 				(keithScript changeState: 6)
 			)
-			((> (gEgo y:) 165)
-				(gCurRoom newRoom: 31)
-			)
-			((and (gEgo inRect: 190 95 222 110) (not local1))
-				(local0 setScript: bathroomScript)
-			)
+			((> (ego y?) 165) (curRoom newRoom: 31))
+			(
+			(and (ego inRect: 190 95 222 110) (not local1)) (newProp setScript: bathroomScript))
 		)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(cond
-					((and (>= global100 8) (== global131 13))
-						((= global112 (Act new:))
+				(cond 
+					((and (>= gamePhase 8) (== currentCar 13))
+						((= keith (Actor new:))
 							view: 20
 							posn: 255 145
 							observeBlocks: lampBlock
@@ -231,563 +230,480 @@
 							setScript: keithScript
 							init:
 						)
-						(gEgo
-							view: 1
-							posn: 239 155
-							observeBlocks: lampBlock
-							init:
-						)
+						(ego view: 1 posn: 239 155 observeBlocks: lampBlock init:)
 						(mariesBeenKidnapped play:)
 					)
-					((== gPrevRoomNum 12) ; phone
-						(gEgo init:)
-						(if (and (>= global100 8) (== global131 13))
-							(global112 init:)
+					((== prevRoomNum 12)
+						(ego init:)
+						(if (and (>= gamePhase 8) (== currentCar 13))
+							(keith init:)
 						)
 					)
 					(else
-						(if (>= global100 8)
+						(if (>= gamePhase 8)
 							(mariesBeenKidnapped play:)
 						else
 							(mariesTheme play:)
 						)
-						(gEgo
+						(ego
 							view: 1
 							posn: 240 131
 							observeBlocks: lampBlock
 							setMotion: MoveTo 184 120
 							init:
 						)
-						(if (and (>= global100 8) (not global127))
+						(if (and (>= gamePhase 8) (not global127))
 							(= global127 1)
 							(RedrawCast)
-							(localproc_1 32 0) ; "The appearance of Marie's living room speaks for itself. Your heart sinks and your head starts swimming."
-							(localproc_0 32 1) ; "Oh, Marie!" you think..."What has that maniac done to you??!"
+							(localproc_001c 32 0)
+							(localproc_000c 32 1)
 						)
 					)
 				)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
 		(super handleEvent: event)
-		(switch (event type:)
+		(switch (event type?)
 			(evSAID
-				(cond
+				(cond 
 					((Said 'look>')
-						(cond
+						(cond 
 							((Said '<below>')
-								(cond
+								(cond 
 									((Said '/fridge,oven,cabinet,counter,basin')
-										(if (gEgo inRect: 0 0 172 115)
-											(localproc_0 32 2) ; "Nothing...it's not even dusty!"
+										(if (ego inRect: 0 0 172 115)
+											(localproc_000c 32 2)
 										else
-											(localproc_0 32 3) ; "You're in the wrong room to do that."
+											(localproc_000c 32 3)
 										)
 									)
 									((Said '/bed')
-										(if (gEgo inRect: 215 95 275 111)
-											(localproc_0 32 2) ; "Nothing...it's not even dusty!"
+										(if (ego inRect: 215 95 275 111)
+											(localproc_000c 32 2)
 										else
-											(localproc_0 32 3) ; "You're in the wrong room to do that."
+											(localproc_000c 32 3)
 										)
 									)
-									((Said '/*')
-										(localproc_0 32 2) ; "Nothing...it's not even dusty!"
-									)
+									((Said '/*') (localproc_000c 32 2))
 								)
 							)
 							((Said '[<at,around][/!*,chamber]')
-								(cond
-									((gEgo inRect: 0 0 172 115)
-										(if (>= global100 8)
-											(localproc_0 32 4) ; "Somehow, in the middle of all the mess, the kitchen remains tidy and neat."
+								(cond 
+									((ego inRect: 0 0 172 115)
+										(if (>= gamePhase 8)
+											(localproc_000c 32 4)
 										else
-											(localproc_0 32 5) ; "You look around an immaculately clean kitchen."
+											(localproc_000c 32 5)
 										)
 									)
-									((gEgo inRect: 215 95 275 111)
-										(localproc_0 32 6) ; "The hall leads to the single bedroom. You see nothing out of the ordinary."
-									)
-									((>= global100 8)
-										(localproc_0 32 7) ; "You look around an apparently empty living room. However, you can see definite signs of struggle."
-									)
-									(else
-										(localproc_0 32 8) ; "You look around an apparently empty living room."
-									)
+									((ego inRect: 215 95 275 111) (localproc_000c 32 6))
+									((>= gamePhase 8) (localproc_000c 32 7))
+									(else (localproc_000c 32 8))
 								)
 							)
 							((Said '/bedroom,(chamber<bed)')
-								(if (gEgo inRect: 215 95 275 111)
-									(cond
-										((gCast contains: global112)
-											(localproc_0 32 9) ; "Keith is taking care of it."
-										)
-										((>= global100 8)
-											(localproc_0 32 10) ; "You search her bedroom from top to bottom, but you come up empty-handed. You can still smell her perfume in the air."
-										)
-										(else
-											(localproc_0 32 11) ; "The bed is neatly made and everything's put away nicely. You can smell her sweet perfume in the air."
-										)
+								(if (ego inRect: 215 95 275 111)
+									(cond 
+										((cast contains: keith) (localproc_000c 32 9))
+										((>= gamePhase 8) (localproc_000c 32 10))
+										(else (localproc_000c 32 11))
 									)
 								else
-									(localproc_0 32 12) ; "You're not in the bedroom."
+									(localproc_000c 32 12)
 								)
 							)
-							((or (Said '<up') (Said '/ceiling'))
-								(localproc_0 32 13) ; "As you stare blankly at the ceiling, thoughts of Marie dance through your head."
-							)
-							((Said '/dirt')
-								(localproc_0 32 14) ; "The ground is outside. In here, it's called the floor."
-							)
+							((or (Said '<up') (Said '/ceiling')) (localproc_000c 32 13))
+							((Said '/dirt') (localproc_000c 32 14))
 							((Said '[<at,down][/floor]')
 								(if
 									(and
-										(not (gEgo inRect: 0 0 172 115))
-										(not (gEgo inRect: 215 95 275 111))
+										(not (ego inRect: 0 0 172 115))
+										(not (ego inRect: 215 95 275 111))
 									)
-									(if (>= global100 8)
-										(if (gEgo inRect: 214 110 290 138)
-											(localproc_0 32 15) ; "You see a lamp turned over on the floor. An ashtray is next to it."
+									(if (>= gamePhase 8)
+										(if (ego inRect: 214 110 290 138)
+											(localproc_000c 32 15)
 										else
-											(localproc_0 32 16) ; "You see various items of furniture turned over on the floor."
+											(localproc_000c 32 16)
 										)
 									else
-										(localproc_0 32 17) ; "As usual, the floor is clean."
+										(localproc_000c 32 17)
 									)
 								else
-									(localproc_0 32 17) ; "As usual, the floor is clean."
+									(localproc_000c 32 17)
 								)
 							)
 							((Said '/couch')
 								(if
 									(and
-										(not (gEgo inRect: 215 95 275 111))
-										(not (gEgo inRect: 0 0 172 115))
+										(not (ego inRect: 215 95 275 111))
+										(not (ego inRect: 0 0 172 115))
 									)
-									(if (>= global100 8)
-										(localproc_0 32 18) ; "The phone is on the sofa with the cord ripped from the wall."
+									(if (>= gamePhase 8)
+										(localproc_000c 32 18)
 									else
-										(localproc_0 32 19) ; "This is Marie's favorite sofa."
+										(localproc_000c 32 19)
 									)
 								else
-									(localproc_0 32 20) ; "You're in the wrong room to be looking at the sofa."
+									(localproc_000c 32 20)
 								)
 							)
 							((Said '/wall')
-								(localproc_0 32 21) ; "The walls are bright and freshly painted."
-								(if (not (gEgo inRect: 0 0 172 115))
-									(localproc_0 32 22) ; "There are paintings hung here and there."
+								(localproc_000c 32 21)
+								(if (not (ego inRect: 0 0 172 115))
+									(localproc_000c 32 22)
 								)
 							)
 							((Said '/hall')
-								(if (gEgo inRect: 215 95 275 111)
-									(localproc_0 32 6) ; "The hall leads to the single bedroom. You see nothing out of the ordinary."
+								(if (ego inRect: 215 95 275 111)
+									(localproc_000c 32 6)
 								else
-									(localproc_0 32 23) ; "Go into the hall."
+									(localproc_000c 32 23)
 								)
 							)
 							((Said '/bench')
 								(if
 									(and
-										(not (gEgo inRect: 215 95 275 111))
-										(not (gEgo inRect: 0 0 172 115))
+										(not (ego inRect: 215 95 275 111))
+										(not (ego inRect: 0 0 172 115))
 									)
-									(localproc_0 32 24) ; "Nothing unusual."
+									(localproc_000c 32 24)
 								else
-									(localproc_0 32 25) ; "You're in the wrong room to be looking at the chair."
+									(localproc_000c 32 25)
 								)
 							)
 							((Said '/table')
-								(cond
-									((>= global100 8)
-										(cond
-											((gEgo inRect: 152 117 209 132)
-												(localproc_0 32 26) ; "The table is bare. The phone was on it."
-											)
-											((gEgo inRect: 214 110 290 138)
-												(localproc_0 32 27) ; "The table is bare. The lamp and ashtray were on it."
-											)
-											(else
-												(localproc_0 32 28) ; "Go closer to the table."
-											)
+								(cond 
+									((>= gamePhase 8)
+										(cond 
+											((ego inRect: 152 117 209 132) (localproc_000c 32 26))
+											((ego inRect: 214 110 290 138) (localproc_000c 32 27))
+											(else (localproc_000c 32 28))
 										)
 									)
-									((gEgo inRect: 152 117 209 132)
-										(localproc_0 32 29) ; "The phone is on the table."
-									)
-									((gEgo inRect: 214 110 290 138)
-										(localproc_0 32 30) ; "You see a lamp and an ashtray."
-									)
-									(else
-										(localproc_0 32 28) ; "Go closer to the table."
-									)
+									((ego inRect: 152 117 209 132) (localproc_000c 32 29))
+									((ego inRect: 214 110 290 138) (localproc_000c 32 30))
+									(else (localproc_000c 32 28))
 								)
 							)
 							((Said '/phone')
 								(if
 									(and
-										(not (gEgo inRect: 215 95 275 111))
-										(not (gEgo inRect: 0 0 172 115))
+										(not (ego inRect: 215 95 275 111))
+										(not (ego inRect: 0 0 172 115))
 									)
-									(if (>= global100 8)
-										(localproc_0 32 18) ; "The phone is on the sofa with the cord ripped from the wall."
+									(if (>= gamePhase 8)
+										(localproc_000c 32 18)
 									else
-										(localproc_0 32 31) ; "It's a pink Contel designer phone."
+										(localproc_000c 32 31)
 									)
 								else
-									(localproc_0 32 32) ; "You're in the wrong room to be looking at the telephone."
+									(localproc_000c 32 32)
 								)
 							)
 							((Said '/ashtray,(tray<ash)')
 								(if
 									(and
-										(not (gEgo inRect: 215 95 275 111))
-										(not (gEgo inRect: 0 0 172 115))
+										(not (ego inRect: 215 95 275 111))
+										(not (ego inRect: 0 0 172 115))
 									)
-									(if (gEgo inRect: 229 118 265 134)
-										(if (>= global100 8)
+									(if (ego inRect: 229 118 265 134)
+										(if (>= gamePhase 8)
 											(if (not local6)
-												(localproc_0 32 33) ; "You see an empty ashtray."
+												(localproc_000c 32 33)
 											else
-												(localproc_0 32 34) ; "In the ashtray, you see a partially burned piece of paper."
+												(localproc_000c 32 34)
 											)
 										else
-											(localproc_0 32 35) ; "It is clean. Marie doesn't smoke."
+											(localproc_000c 32 35)
 										)
 									else
-										(proc0_7) ; "You're not close enough."
+										(NotClose)
 									)
 								else
-									(localproc_0 32 36) ; "You're in the wrong room to be looking at the ashtray."
+									(localproc_000c 32 36)
 								)
 							)
 							((Said '/light,lamp')
-								(cond
-									((gEgo inRect: 0 0 172 115)
-										(localproc_0 32 37) ; "There is a fluorescent lamp overhead."
-									)
-									((gEgo inRect: 215 95 275 111)
-										(localproc_0 32 38) ; "There is a single light in the hall."
-									)
-									(
-										(and
-											(> (gEgo x:) 160)
-											(> (gEgo y:) 112)
-										)
-										(if (>= global100 8)
-											(localproc_0 32 39) ; "It'll never work again."
+								(cond 
+									((ego inRect: 0 0 172 115) (localproc_000c 32 37))
+									((ego inRect: 215 95 275 111) (localproc_000c 32 38))
+									((and (> (ego x?) 160) (> (ego y?) 112))
+										(if (>= gamePhase 8)
+											(localproc_000c 32 39)
 										else
-											(localproc_0 32 40) ; "An imported ceramic lamp from Mexico."
+											(localproc_000c 32 40)
 										)
 									)
-									(else
-										(proc0_7) ; "You're not close enough."
-									)
+									(else (NotClose))
 								)
 							)
 							((Said '/painting')
-								(if (gEgo inRect: 0 0 172 115)
-									(localproc_0 32 41) ; "There are no paintings in the kitchen."
+								(if (ego inRect: 0 0 172 115)
+									(localproc_000c 32 41)
 								else
-									(localproc_0 32 42) ; "Abstract art, by Sierra's very own graphic artist, "Vu"."
+									(localproc_000c 32 42)
 								)
 							)
 							((Said '/plant,flower')
-								(cond
-									((gEgo inRect: 0 0 172 115)
-										(localproc_0 32 43) ; "The houseplants in the kitchen are flourishing."
-									)
-									((gEgo inRect: 215 95 275 111)
-										(if (== ((gInventory at: 11) owner:) 30) ; potted_plant
-											(localproc_0 32 44) ; "Glancing around her bedroom briefly, you glimpse the flowers you once gave her."
+								(cond 
+									((ego inRect: 0 0 172 115) (localproc_000c 32 43))
+									((ego inRect: 215 95 275 111)
+										(if (== ((inventory at: 11) owner?) 30)
+											(localproc_000c 32 44)
 										else
-											(localproc_0 32 45) ; "Yeah!" you think. "I ought to get Marie some flowers today."
+											(localproc_000c 32 45)
 										)
 									)
-									(else
-										(localproc_0 32 46) ; "The little fake potted plant almost looks real."
-									)
+									(else (localproc_000c 32 46))
 								)
 							)
-							((Said '/grass')
-								(localproc_0 32 47) ; "There's no marijuana in here."
-							)
-							((Said '/pane')
-								(localproc_0 32 48) ; "You look through the window into Marie's back yard.... You think to yourself, "Nothing unusual out there.""
-							)
+							((Said '/grass') (localproc_000c 32 47))
+							((Said '/pane') (localproc_000c 32 48))
 							((Said '/counter')
 								(if
 									(or
-										(gEgo inRect: 103 113 182 123)
-										(gEgo inRect: 0 0 172 115)
+										(ego inRect: 103 113 182 123)
+										(ego inRect: 0 0 172 115)
 									)
-									(localproc_0 32 49) ; "You see nothing on the counter here."
+									(localproc_000c 32 49)
 								else
-									(localproc_0 32 50) ; "You should go into the kitchen."
+									(localproc_000c 32 50)
 								)
 							)
 							((Said '/kitchen')
-								(if (gEgo inRect: 0 0 172 115)
-									(if (>= global100 8)
-										(localproc_0 32 4) ; "Somehow, in the middle of all the mess, the kitchen remains tidy and neat."
+								(if (ego inRect: 0 0 172 115)
+									(if (>= gamePhase 8)
+										(localproc_000c 32 4)
 									else
-										(localproc_0 32 5) ; "You look around an immaculately clean kitchen."
+										(localproc_000c 32 5)
 									)
 								else
-									(localproc_0 32 50) ; "You should go into the kitchen."
+									(localproc_000c 32 50)
 								)
 							)
 							((Said '/cabinet,basin,oven,fridge')
-								(if (gEgo inRect: 0 0 172 115)
-									(localproc_0 32 51) ; "You look, but find nothing that will help you."
+								(if (ego inRect: 0 0 172 115)
+									(localproc_000c 32 51)
 								else
-									(localproc_0 32 52) ; "You must be in the kitchen to get a good look."
+									(localproc_000c 32 52)
 								)
 							)
 							((Said '/television,set')
 								(if
 									(and
-										(not (gEgo inRect: 215 95 275 111))
-										(not (gEgo inRect: 0 0 172 115))
+										(not (ego inRect: 215 95 275 111))
+										(not (ego inRect: 0 0 172 115))
 									)
-									(localproc_0 32 53) ; "It's a 19-inch "DynaView" color portable."
+									(localproc_000c 32 53)
 								else
-									(localproc_0 32 54) ; "You're in the wrong room to be looking at the television."
+									(localproc_000c 32 54)
 								)
 							)
 							((Said '/lampshade,(shade<lamp)')
 								(if
 									(and
-										(not (gEgo inRect: 215 95 275 111))
-										(not (gEgo inRect: 0 0 172 115))
+										(not (ego inRect: 215 95 275 111))
+										(not (ego inRect: 0 0 172 115))
 									)
-									(if (>= global100 8)
-										(localproc_0 32 55) ; "Useless!"
+									(if (>= gamePhase 8)
+										(localproc_000c 32 55)
 									else
-										(localproc_0 32 56) ; "Very pretty."
+										(localproc_000c 32 56)
 									)
 								else
-									(proc0_7) ; "You're not close enough."
+									(NotClose)
 								)
 							)
 							((Said '/bathroom,(chamber<bath)')
 								(if (not local1)
-									(localproc_0 32 57) ; "You must go over to the bathroom in order to look at it."
+									(localproc_000c 32 57)
 								else
-									(localproc_0 32 58) ; "You've already looked there."
+									(localproc_000c 32 58)
 								)
 							)
 							((Said '/friend')
-								(if (gCast contains: global112)
+								(if (cast contains: keith)
 									(if
 										(and
-											(> (global112 x:) 215)
-											(not
-												(gEgo inRect: 215 95 275 111)
-											)
+											(> (keith x?) 215)
+											(not (ego inRect: 215 95 275 111))
 										)
-										(localproc_0 32 59) ; "He's down the hall."
+										(localproc_000c 32 59)
 									else
-										(localproc_0 32 60) ; "Just good old Keith!"
+										(localproc_000c 32 60)
 									)
 								else
-									(localproc_0 32 61) ; "He's not here."
+									(localproc_000c 32 61)
 								)
 							)
 							((Said '/newspaper,list')
-								(if (gEgo has: 13) ; hit_list
-									(localproc_1 32 62 82 113) ; "You read over a list of names..."Roberts, Wilkans, Colby, Bonds.""
+								(if (ego has: 13)
+									(localproc_001c 32 62 82 113)
 									(if (not local5)
 										(= local5 1)
-										(localproc_0 32 63) ; "Mercy, Mercy!" you think to yourself, as you realize... "This is Bains' hit list...and..."
-										(localproc_0 32 64) ; "Now that murderous scumbag has Marie!"
+										(localproc_000c 32 63)
+										(localproc_000c 32 64)
 									)
 								else
-									(localproc_0 32 65) ; "You don't have it."
+									(localproc_000c 32 65)
 								)
 							)
 						)
 					)
 					((Said 'frisk>')
-						(cond
+						(cond 
 							((Said '/couch')
-								(if
-									(and
-										(<= (gEgo x:) 152)
-										(>= (gEgo y:) 119)
-									)
+								(if (and (<= (ego x?) 152) (>= (ego y?) 119))
 									(if (not global193)
-										(localproc_0 32 66) ; "You search the deep crevices of the sofa and find..."
-										(localproc_0 32 67) ; "How about that!" you think to yourself, "a $2 bill."
-										(localproc_0 32 68) ; "You slip the bill into your money clip."
-										(+= global107 2)
+										(localproc_000c 32 66)
+										(localproc_000c 32 67)
+										(localproc_000c 32 68)
+										(= dollars (+ dollars 2))
 										(= global193 1)
 									else
-										(localproc_0 32 69) ; "You search the deep crevices of the sofa, but there are no clues."
+										(localproc_000c 32 69)
 									)
 								else
-									(localproc_0 32 70) ; "Go closer to the sofa."
+									(localproc_000c 32 70)
 								)
 							)
 							((Said '/bench')
-								(if (gEgo inRect: 160 117 209 137)
+								(if (ego inRect: 160 117 209 137)
 									(if (not global194)
-										(localproc_0 32 71) ; "You search the deep crevices of the chair and find..."
-										(localproc_0 32 72) ; "How about that!" you think to yourself, "a $1 bill."
-										(localproc_0 32 68) ; "You slip the bill into your money clip."
-										(+= global107 1)
+										(localproc_000c 32 71)
+										(localproc_000c 32 72)
+										(localproc_000c 32 68)
+										(= dollars (+ dollars 1))
 										(= global194 1)
 									else
-										(localproc_0 32 73) ; "You search the deep crevices of the chair, but there are no clues."
+										(localproc_000c 32 73)
 									)
 								else
-									(localproc_0 32 74) ; "Go closer to the chair."
+									(localproc_000c 32 74)
 								)
 							)
 							((Said '/drawer,counter,basin,oven,fridge')
-								(if (gEgo inRect: 0 0 172 115)
-									(localproc_0 32 75) ; "You look through everything, but you see nothing that could help you."
+								(if (ego inRect: 0 0 172 115)
+									(localproc_000c 32 75)
 								else
-									(localproc_0 32 50) ; "You should go into the kitchen."
+									(localproc_000c 32 50)
 								)
 							)
 							((Said '/bedroom,(chamber<bed)')
-								(if (gEgo inRect: 215 95 275 111)
-									(cond
-										((gCast contains: global112)
-											(localproc_0 32 9) ; "Keith is taking care of it."
-										)
-										((>= global100 8)
-											(localproc_0 32 10) ; "You search her bedroom from top to bottom, but you come up empty-handed. You can still smell her perfume in the air."
-										)
-										(else
-											(localproc_0 32 76) ; "There's no reason to search it."
-										)
+								(if (ego inRect: 215 95 275 111)
+									(cond 
+										((cast contains: keith) (localproc_000c 32 9))
+										((>= gamePhase 8) (localproc_000c 32 10))
+										(else (localproc_000c 32 76))
 									)
 								else
-									(localproc_0 32 12) ; "You're not in the bedroom."
+									(localproc_000c 32 12)
 								)
 							)
 							((Said '/ashtray,(tray<ash)')
 								(if
 									(and
-										(not (gEgo inRect: 215 95 275 111))
-										(not (gEgo inRect: 0 0 172 115))
+										(not (ego inRect: 215 95 275 111))
+										(not (ego inRect: 0 0 172 115))
 									)
-									(if (gEgo inRect: 229 118 265 134)
-										(if (>= global100 8)
-											(Print 32 34) ; "In the ashtray, you see a partially burned piece of paper."
+									(if (ego inRect: 229 118 265 134)
+										(if (>= gamePhase 8)
+											(Print 32 34)
 										else
-											(localproc_0 32 77) ; "Huh?"
+											(localproc_000c 32 77)
 										)
 									else
-										(proc0_7) ; "You're not close enough."
+										(NotClose)
 									)
 								else
-									(localproc_0 32 36) ; "You're in the wrong room to be looking at the ashtray."
+									(localproc_000c 32 36)
 								)
 							)
 							((Said '/hall')
-								(if (>= global100 8)
-									(if (gEgo inRect: 215 95 275 111)
-										(localproc_0 32 78) ; "You don't see anything unusual."
+								(if (>= gamePhase 8)
+									(if (ego inRect: 215 95 275 111)
+										(localproc_000c 32 78)
 									else
-										(localproc_0 32 23) ; "Go into the hall."
+										(localproc_000c 32 23)
 									)
 								else
-									(localproc_0 32 79) ; "Why are you searching Marie's house?"
+									(localproc_000c 32 79)
 								)
 							)
 							((Said '/kitchen')
-								(if (>= global100 8)
-									(if (gEgo inRect: 215 95 275 111)
-										(localproc_0 32 78) ; "You don't see anything unusual."
+								(if (>= gamePhase 8)
+									(if (ego inRect: 215 95 275 111)
+										(localproc_000c 32 78)
 									else
-										(localproc_0 32 80) ; "Go into the kitchen."
+										(localproc_000c 32 80)
 									)
 								else
-									(localproc_0 32 79) ; "Why are you searching Marie's house?"
+									(localproc_000c 32 79)
 								)
 							)
 							((Said '/bathroom,(chamber<bath)')
 								(if (not local1)
-									(localproc_0 32 57) ; "You must go over to the bathroom in order to look at it."
+									(localproc_000c 32 57)
 								else
-									(localproc_0 32 58) ; "You've already looked there."
+									(localproc_000c 32 58)
 								)
 							)
 							((Said '/chamber')
-								(if (>= global100 8)
-									(if (gEgo has: 13) ; hit_list
-										(localproc_0 32 81) ; "You find no more substantial evidence."
+								(if (>= gamePhase 8)
+									(if (ego has: 13)
+										(localproc_000c 32 81)
 									else
-										(localproc_0 32 82) ; "So far, you haven't seen any substantial evidence."
+										(localproc_000c 32 82)
 									)
 								else
-									(localproc_0 32 79) ; "Why are you searching Marie's house?"
+									(localproc_000c 32 79)
 								)
 							)
-							((Said '/*')
-								(localproc_0 32 83) ; "No clues there."
-							)
+							((Said '/*') (localproc_000c 32 83))
 						)
 					)
-					((Said '/cheeks')
-						(localproc_0 32 84) ; "Marie is not here."
-					)
+					((Said '/cheeks') (localproc_000c 32 84))
 					((Said 'enter,go[<in]/bedroom,(chamber<bed)')
-						(if (gEgo inRect: 215 95 275 111)
-							(cond
-								((gCast contains: global112)
-									(localproc_0 32 9) ; "Keith is taking care of it."
-								)
-								((>= global100 8)
-									(localproc_0 32 10) ; "You search her bedroom from top to bottom, but you come up empty-handed. You can still smell her perfume in the air."
-								)
-								(else
-									(localproc_0 32 11) ; "The bed is neatly made and everything's put away nicely. You can smell her sweet perfume in the air."
-								)
+						(if (ego inRect: 215 95 275 111)
+							(cond 
+								((cast contains: keith) (localproc_000c 32 9))
+								((>= gamePhase 8) (localproc_000c 32 10))
+								(else (localproc_000c 32 11))
 							)
 						else
-							(localproc_0 32 12) ; "You're not in the bedroom."
+							(localproc_000c 32 12)
 						)
 					)
 					((Said 'smell/perfume')
-						(if (gEgo inRect: 215 95 275 111)
-							(localproc_0 32 85) ; "It's Marie's favorite, "Silky Lace"."
+						(if (ego inRect: 215 95 275 111)
+							(localproc_000c 32 85)
 						else
-							(localproc_0 32 86) ; "The fragrance is too faint to smell."
+							(localproc_000c 32 86)
 						)
 					)
 					((Said 'get,pick[<up]>')
-						(cond
-							((Said '/ashtray')
-								(localproc_0 32 87) ; "You don't need to take the ashtray."
-							)
+						(cond 
+							((Said '/ashtray') (localproc_000c 32 87))
 							((Said '/table')
 								(if
 									(or
-										(gEgo inRect: 214 110 290 138)
-										(gEgo inRect: 152 117 209 132)
+										(ego inRect: 214 110 290 138)
+										(ego inRect: 152 117 209 132)
 									)
-									(localproc_0 32 88) ; "The table wouldn't help you."
+									(localproc_000c 32 88)
 								else
-									(localproc_0 32 28) ; "Go closer to the table."
+									(localproc_000c 32 28)
 								)
 							)
 							((Said '/newspaper,list')
-								(cond
-									((gEgo has: 13) ; hit_list
-										(localproc_0 32 89) ; "You already have it."
-									)
-									((not local6)
-										(localproc_0 32 90) ; "You don't see it here."
-									)
-									((not (gEgo inRect: 229 118 265 134))
-										(localproc_0 32 91) ; "Go closer to it."
-									)
+								(cond 
+									((ego has: 13) (localproc_000c 32 89))
+									((not local6) (localproc_000c 32 90))
+									((not (ego inRect: 229 118 265 134)) (localproc_000c 32 91))
 									(else
 										((View new:)
 											view: 271
@@ -799,118 +715,112 @@
 											stopUpd:
 											addToPic:
 										)
-										(SetScore 3 91)
-										(localproc_0 32 92 83) ; "You pick it up and carefully unfold it."
-										(localproc_1 32 62 83 82 113) ; "You read over a list of names..."Roberts, Wilkans, Colby, Bonds.""
+										(SolvePuzzle 3 91)
+										(localproc_000c 32 92 83)
+										(localproc_001c 32 62 83 82 113)
 										(if (not local5)
 											(= local5 1)
-											(localproc_0 32 63 83) ; "Mercy, Mercy!" you think to yourself, as you realize... "This is Bains' hit list...and..."
-											(localproc_0 32 64 83) ; "Now that murderous scumbag has Marie!"
+											(localproc_000c 32 63 83)
+											(localproc_000c 32 64 83)
 										)
-										(gEgo get: 13) ; hit_list
+										(ego get: 13)
 										(= local6 0)
 									)
 								)
 							)
 							((Said '/painting')
-								(if (not (gEgo inRect: 0 0 172 115))
-									(localproc_0 32 93) ; "You're on the wrong track."
+								(if (not (ego inRect: 0 0 172 115))
+									(localproc_000c 32 93)
 								else
-									(localproc_0 32 91) ; "Go closer to it."
+									(localproc_000c 32 91)
 								)
 							)
 							((Said '/lamp')
-								(if (gEgo inRect: 214 110 290 138)
-									(localproc_0 32 94) ; "Nothing about the lamp will help."
+								(if (ego inRect: 214 110 290 138)
+									(localproc_000c 32 94)
 								else
-									(localproc_0 32 91) ; "Go closer to it."
+									(localproc_000c 32 91)
 								)
 							)
 							((Said '/plant')
-								(if (gEgo inRect: 214 110 290 138)
-									(localproc_0 32 95) ; "It's not big enough to hide behind, and you would look funny carrying it around."
+								(if (ego inRect: 214 110 290 138)
+									(localproc_000c 32 95)
 								else
-									(localproc_0 32 91) ; "Go closer to it."
+									(localproc_000c 32 91)
 								)
 							)
-							((Said '/phone')
-								(localproc_0 32 96) ; "You don't need it."
-							)
+							((Said '/phone') (localproc_000c 32 96))
 							(
 								(Said
 									'/couch,bench,television,fridge,oven,cabinet,grass,cabinet'
 								)
-								(Print 32 97) ; "You've got to be kidding!"
+								(Print 32 97)
 							)
 						)
 					)
 					((Said 'move>')
-						(cond
+						(cond 
 							((Said '/painting')
-								(if (gEgo inRect: 44 118 63 135)
-									(localproc_0 32 93) ; "You're on the wrong track."
+								(if (ego inRect: 44 118 63 135)
+									(localproc_000c 32 93)
 								else
-									(localproc_0 32 91) ; "Go closer to it."
+									(localproc_000c 32 91)
 								)
 							)
 							((Said '/lamp')
-								(if (gEgo inRect: 214 110 290 138)
-									(localproc_0 32 94) ; "Nothing about the lamp will help."
+								(if (ego inRect: 214 110 290 138)
+									(localproc_000c 32 94)
 								else
-									(localproc_0 32 91) ; "Go closer to it."
+									(localproc_000c 32 91)
 								)
 							)
 							((Said '/plant')
-								(if (gEgo inRect: 214 110 290 138)
-									(localproc_0 32 95) ; "It's not big enough to hide behind, and you would look funny carrying it around."
+								(if (ego inRect: 214 110 290 138)
+									(localproc_000c 32 95)
 								else
-									(localproc_0 32 91) ; "Go closer to it."
+									(localproc_000c 32 91)
 								)
 							)
-							((Said '/couch,bench,television,ashtray,table')
-								(localproc_0 32 98) ; "There's no need to do that."
-							)
+							((Said '/couch,bench,television,ashtray,table') (localproc_000c 32 98))
 						)
 					)
 					((Said 'read/newspaper,list')
-						(if (gEgo has: 13) ; hit_list
-							(localproc_1 32 62 82 113) ; "You read over a list of names..."Roberts, Wilkans, Colby, Bonds.""
+						(if (ego has: 13)
+							(localproc_001c 32 62 82 113)
 							(if (not local5)
 								(= local5 1)
-								(localproc_0 32 63) ; "Mercy, Mercy!" you think to yourself, as you realize... "This is Bains' hit list...and..."
-								(localproc_0 32 64) ; "Now that murderous scumbag has Marie!"
+								(localproc_000c 32 63)
+								(localproc_000c 32 64)
 							)
 						else
-							(localproc_0 32 65) ; "You don't have it."
+							(localproc_000c 32 65)
 						)
 					)
-					((Said 'turn[<on,off]/light,lamp')
-						(localproc_0 32 99) ; "That isn't necessary."
-					)
-					((Said 'talk,call/friend')
-						(if (gCast contains: global112)
-							(localproc_0 32 100) ; "Keith simply grunts in reply."
+					((Said 'turn[<on,off]/light,lamp') (localproc_000c 32 99))
+					((Said 'chat,call/friend')
+						(if (cast contains: keith)
+							(localproc_000c 32 100)
 						else
-							(localproc_0 32 101) ; "You're talking to yourself again... Keith's not here."
+							(localproc_000c 32 101)
 						)
 					)
 					((Said 'open/door')
-						(if (gEgo inRect: 190 95 222 110)
-							(localproc_0 32 102) ; "Don't bother. You've already looked in there."
+						(if (ego inRect: 190 95 222 110)
+							(localproc_000c 32 102)
 						else
-							(proc0_7) ; "You're not close enough."
+							(NotClose)
 						)
 					)
 					((Said 'open/fridge,cabinet')
-						(if (gEgo inRect: 0 0 172 115)
-							(if (>= global100 8)
-								(localproc_0 32 103) ; "There are no clues, and you're not hungry."
+						(if (ego inRect: 0 0 172 115)
+							(if (>= gamePhase 8)
+								(localproc_000c 32 103)
 							else
-								(localproc_0 32 104) ; "Hmmmm..." you say to yourself. "Marie sure stocks a mean kitchen!"
-								(localproc_0 32 105) ; "You munch down a piece of fruit."
+								(localproc_000c 32 104)
+								(localproc_000c 32 105)
 							)
 						else
-							(localproc_0 32 106) ; "You're not in the right room."
+							(localproc_000c 32 106)
 						)
 					)
 					(
@@ -918,36 +828,34 @@
 							(Said 'get/fingerprint,print')
 							(Said 'dust/fingerprint,print')
 						)
-						(if (gEgo has: 10) ; field_kit
-							(localproc_0 32 107) ; "Specify where you want to apply the powder."
+						(if (ego has: 10)
+							(localproc_000c 32 107)
 						else
-							(localproc_0 32 108) ; "You don't have your field kit."
+							(localproc_000c 32 108)
 						)
 					)
-					((or (Said 'dust>') (Said 'powder>') (Said 'apply/powder>'))
-						(cond
-							((not (gEgo has: 10)) ; field_kit
-								(event claimed: 1)
-								(localproc_0 32 108) ; "You don't have your field kit."
-							)
+					(
+						(or
+							(Said 'dust>')
+							(Said 'powder>')
+							(Said 'apply/powder>')
+						)
+						(cond 
+							((not (ego has: 10)) (event claimed: 1) (localproc_000c 32 108))
 							(
-								(Said
-									'/table,couch,bench,counter,cabinet,phone,ashtray'
-								)
-								(if (gEgo has: 10) ; field_kit
+							(Said '/table,couch,bench,counter,cabinet,phone,ashtray')
+								(if (ego has: 10)
 									(global122 setPri: 0)
 									(global120 setPri: 0)
-									(localproc_0 32 109 83) ; "Carefully, you apply the fingerprint powder ... you examine the powder and think to yourself... "Not worth processing.""
+									(localproc_000c 32 109 83)
 									(global122 setPri: 15)
 									(global120 setPri: 14)
 									(= local2 1)
 								else
-									(localproc_0 32 108) ; "You don't have your field kit."
+									(localproc_000c 32 108)
 								)
 							)
-							((Said '/*')
-								(localproc_0 32 110) ; "A wasted effort."
-							)
+							((Said '/*') (localproc_000c 32 110))
 						)
 					)
 					(
@@ -955,56 +863,52 @@
 							(Said 'use/tape[<fingerprint]')
 							(Said 'get,hoist/print,clue')
 						)
-						(if (gEgo has: 10) ; field_kit
-							(cond
+						(if (ego has: 10)
+							(cond 
 								((== local2 2)
 									(global123 setPri: 0)
-									(localproc_0 32 111 83) ; "Using the tape, you carefully transfer the print to a 3x5 card."
+									(localproc_000c 32 111 83)
 									(global123 setPri: 15)
-									(gEgo get: 22) ; fingerprint
+									(ego get: 22)
 								)
-								(local2
-									(localproc_0 32 112) ; "There aren't any prints."
-								)
-								(else
-									(localproc_0 32 113) ; "Don't you know the correct way to get fingerprints?"
-								)
+								(local2 (localproc_000c 32 112))
+								(else (localproc_000c 32 113))
 							)
 							(global122 setPri: 15)
 							(global120 setPri: 14)
 						else
-							(localproc_0 32 108) ; "You don't have your field kit."
+							(localproc_000c 32 108)
 						)
 					)
-					((or (Said 'use,dial,pick[<up]/phone') (Said 'make/call'))
-						(if (< global100 8)
-							(if (gEgo inRect: 150 117 178 135)
-								(gCurRoom newRoom: 12) ; phone
+					(
+						(or
+							(Said 'use,dial,pick[<up]/phone')
+							(Said 'make/call')
+						)
+						(if (< gamePhase 8)
+							(if (ego inRect: 150 117 178 135)
+								(curRoom newRoom: 12)
 							else
-								(proc0_7) ; "You're not close enough."
+								(NotClose)
 							)
 						else
-							(localproc_0 32 114) ; "It's been torn from the wall. It's inoperative."
+							(localproc_000c 32 114)
 						)
 					)
 					((Said 'use,go/bathroom,(chamber<bath)')
 						(if local1
-							(localproc_0 32 115) ; "You can hold it."
+							(localproc_000c 32 115)
 						else
-							(localproc_0 32 116) ; "First, go into the bathroom."
+							(localproc_000c 32 116)
 						)
 					)
-					((Said 'use/basin,oven,fridge')
-						(localproc_0 32 117) ; "You don't need to do that now."
-					)
-					((Said 'clock,use,(turn<on)/television,set')
-						(localproc_0 32 118) ; "You don't have time to watch TV."
-					)
+					((Said 'use/basin,oven,fridge') (localproc_000c 32 117))
+					((Said 'clock,use,(turn<on)/television,set') (localproc_000c 32 118))
 					((Said 'sat[<down]')
-						(if (>= global100 8)
-							(localproc_0 32 119) ; "You're too upset to sit and relax."
+						(if (>= gamePhase 8)
+							(localproc_000c 32 119)
 						else
-							(localproc_0 32 120) ; "You have business to take care of, Bonds."
+							(localproc_000c 32 120)
 						)
 					)
 				)
@@ -1015,99 +919,94 @@
 
 (instance keithScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(if (>= global100 8)
+				(if (>= gamePhase 8)
 					(User canControl: 0)
-					(global112 setMotion: MoveTo 255 140 self)
+					(keith setMotion: MoveTo 255 140 self)
 				)
 			)
 			(1
-				(global112 setMotion: MoveTo 240 135 self)
+				(keith setMotion: MoveTo 240 135 self)
 			)
 			(2
 				(if (not global127)
-					(localproc_0 32 0) ; "The appearance of Marie's living room speaks for itself. Your heart sinks and your head starts swimming."
-					(localproc_0 32 1) ; "Oh, Marie!" you think..."What has that maniac done to you??!"
-					(localproc_0 32 121) ; "Trying to keep your composure, you say to Keith..."
-					(localproc_0 32 122) ; "OK, Keith, why don't you go check out the back of the house? I'll look around here."
+					(localproc_000c 32 0)
+					(localproc_000c 32 1)
+					(localproc_000c 32 121)
+					(localproc_000c 32 122)
 				)
 				(= cycles 5)
 				(User canControl: 1)
 				(= global127 1)
 			)
 			(3
-				(global112 setMotion: MoveTo 210 109 self)
+				(keith setMotion: MoveTo 210 109 self)
 			)
 			(4
-				(global112 setMotion: MoveTo 275 109)
+				(keith setMotion: MoveTo 275 109)
 			)
-			(5
-				(global112 stopUpd:)
-			)
+			(5 (keith stopUpd:))
 			(6
-				(localproc_0 32 123) ; "Hearing you open the door, Keith hollers: "Hey, Sonny! Wait up!""
-				(gEgo setLoop: 3)
-				(global112 startUpd: setMotion: MoveTo 213 109 self)
+				(localproc_000c 32 123)
+				(ego setLoop: 3)
+				(keith startUpd: setMotion: MoveTo 213 109 self)
 			)
 			(7
-				(global112 setMotion: MoveTo 215 135 self)
+				(keith setMotion: MoveTo 215 135 self)
 			)
 			(8
-				(gEgo setLoop: 2)
-				(global112 setMotion: MoveTo 238 135 self)
+				(ego setLoop: 2)
+				(keith setMotion: MoveTo 238 135 self)
 			)
 			(9
-				(global112 setMotion: MoveTo 238 145 self)
+				(keith setMotion: MoveTo 238 145 self)
 			)
 			(10
-				(gEgo setLoop: -1)
-				(gCurRoom newRoom: 31)
+				(ego setLoop: -1)
+				(curRoom newRoom: 31)
 			)
 		)
 	)
 )
 
-(instance lampBlock of Blk
+(instance lampBlock of Block
 	(properties)
 )
 
 (instance bathroomScript of Script
 	(properties)
-
+	
 	(method (init)
 		(super init: &rest)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(HandsOff)
-				(gEgo setMotion: 0 stopUpd: setPri: 8)
-				(local0 setCycle: End)
+				(ego setMotion: 0 stopUpd: setPri: 8)
+				(newProp setCycle: EndLoop)
 				(= local1 1)
 				(= seconds 2)
 			)
 			(1
-				(if (< global100 8)
-					(localproc_0 32 124 83) ; "This is Marie's bathroom. As usual, it is neat and tidy. Marie is not here. You close the door."
+				(if (< gamePhase 8)
+					(localproc_000c 32 124 83)
 				else
-					(localproc_0 32 125 83) ; "There are signs of a struggle in Marie's bathroom. Marie is not here. You close the door."
+					(localproc_000c 32 125 83)
 				)
 				(= seconds 2)
 			)
-			(2
-				(local0 setCycle: Beg self)
-			)
+			(2 (newProp setCycle: BegLoop self))
 			(3
-				(local0 stopUpd:)
-				(gEgo setPri: -1)
+				(newProp stopUpd:)
+				(ego setPri: -1)
 				(HandsOn)
 				(client setScript: 0)
 			)
 		)
 	)
 )
-

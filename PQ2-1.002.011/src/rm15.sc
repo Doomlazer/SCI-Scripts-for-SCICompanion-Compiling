@@ -1,12 +1,12 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 15)
-(include sci.sh)
+(include system.sh)
+(include game.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use AutoDoor)
 (use Wander)
-(use Avoid)
+(use Avoider)
 (use Sound)
 (use Motion)
 (use Game)
@@ -20,11 +20,11 @@
 
 (local
 	local0
-	local1
-	local2
-	local3
-	local4
-	local5
+	newAutoDoor
+	newAct
+	rosePrice
+	bouquetPrice
+	plantPrice
 	local6
 	local7
 	local8
@@ -40,9 +40,8 @@
 	local18
 	local19
 )
-
-(procedure (localproc_0)
-	(if (> (gEgo y:) 150)
+(procedure (LocPrint)
+	(if (> (ego y?) 150)
 		(Print &rest #at -1 15)
 	else
 		(Print &rest #at -1 120)
@@ -65,7 +64,7 @@
 	(properties)
 )
 
-(instance flowerGirl of Act
+(instance flowerGirl of Actor
 	(properties)
 )
 
@@ -73,34 +72,67 @@
 	(properties)
 )
 
-(instance rm15 of Rm
+(instance rm15 of Room
 	(properties
 		picture 15
-		style 0
+		style HWIPE
 	)
-
-	(method (dispose)
-		(flowerScript dispose:)
-		(DisposeScript 301)
-		(super dispose:)
-	)
-
+	
 	(method (init)
-		(Load rsVIEW 1)
-		(Load rsVIEW 76)
-		(if (or (gEgo has: 11) (< global100 8)) ; potted_plant
-			(Load rsVIEW 43)
+		(Load VIEW 1)
+		(Load VIEW 76)
+		(if
+			(or
+				(ego has: iFlower)
+				(< gamePhase 8)
+			)
+			(Load VIEW 43)
 		)
 		(super init:)
-		(= gPerspective 70)
+		(= perspective 70)
 		(= local19 0)
 		(HandsOn)
-		(= global212 3)
-		((View new:) view: 76 loop: 3 cel: 0 posn: 120 52 init: addToPic:)
-		((View new:) view: 76 loop: 0 cel: 0 posn: 263 122 init: addToPic:)
-		((View new:) view: 76 loop: 0 cel: 1 posn: 297 123 init: addToPic:)
-		((View new:) view: 76 loop: 0 cel: 2 posn: 273 124 init: addToPic:)
-		((View new:) view: 76 loop: 0 cel: 3 posn: 251 124 init: addToPic:)
+		(= gunFireState 3)
+		((View new:)
+			view: 76
+			loop: 3
+			cel: 0
+			posn: 120 52
+			init:
+			addToPic:
+		)
+		((View new:)
+			view: 76
+			loop: 0
+			cel: 0
+			posn: 263 122
+			init:
+			addToPic:
+		)
+		((View new:)
+			view: 76
+			loop: 0
+			cel: 1
+			posn: 297 123
+			init:
+			addToPic:
+		)
+		((View new:)
+			view: 76
+			loop: 0
+			cel: 2
+			posn: 273 124
+			init:
+			addToPic:
+		)
+		((View new:)
+			view: 76
+			loop: 0
+			cel: 3
+			posn: 251 124
+			init:
+			addToPic:
+		)
 		((View new:)
 			view: 76
 			loop: 0
@@ -109,7 +141,14 @@
 			init:
 			addToPic:
 		)
-		((View new:) view: 76 loop: 4 cel: 0 posn: 38 140 init: addToPic:)
+		((View new:)
+			view: 76
+			loop: 4
+			cel: 0
+			posn: 38 140
+			init:
+			addToPic:
+		)
 		(lightPole
 			view: 76
 			loop: 0
@@ -119,7 +158,7 @@
 			stopUpd:
 			setScript: lightScript
 		)
-		((= local1 (AutoDoor new:))
+		((= newAutoDoor (AutoDoor new:))
 			view: 76
 			loop: 1
 			posn: 117 108
@@ -129,48 +168,51 @@
 			init:
 			stopUpd:
 		)
-		(= local3 2)
-		(= local4 15)
-		(= local5 7)
+		(= rosePrice 2)
+		(= bouquetPrice 15)  bouquetPrice
+		(= plantPrice 7)
 		(self setLocales: 153)
 		(self setScript: rm15Script)
 	)
-
+	
 	(method (doit)
-		(local1 doit:)
-		(if (gCast contains: global112)
-			(global112 setMotion: Follow gEgo 25)
+		(newAutoDoor doit:)
+		(if (cast contains: keith)
+			(keith setMotion: Follow ego 25)
 		)
-		(cond
+		(cond 
 			(local19 0)
-			((> (gEgo x:) 325)
-				(localproc_0 15 0) ; "Although it occurs to you that you could easily walk around the airport, you decide to stick to the business at hand."
-				(gEgo setMotion: MoveTo 300 (gEgo y:))
+			((> (ego x?) 325)
+				(LocPrint 15 0)
+				(ego setMotion: MoveTo 300 (ego y?))
 			)
-			((< (gEgo x:) -5)
-				(localproc_0 15 0) ; "Although it occurs to you that you could easily walk around the airport, you decide to stick to the business at hand."
-				(gEgo setMotion: MoveTo 20 (gEgo y:))
+			((< (ego x?) -5)
+				(LocPrint 15 0)
+				(ego setMotion: MoveTo 20 (ego y?))
 			)
 		)
-		(cond
-			((<= (gEgo y:) 124)
-				(if (!= (mod (gEgo view:) 2) 0)
-					(gEgo view: (- (gEgo view:) 1))
+		(cond 
+			((<= (ego y?) 124)
+				(if (!= (mod (ego view?) 2) 0)
+					(ego view: (- (ego view?) 1))
 				)
 			)
-			((!= (mod (gEgo view:) 2) 1)
-				(gEgo view: (+ (gEgo view:) 1))
+			((!= (mod (ego view?) 2) 1)
+				(ego view: (+ (ego view?) 1))
 			)
 		)
 		(if
 			(and
 				(not local8)
 				(not local12)
-				(not (gEgo has: 11)) ; potted_plant
-				(< global100 8)
+				(not (ego has: iFlower))
+				(< gamePhase 8)
 				(or
-					(== gPrevRoomNum 16)
-					(and (== gPrevRoomNum 14) (< (gEgo y:) 140))
+					(== prevRoomNum 16)
+					(and
+						(== prevRoomNum 14)
+						(< (ego y?) 140)
+					)
 				)
 			)
 			(flowerScript changeState: 0)
@@ -178,16 +220,18 @@
 		(if
 			(and
 				local10
-				(or (== (flowerScript state:) 0) (== (flowerScript state:) 1))
+				(or
+					(== (flowerScript state?) 0)
+					(== (flowerScript state?) 1)
+				)
 			)
-			(cond
-				((> (gEgo x:) 245)
+			(cond 
+				((> (ego x?) 245)
 					(= local18 1)
 					(flowerGirl setMotion: 0)
 				)
-				(local18
-					(= local18 0)
-					(flowerGirl setMotion: Follow gEgo 25)
+				(local18 (= local18 0)
+					(flowerGirl setMotion: Follow ego 25)
 				)
 			)
 		)
@@ -196,104 +240,126 @@
 				(not local10)
 				(not local11)
 				local8
-				(<= (flowerGirl distanceTo: gEgo) 25)
+				(<= (flowerGirl distanceTo: ego) 25)
 			)
 			(= local10 1)
 			(= local9 0)
 			(flowerScript changeState: 1)
 		)
-		(if (and local8 (> (gEgo y:) 145))
+		(if
+			(and
+				local8
+				(> (ego y?) 145)
+			)
 			(flowerGirl stopUpd:)
 		else
 			(flowerGirl startUpd:)
 		)
-		(cond
+		(cond 
 			((not local16)
-				(if (and (not local6) (> 176 (gEgo y:) 142))
+				(if
+					(and
+						(not local6)
+						(> 176 (ego y?)
+					)
+					(> (ego y?) 142))
 					(= local16 1)
-					(if (<= (gEgo y:) 150)
+					(if (<= (ego y?) 150)
 						(= local17 2)
 					else
 						(= local17 -2)
 					)
 					(egoSquashed play:)
-					(taxi posn: 450 (+ (gEgo y:) 2))
+					(taxi posn: 450 (+ (ego y?) 2))
 				)
 			)
-			((< (taxi x:) -35)
-				(if (< (rm15Script state:) 1)
+			((< (taxi x?) -35)
+				(if (< (rm15Script state?) 1)
 					(= local16 0)
 				)
 			)
 			(else
 				(taxi
 					posn:
-						(- (taxi x:) 50)
-						(if (> 173 (gEgo y:) 142)
-							(+ (gEgo y:) 2)
+						(- (taxi x?) 50)
+						(if 
+							(and
+								(> 173 (ego y?))
+								(> (ego y?) 142)
+							)
+							(+ (ego y?) 2)
 						else
-							(taxi y:)
+							(taxi y?)
 						)
-					setPri: (+ (gEgo priority:) local17)
+					setPri: (+ (ego priority?) local17)
 				)
-				(if (> (taxi priority:) 14)
+				(if (> (taxi priority?) 14)
 					(taxi priority: 15)
 				)
-				(if (< (taxi priority:) 10)
+				(if (< (taxi priority?) 10)
 					(taxi priority: 10)
 				)
 			)
 		)
-		(cond
-			((< (gEgo x:) -20)
-				(gEgo x: -20)
+		(cond 
+			((< (ego x?) -20)
+				(ego x: -20)
 			)
 			(
 				(and
-					(< -25 (- (taxi x:) (gEgo x:)) 65)
-					(> 9 (- (taxi y:) (gEgo y:)) -6)
-					(< (rm15Script state:) 1)
-					(> 176 (gEgo y:) 138)
+					(< -25 (- (taxi x?) (ego x?)))
+					(< (- (taxi x?) (ego x?)) 65)
+					(> 9 (- (taxi y?) (ego y?)))
+					(> (- (taxi y?) (ego y?)) -6)
+					(< (rm15Script state?) 1)
+					(> 176 (ego y?))
+					(> (ego y?) 138)
 					(not local6)
 				)
 				(rm15Script changeState: 1)
 			)
-			((== (local1 doorState:) 2)
-				(= gPerspective 0)
-				(gCurRoom newRoom: 16)
+			((== (newAutoDoor doorState?) 2)
+				(= perspective 0)
+				(curRoom newRoom: 16)
 			)
-			((> (gEgo y:) 210)
-				(= global108 (gEgo x:))
-				(= global212 2)
-				(= gPerspective 0)
-				(gCurRoom newRoom: 14)
+			((> (ego y?) 210)
+				(= gGEgoX (ego x?))
+				(= gunFireState 2)
+				(= perspective 0)
+				(curRoom newRoom: 14)
 			)
 		)
 		(super doit:)
+	)
+	
+	(method (dispose)
+		(flowerScript dispose:)
+		(DisposeScript 301)
+		(super dispose:)
 	)
 )
 
 (instance rm15Script of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(SL enable:)
-				(if (== gPrevRoomNum 14)
-					(cond
-						((< global108 58)
-							(gEgo
-								view: (if global204 7 else 1)
+				(StatusLine enable:)
+				(if (== prevRoomNum 14)
+					(cond 
+						((< gGEgoX 58)
+							(ego
+								view: (if gunDrawn 7 else 1)
 								posn: -10 189
 								setCycle: Walk
 								init:
 								setMotion: MoveTo 25 189
 							)
 						)
-						((> global108 161)
-							(gEgo
-								view: (if global204 7 else 1)
+						((> gGEgoX 161)
+							(ego
+								view: (if gunDrawn 7 else 1)
 								posn: 327 189
 								setCycle: Walk
 								init:
@@ -301,99 +367,92 @@
 							)
 						)
 						(else
-							(gEgo
-								view: (if global204 7 else 1)
-								posn: (* (- global108 57) 3) 195
+							(ego
+								view: (if gunDrawn 7 else 1)
+								posn: (* (- gGEgoX 57) 3) 195
 								setCycle: Walk
 								init:
-								setMotion: MoveTo (* (- global108 57) 3) 189
+								setMotion: MoveTo (* (- gGEgoX 57) 3) 189
 							)
 						)
 					)
 				else
-					(gEgo
-						view: (if global204 6 else 0)
+					(ego
+						view: (if gunDrawn 6 else 0)
 						posn: 115 117
 						setCycle: Walk
 						init:
-						illegalBits: $8000
+						illegalBits: -32768
 						setMotion: MoveTo 115 122
 					)
 				)
-				(if (IsFlag 40)
-					((= global112 (Act new:))
+				(if (Btst fKeithFollows)
+					((= keith (Actor new:))
 						view: 20
 						init:
 						setCycle: Walk
-						setAvoider: (Avoid new:)
-						setMotion: Follow gEgo 25
+						setAvoider: (Avoider new:)
+						setMotion: Follow ego 25
 					)
-					(if (== gPrevRoomNum 16)
-						(global112 posn: 103 113 loop: 2)
+					(if (== prevRoomNum 16)
+						(keith posn: 103 113 loop: 2)
 					else
-						(global112 posn: (+ (gEgo x:) 20) 200)
+						(keith posn: (+ (ego x?) 20) 200)
 					)
 				)
 				(taxi
 					view: 76
 					loop: 2
 					cel: 0
-					posn:
-						450
-						(if (< (gEgo y:) 176)
-							(gEgo y:)
-						else
-							176
-						)
+					posn: 450 (if (< (ego y?) 176) (ego y?) else 176)
 					init:
 					ignoreActors:
 				)
 			)
 			(1
 				(HandsOff)
-				((= local2 (Act new:))
+				((= newAct (Actor new:))
 					view: 76
-					posn:
-						(if (> (gEgo x:) 325)
-							322
-						else
-							(gEgo x:)
-						)
-						(gEgo y:)
+					posn: (if (> (ego x?) 325) 322 else (ego x?)) (ego y?)
 					loop: 5
 					cel: 0
 					setMotion: 0
 					cycleSpeed: 2
 					init:
-					setCycle: End self
+					setCycle: EndLoop self
 				)
-				(gEgo dispose:)
+				(ego dispose:)
 				(= local15 0)
 				(= local19 1)
 			)
 			(2
-				(local2
+				(newAct
 					setLoop: 6
 					cel: 0
-					setMotion: MoveTo (- (local2 x:) 20) (local2 y:)
-					setCycle: End self
+					setMotion: MoveTo (- (newAct x?) 20) (newAct y?)
+					setCycle: EndLoop self
 				)
 			)
 			(3
-				(local2 setLoop: 7 setCel: 0 stopUpd: addToPic:)
+				(newAct
+					setLoop: 7
+					setCel: 0
+					stopUpd:
+					addToPic:
+				)
 				(= cycles 12)
 				(User canInput: 0)
 			)
 			(4
-				(if (IsFlag 40)
-					(global112 loop: 1)
-					(localproc_0 15 1 83) ; "Gee, that taxi cab was SPEEDING! You'd better get up and give him a ticket, Sonny. Sonny? SONNY!?"
+				(if (Btst fKeithFollows)
+					(keith loop: 1)
+					(LocPrint 15 1 83)
 				)
 				(= cycles 12)
 			)
 			(5
-				(Print 15 2 #width 26 #at 221 62 #time 3) ; "My, My!"
-				(Print 15 3 #width 50 #at 252 60 #time 4) ; "Didja see that?"
+				(Print 15 2 #width 26 #at 221 62 #time 3)
+				(Print 15 3 #width 50 #at 252 60 #time 4)
 				(if local7
 					(EgoDead
 						{You took too much time getting across the street. Too bad...so sad...you've been had!}
@@ -406,180 +465,204 @@
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(switch (event type:)
-			(evSAID
-				(cond
-					((or (Said 'give/newspaper') (Said 'ask,get/newspaper'))
-						(if (gEgo inRect: 206 110 305 145)
-							(localproc_0 15 4) ; "They won't let you have it."
+		(switch (event type?)
+			(saidEvent
+				(cond 
+					(
+						(or
+							(Said 'gave/newspaper')
+							(Said 'ask,get/newspaper')
+						)
+						(if (ego inRect: 206 110 305 145)
+							(LocPrint 15 4)
 						else
-							(localproc_0 15 5) ; "Get closer."
+							(LocPrint 15 5)
 						)
 					)
 					((Said 'look>')
-						(cond
+						(cond 
 							((Said '/ave,sidewalk,bridge,(walk<side)')
-								(localproc_0 15 6) ; "A crosswalk is painted on the street near the front entrance of the airport."
+								(LocPrint 15 6)
 							)
 							((Said '/box')
-								(localproc_0 15 7) ; "The box is equipped with a button....that's all."
+								(LocPrint 15 7)
 							)
 							((Said '/pane')
-								(localproc_0 15 8) ; "Because of the reflective coating on the windows, you can't see through them."
+								(LocPrint 15 8)
 							)
-							((Said '/men,man,person,crowd')
-								(Print 15 9 #at -1 15) ; "At the moment, a couple of people are sitting on a bench in front of the building entrance. One of them is reading the Lytton Tribune. The other one, too cheap to buy his own paper, is reading over his shoulder."
+							((Said '/men,dude,person,crowd')
+								(Print 15 9 #at -1 15)
 							)
 							((Said '/bench')
-								(localproc_0 15 10) ; "It's a concrete bus stop bench with advertising on it."
+								(LocPrint 15 10)
 							)
 							((Said '/advertise,ad')
-								(localproc_0 15 11) ; "The people are sitting in front of the advertising on the bench."
+								(LocPrint 15 11)
 							)
 							((Said '/way<both')
-								(localproc_0 15 12) ; "OK."
+								(LocPrint 15 12)
 							)
 							((Said '/awning')
-								(localproc_0 15 13) ; "It shelters the entrance and provides some decoration."
+								(LocPrint 15 13)
 							)
 							((Said '<below/auto')
-								(localproc_0 15 14) ; "There's nothing down there."
+								(LocPrint 15 14)
 							)
 							((Said '/auto')
-								(if (gEgo inRect: 80 108 120 150)
-									(localproc_0 15 15) ; "Looking at the license, you can see that the registration's expired."
+								(if (ego inRect: 80 108 120 150)
+									(LocPrint 15 15)
 								else
-									(localproc_0 15 16) ; "It's blue, just like yours!"
+									(LocPrint 15 16)
 								)
 							)
 							((Said '/door')
-								(localproc_0 15 17) ; "It's one of those automatic sliding doors."
+								(LocPrint 15 17)
 							)
 							((Said '/sign')
-								(localproc_0 15 18 25 4) ; "The sign above the entrance says...in HUGE letters..."LYTTON AIRPORT.""
-								(localproc_0 15 19) ; "The sign above the bench tells you which buses stop here."
+								(LocPrint 15 18 25 4)
+								(LocPrint 15 19)
 							)
-							((or (Said '/air') (Said '<up'))
-								(localproc_0 15 20) ; "You look up as yet another airliner roars above your head."
+							(
+								(or
+									(Said '/air')
+									(Said '<up')
+								)
+								(LocPrint 15 20)
 							)
-							((or (Said '/dirt') (Said '<down'))
-								(localproc_0 15 21) ; "Your shoes need polishing."
+							(
+								(or
+									(Said '/dirt')
+									(Said '<down')
+								)
+								(LocPrint 15 21)
 							)
 							((Said '[<at,around][/building,airport,terminal]')
-								(Print 15 22 #at -1 15) ; "The new Lytton Airport is an awe-inspiring sight. Jets and small private aircraft take off and land with dizzying frequency. You are impressed!!"
+								(Print 15 22 #at -1 15)
 							)
 							((Said '/pole,light[<traffic]')
-								(if (> (gEgo y:) 150)
-									(localproc_0 15 23) ; "You see a "signal control box" attached to the light pole."
+								(if (> (ego y?) 150)
+									(LocPrint 15 23)
 								else
-									(localproc_0 15 24) ; "You see a "signal control box" attached to the traffic light."
+									(LocPrint 15 24)
 								)
 							)
 							((Said '/button')
-								(if (== (gEgo onControl: 1) 2048)
-									(localproc_0 15 25) ; "The button on the post is labeled: 'WALK'."
+								(if (== (ego onControl: 1) cLCYAN)
+									(LocPrint 15 25)
 								else
-									(localproc_0 15 26) ; "There is a button on the post."
+									(LocPrint 15 26)
 								)
 							)
 							((Said '/flower,basket')
-								(cond
+								(cond 
 									(local10
-										(Print 15 27 #at -1 15) ; "I have some lovely flowers...." the flower girl says. "Single roses, a bouquet of carnations....even some easy-to-care-for potted plants. You'll get a big kiss if you give these to your girl!"
+										(Print 15 27 #at -1 15)
 									)
 									(local9
-										(localproc_0 15 28) ; "Someone is coming to show you flowers."
+										(LocPrint 15 28)
 									)
 									(local11
-										(localproc_0 15 29) ; "She's off to find another customer."
+										(LocPrint 15 29)
 									)
 									(else
 										(event claimed: 0)
 									)
 								)
 							)
-							((Said '/woman,wanda')
-								(cond
-									((or local10 local9)
-										(localproc_0 15 30) ; "She's large and lovely!"
+							((Said '/broad,wanda')
+								(cond 
+									(
+										(or
+											local10
+											local9
+										)
+										(LocPrint 15 30)
 									)
 									(local11
-										(localproc_0 15 29) ; "She's off to find another customer."
+										(LocPrint 15 29)
 									)
 									(else
-										(localproc_0 15 31) ; "She's not here."
+										(LocPrint 15 31)
 									)
 								)
 							)
 						)
 					)
-					((Said 'show/shot,mugshot,painting')
-						(if (or (gEgo has: 12) (gEgo has: 23)) ; new_mug_shot, old_mug_shot
-							(if (or (gEgo inRect: 206 110 305 145) local10)
-								(localproc_0 15 32) ; "Nope. Never saw the guy."
+					((Said 'display/shot,mugshot,painting')
+						(if
+							(or
+								(ego has: iNewMugShot)
+								(ego has: iOldMugShot)
+							)
+							(if
+								(or
+									(ego inRect: 206 110 305 145)
+									local10
+								)
+								(LocPrint 15 32)
 							else
-								(localproc_0 15 33) ; "No one can see the mug shot."
+								(LocPrint 15 33)
 							)
 						)
 					)
 					(
 						(or
-							(Said 'show,see,ask,talk/flower,rose,bouquet,plant')
-							(Said
-								'show,ask,talk[/woman,me]/flower,rose,bouquet,plant'
-							)
+							(Said 'display,see,ask,chat/flower,rose,bouquet,plant')
+							(Said 'display,ask,chat[/broad,i]/flower,rose,bouquet,plant')
 							(Said '(have<do)<what')
 						)
-						(cond
+						(cond 
 							((not local8)
-								(localproc_0 15 34) ; "What flowers? Where?"
+								(LocPrint 15 34)
 							)
 							(local9
-								(localproc_0 15 28) ; "Someone is coming to show you flowers."
+								(LocPrint 15 28)
 							)
 							(local11
-								(localproc_0 15 29) ; "She's off to find another customer."
+								(LocPrint 15 29)
 							)
 							(else
-								(Print 15 27 #at -1 15) ; "I have some lovely flowers...." the flower girl says. "Single roses, a bouquet of carnations....even some easy-to-care-for potted plants. You'll get a big kiss if you give these to your girl!"
+								(Print 15 27 #at -1 15)
 							)
 						)
 					)
-					((Said 'give/flower,rose,bouquet,carnation,plant')
-						(cond
+					(
+					(Said 'gave/flower,rose,bouquet,carnation,plant')
+						(cond 
 							(local8
-								(localproc_0 15 35) ; "She won't just GIVE flowers to you. You have to BUY them."
+								(LocPrint 15 35)
 							)
 							(local11
-								(localproc_0 15 29) ; "She's off to find another customer."
+								(LocPrint 15 29)
 							)
 							(else
-								(localproc_0 15 36) ; "You can't get flowers right now."
+								(LocPrint 15 36)
 							)
 						)
 					)
-					((Said 'smell/flower,rose,carnation,bouquet,plant')
-						(if (gEgo has: 11) ; potted_plant
-							(localproc_0 15 37) ; "Just like perfume."
+					(
+						(Said 'smell/flower,rose,carnation,bouquet,plant')
+						(if (ego has: iFlower)
+							(LocPrint 15 37)
 						else
-							(localproc_0 15 38) ; "You should buy one so that you can smell it."
+							(LocPrint 15 38)
 						)
 					)
 					((Said 'polish')
-						(localproc_0 15 39) ; "Not NOW!"
+						(LocPrint 15 39)
 					)
-					((Said 'show/badge')
-						(cond
-							((gEgo inRect: 206 110 305 145)
-								(localproc_0 15 40) ; "Simultaneously, both men say: "HE did it!""
+					((Said 'display/badge')
+						(cond 
+							((ego inRect: 206 110 305 145)
+								(LocPrint 15 40)
 							)
 							(local10
-								(localproc_0 15 41) ; "She says, "Well...I bet even cops like flowers!""
+								(LocPrint 15 41)
 							)
 							(else
-								(localproc_0 15 42) ; "Nobody's close enough to see your badge."
+								(LocPrint 15 42)
 							)
 						)
 					)
@@ -588,200 +671,200 @@
 							(Said 'stay')
 							(Said 'come<back')
 							(Said 'dont')
-							(Said 'stop')
+							(Said 'cease')
 						)
-						(cond
+						(cond 
 							(local13
-								(localproc_0 15 43) ; "You've done it now, Sonny! She's not coming back."
+								(LocPrint 15 43)
 							)
 							(local11
-								(localproc_0 15 29) ; "She's off to find another customer."
+								(LocPrint 15 29)
 							)
 							(else
-								(localproc_0 15 44) ; "Huh?"
+								(LocPrint 15 44)
 							)
 						)
 					)
-					((Said 'give,write/ticket')
-						(localproc_0 15 45) ; "You're a Homicide Detective, not a meter maid."
+					((Said 'gave,write/ticket')
+						(LocPrint 15 45)
 					)
 					((Said 'cross/ave')
-						(localproc_0 15 46) ; "Here we go."
-						(gEgo setMotion: MoveTo 165 150)
+						(LocPrint 15 46)
+						(ego setMotion: MoveTo 165 150)
 					)
 					((Said 'get,call,hail/cab')
-						(localproc_0 15 47) ; "There's never one around when you need one."
+						(LocPrint 15 47)
 					)
 					((Said '/bus')
-						(localproc_0 15 48) ; "Not a one in sight."
+						(LocPrint 15 48)
 					)
 					((Said 'sat[<down]')
-						(localproc_0 15 49) ; "You have better things to do, and besides, those guys on the bench seem to want it all to themselves."
+						(LocPrint 15 49)
 					)
 					((Said 'get,drive/auto')
-						(localproc_0 15 50) ; "What kind of cop are you?? That's NOT your car!!"
+						(LocPrint 15 50)
 					)
 					((Said 'frisk/auto')
-						(localproc_0 15 51) ; "C'mon, Sonny! Expired registration is no reason to seek a search warrant!"
+						(LocPrint 15 51)
 					)
 					((Said 'open/door[<auto]')
-						(if (< (gEgo x:) 100)
-							(localproc_0 15 50) ; "What kind of cop are you?? That's NOT your car!!"
+						(if (< (ego x?) 100)
+							(LocPrint 15 50)
 						else
-							(localproc_0 15 52) ; "The airport door is automatic. Just step in."
+							(LocPrint 15 52)
 						)
 					)
 					((Said 'open/trunk')
-						(if (< (gEgo x:) 100)
-							(localproc_0 15 50) ; "What kind of cop are you?? That's NOT your car!!"
+						(if (< (ego x?) 100)
+							(LocPrint 15 50)
 						else
-							(localproc_0 15 44) ; "Huh?"
+							(LocPrint 15 44)
 						)
 					)
 					((Said 'break/pane')
-						(localproc_0 15 53) ; "And you'll be breaking the law!"
+						(LocPrint 15 53)
 					)
 					((Said 'get,buy/flower')
 						(if local10
-							(localproc_0 15 54) ; "Great!" she says. "Which ones do you want?"
+							(LocPrint 15 54)
 						else
-							(localproc_0 15 55) ; "There are none available at this moment."
+							(LocPrint 15 55)
 						)
 					)
-					((or (Said '[buy,get]/yellow') (Said '/1,flower<yellow'))
+					(
+						(or
+							(Said '[buy,get]/yellow')
+							(Said '/1,flower<yellow')
+						)
 						(if local10
-							(localproc_0 15 56) ; "I'm sorry, sir. The yellow flowers have wilted. Perhaps you'd like something else."
+							(LocPrint 15 56)
 						else
-							(localproc_0 15 44) ; "Huh?"
+							(LocPrint 15 44)
 						)
 					)
-					((or (Said '[buy,get]/red') (Said '/1,flower<red'))
+					(
+						(or
+							(Said '[buy,get]/red')
+							(Said '/1,flower<red')
+						)
 						(if local10
-							(localproc_0 15 57) ; "Which ones? I have roses and carnations."
+							(LocPrint 15 57)
 						else
-							(localproc_0 15 44) ; "Huh?"
+							(LocPrint 15 44)
 						)
 					)
 					((Said '[buy,get]/rose')
-						(cond
-							((not (gEgo has: 11)) ; potted_plant
+						(cond 
+							((not (ego has: iFlower))
 								(if local10
-									(if (gEgo has: 4) ; money_clip
-										(if (> global107 local3)
-											(-= global107 local3)
-											(localproc_0 15 58) ; "Thank you, sir." she says. "It's a beautiful rose! That will be $2.00 please."
-											(localproc_0 15 59) ; "You pay the young lady and send her on her way."
-											(SetScore 2 80)
-											(gEgo get: 11) ; potted_plant
-											((gInventory at: 11) cel: 1) ; potted_plant
+									(if (ego has: iMoneyClip)
+										(if (> dollars rosePrice)
+											(= dollars (- dollars rosePrice))
+											(LocPrint 15 58)
+											(LocPrint 15 59)
+											(SolvePuzzle 2 fBoughtFlower)
+											(ego get: iFlower)
+											((inventory at: iFlower) cel: 1)
 											(flowerScript changeState: 2)
 										else
-											(localproc_0 15 60) ; "Have you checked your money clip lately? You can't afford this!"
+											(LocPrint 15 60)
 										)
 									else
-										(localproc_0 15 61) ; "Where's your money?"
+										(LocPrint 15 61)
 									)
 								else
-									(localproc_0 15 55) ; "There are none available at this moment."
+									(LocPrint 15 55)
 								)
 							)
 							(local10
-								(localproc_0 15 62) ; "I'm sorry, sir." she says. "That was my last one. Is there something else you'd like?"
+								(LocPrint 15 62)
 							)
 							(else
-								(localproc_0 15 63) ; "You already bought it."
+								(LocPrint 15 63)
 							)
 						)
 					)
 					((Said '[buy,get]/bouquet,carnation')
-						(cond
-							((not (gEgo has: 11)) ; potted_plant
+						(cond 
+							((not (ego has: iFlower))
 								(if local10
-									(if (> global107 local4)
-										(-= global107 local4)
-										(localproc_0 15 64) ; "Thank you, sir." she says. "It's a beautiful bouquet! That will be $15.00 please."
-										(localproc_0 15 59) ; "You pay the young lady and send her on her way."
-										(SetScore 2 80)
-										(gEgo get: 11) ; potted_plant
-										((gInventory at: 11) cel: 2) ; potted_plant
+									(if (> dollars bouquetPrice)
+										(= dollars (- dollars bouquetPrice))
+										(LocPrint 15 64)
+										(LocPrint 15 59)
+										(SolvePuzzle 2 fBoughtFlower)
+										(ego get: iFlower)
+										((inventory at: iFlower) cel: 2)
 										(flowerScript changeState: 2)
 									else
-										(localproc_0 15 60) ; "Have you checked your money clip lately? You can't afford this!"
+										(LocPrint 15 60)
 									)
 								else
-									(localproc_0 15 55) ; "There are none available at this moment."
+									(LocPrint 15 55)
 								)
 							)
-							(local10
-								(localproc_0 15 62) ; "I'm sorry, sir." she says. "That was my last one. Is there something else you'd like?"
-							)
-							(else
-								(localproc_0 15 63) ; "You already bought it."
-							)
+							(local10 (LocPrint 15 62))
+							(else (LocPrint 15 63))
 						)
 					)
 					((Said '[buy,get]/plant')
-						(cond
-							((not (gEgo has: 11)) ; potted_plant
+						(cond 
+							((not (ego has: iFlower))
 								(if local10
-									(if (> global107 local5)
-										(-= global107 local5)
-										(localproc_0 15 65) ; "Thank you, sir." she says. "It's a beautiful plant! That will be $7.00 please."
-										(localproc_0 15 59) ; "You pay the young lady and send her on her way."
-										(SetScore 2 80)
-										(gEgo get: 11) ; potted_plant
-										((gInventory at: 11) cel: 0) ; potted_plant
+									(if (> dollars plantPrice)
+										(= dollars (- dollars plantPrice))
+										(LocPrint 15 65)
+										(LocPrint 15 59)
+										(SolvePuzzle 2 fBoughtFlower)
+										(ego get: iFlower)
+										((inventory at: iFlower) cel: 0)
 										(flowerScript changeState: 2)
 									else
-										(localproc_0 15 60) ; "Have you checked your money clip lately? You can't afford this!"
+										(LocPrint 15 60)
 									)
 								else
-									(localproc_0 15 55) ; "There are none available at this moment."
+									(LocPrint 15 55)
 								)
 							)
-							(local10
-								(localproc_0 15 62) ; "I'm sorry, sir." she says. "That was my last one. Is there something else you'd like?"
-							)
-							(else
-								(localproc_0 15 63) ; "You already bought it."
-							)
+							(local10 (LocPrint 15 62))
+							(else (LocPrint 15 63))
 						)
 					)
 					((Said 'use,press/button')
-						(if (== (gEgo onControl: 1) 2048)
-							(localproc_0 15 66) ; "You push the button activating the traffic control light. You can now safely cross the street."
+						(if (== (ego onControl: 1) cLCYAN)
+							(LocPrint 15 66)
 							(= local6 1)
 							(lightScript changeState: 1)
-							(if (> (gEgo y:) 170)
-								(SetScore 1 78)
+							(if (> (ego y?) 170)
+								(SolvePuzzle 1 fWaitedToCrossNorth) 
 							else
-								(SetScore 1 79)
+								(SolvePuzzle 1 fWaitedToCrossSouth)
 							)
 						else
-							(localproc_0 15 67) ; "You're not close enough to the button."
+							(LocPrint 15 67)
 						)
 					)
-					((Said 'talk/man,men,person,crowd')
-						(if (gEgo inRect: 206 110 305 145)
-							(localproc_0 15 68) ; "The man reading the paper says, "Get outta here, pal! I'm trying to find out if my horse won.""
-							(localproc_0 15 69) ; "The other guy says "Yeah! Me too!""
+					((Said 'chat/dude,men,person,crowd')
+						(if (ego inRect: 206 110 305 145)
+							(LocPrint 15 68)
+							(LocPrint 15 69)
 						else
-							(localproc_0 15 70) ; "You can't be heard over the airport noise."
+							(LocPrint 15 70)
 						)
 					)
-					((Said 'talk/woman,woman,wanda[<flower]')
-						(cond
+					((Said 'chat/broad,broad,wanda[<flower]')
+						(cond 
 							((not local8)
-								(localproc_0 15 71) ; "What girl? Where?"
+								(LocPrint 15 71)
 							)
 							(local9
-								(localproc_0 15 70) ; "You can't be heard over the airport noise."
+								(LocPrint 15 70)
 							)
 							(local11
-								(localproc_0 15 29) ; "She's off to find another customer."
+								(LocPrint 15 29)
 							)
 							(else
-								(Print 15 27 #at -1 15) ; "I have some lovely flowers...." the flower girl says. "Single roses, a bouquet of carnations....even some easy-to-care-for potted plants. You'll get a big kiss if you give these to your girl!"
+								(Print 15 27 #at -1 15)
 							)
 						)
 					)
@@ -789,125 +872,125 @@
 						(or
 							(Said 'much<how[/flower]')
 							(Said 'are/flower')
-							(Said 'give,tell,ask[/me,woman,wanda]/cost')
-							(Said 'give,tell,ask/cost')
+							(Said 'gave,tell,ask[/i,broad,wanda]/cost')
+							(Said 'gave,tell,ask/cost')
 						)
 						(if local10
-							(localproc_0 15 72) ; "The girl says, "The single roses are $2.00, the bouquets are $15.00, and the beautiful potted plants are only $7.00.""
+							(LocPrint 15 72)
 						else
-							(localproc_0 15 73) ; "You can't buy anything right now."
+							(LocPrint 15 73)
 						)
 					)
 					((Said 'pay')
 						(if local10
-							(if (gEgo has: 11) ; potted_plant
-								(localproc_0 15 74) ; "You've already bought something. You'd better watch your cash flow situation."
+							(if (ego has: iFlower)
+								(LocPrint 15 74)
 							else
-								(localproc_0 15 75) ; "Choose a posie to purchase."
+								(LocPrint 15 75)
 							)
 						else
-							(localproc_0 15 76) ; "There's nothing to pay for right now."
+							(LocPrint 15 76)
 						)
 					)
-					((Said 'yes')
+					((Said 'affirmative')
 						(if local10
-							(localproc_0 15 54) ; "Great!" she says. "Which ones do you want?"
+							(LocPrint 15 54)
 						else
-							(localproc_0 15 77) ; "OK, yes...what??"
+							(LocPrint 15 77)
 						)
 					)
 					((Said 'no')
 						(if local10
-							(localproc_0 15 78 25 4) ; "Okay. Maybe some other time, sugar."
-							(localproc_0 15 79) ; "The young lady thanks you as she walks away. You then hear her mumble under her breath. "Cheapskate.""
+							(LocPrint 15 78 25 4)
+							(LocPrint 15 79)
 							(flowerScript changeState: 2)
 						else
-							(localproc_0 15 80) ; "No...what??"
+							(LocPrint 15 80)
 						)
 					)
-					((Said 'ask/name[<woman]')
-						(cond
+					((Said 'ask/name[<broad]')
+						(cond 
 							(local10
-								(localproc_0 15 81) ; "Around here," she says, "they call me Wired Wanda."
+								(LocPrint 15 81)
 							)
 							(local11
-								(localproc_0 15 29) ; "She's off to find another customer."
+								(LocPrint 15 29)
 							)
 							(local9
-								(localproc_0 15 82) ; "Wait a minute!"
+								(LocPrint 15 82)
 							)
 							(else
-								(localproc_0 15 31) ; "She's not here."
+								(LocPrint 15 31)
 							)
 						)
 					)
-					((Said 'kiss/woman,wanda')
-						(cond
+					((Said 'kiss/broad,wanda')
+						(cond 
 							(local10
-								(localproc_0 15 83) ; "Embarrassed, she turns three shades of red and says..."No, thank you.""
+								(LocPrint 15 83)
 							)
 							(local9
-								(localproc_0 15 84) ; "Boy! You just can't wait, can you?"
+								(LocPrint 15 84)
 							)
 							(local11
-								(localproc_0 15 85) ; "Too late!"
+								(LocPrint 15 85)
 							)
 							(else
-								(localproc_0 15 86) ; "Too bad! She's not here."
+								(LocPrint 15 86)
 							)
 						)
 					)
 					(
 						(or
-							(Said 'fuck,eat,blow/woman,wanda')
+							(Said 'fuck,eat,blow/broad,wanda')
 							(Said 'feel/boob,cunt')
 						)
-						(cond
+						(cond 
 							(local10
-								(localproc_0 15 87) ; "Obviously upset she says..."Listen super stud! Any more talk like that and you'll be eating rose stems.""
+								(LocPrint 15 87)
 								(= local13 1)
 								(flowerScript changeState: 2)
 							)
 							(local9
-								(localproc_0 15 84) ; "Boy! You just can't wait, can you?"
+								(LocPrint 15 84)
 							)
 							(local11
-								(localproc_0 15 85) ; "Too late!"
+								(LocPrint 15 85)
 							)
 							(else
-								(localproc_0 15 86) ; "Too bad! She's not here."
+								(LocPrint 15 86)
 							)
 						)
 					)
-					((Said 'frisk/woman,wanda')
-						(cond
+					((Said 'frisk/broad,wanda')
+						(cond 
 							(local10
-								(localproc_0 15 88) ; "You could get slapped that way."
+								(LocPrint 15 88)
 							)
 							(local9
-								(localproc_0 15 84) ; "Boy! You just can't wait, can you?"
+								(LocPrint 15 84)
 							)
 							(local11
-								(localproc_0 15 85) ; "Too late!"
+								(LocPrint 15 85)
 							)
 							(else
-								(localproc_0 15 86) ; "Too bad! She's not here."
+								(LocPrint 15 86)
 							)
 						)
 					)
-					((Said 'arrest/woman,wanda')
-						(cond
+					((Said 'arrest/broad,wanda')
+						(cond 
 							(local10
-								(localproc_0 15 89) ; "For selling flowers?"
+								(LocPrint 15 89)
 							)
 							(local9
-								(localproc_0 15 84) ; "Boy! You just can't wait, can you?"
+								(LocPrint 15 84)
 							)
 							(local11
-								(localproc_0 15 85) ; "Too late!"
+								(LocPrint 15 85)
 							)
 							(else
-								(localproc_0 15 86) ; "Too bad! She's not here."
+								(LocPrint 15 86)
 							)
 						)
 					)
@@ -919,15 +1002,15 @@
 
 (instance lightScript of Script
 	(properties)
-
+	
 	(method (doit)
-		(cond
+		(cond 
 			((> local0 1)
 				(-- local0)
 			)
 			((== local0 1)
-				(if (gCast contains: global112)
-					(if (not (> 176 (global112 y:) 133))
+				(if (cast contains: keith)
+					(if (not (if (> 176 (keith y?)) (> (keith y?) 133)))
 						(self changeState: 2)
 					)
 				else
@@ -936,7 +1019,7 @@
 			)
 		)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(1
@@ -947,8 +1030,12 @@
 				(= local6 0)
 				(= local0 0)
 				(lightPole setCel: 6)
-				(if (> 176 (gEgo y:) 142)
-					(Print 15 90 #time 2) ; "WATCH OUT, SONNY!!!"
+				(if
+					(and
+						(> 176 (ego y?))
+						(> (ego y?) 142)
+					)
+					(Print 15 90 #time 2)
 					(= local7 1)
 				)
 			)
@@ -958,7 +1045,7 @@
 
 (instance flowerScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -967,9 +1054,9 @@
 					posn: -15 120
 					init:
 					setCycle: Walk
-					setAvoider: (Avoid new:)
-					setMotion: Chase gEgo 25
-					illegalBits: $8400
+					setAvoider: (Avoider new:)
+					setMotion: Chase ego 25
+					illegalBits: -31744
 					startUpd:
 				)
 				(flowerSounds play:)
@@ -977,7 +1064,7 @@
 				(= local9 1)
 			)
 			(1
-				(localproc_0 15 91) ; "Hey, big fella! Why don't you buy some flowers for your girlfriend?"
+				(LocPrint 15 91)
 			)
 			(2
 				(= local11 1)
@@ -993,4 +1080,3 @@
 		)
 	)
 )
-

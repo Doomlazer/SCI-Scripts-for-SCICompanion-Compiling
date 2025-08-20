@@ -1,9 +1,9 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 20)
-(include sci.sh)
+(include system.sh)
+(include game.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Sound)
 (use Motion)
 (use Game)
@@ -25,10 +25,10 @@
 	local6
 	local7
 	local8
-	local9
+	guardShownBadge
 	local10
 	local11
-	local12
+	newProp
 	local13
 	local14
 	local15
@@ -36,8 +36,7 @@
 	local17
 	local18
 )
-
-(procedure (localproc_0)
+(procedure (LocPrint)
 	(Print &rest #at -1 15)
 )
 
@@ -53,72 +52,79 @@
 	)
 )
 
-(instance larry of Act
+(instance larry of Actor
 	(properties
 		view 81
 		loop 3
 		cycleSpeed 2
 	)
-
+	
 	(method (init)
 		(larry posn: 231 124 setPri: 1)
-		(if (< global110 30)
+		(if (< howFast 30)
 			(larry stopUpd:)
 		else
 			(larry setScript: larryActions)
 		)
 		(super init:)
 	)
-
+	
 	(method (handleEvent event)
-		(cond
-			((or (event claimed:) (!= (event type:) evSAID))
+		(cond 
+			(
+				(or
+					(event claimed?)
+					(!= (event type?) saidEvent)
+				)
 				(return)
 			)
-			((not (gEgo inRect: 222 124 265 135))
+			(
+				(not
+					(ego inRect: 222 124 265 135)
+				)
 				(if (Said '/jerk')
-					(proc0_7) ; "You're not close enough."
+					(NotClose)
 				)
 				(return)
 			)
-			((Said 'look/man,jerk')
-				(localproc_0 20 0) ; "This man looks so bored that you want to talk to him."
+			((Said 'look/dude,jerk')
+				(LocPrint 20 0)
 			)
-			((Said 'frisk,arrest,arrest/man,jerk')
-				(localproc_0 20 1) ; "Don't hurt me! I'm a victim of circumstances!"
+			((Said 'frisk,arrest,arrest/dude,jerk')
+				(LocPrint 20 1)
 			)
-			((Said 'show,flash/badge')
-				(if (gEgo has: 7) ; wallet
-					(localproc_0 20 2) ; "I didn't do it! She made me!"
+			((Said 'display,flash/badge')
+				(if (ego has: iWallet)
+					(LocPrint 20 2)
 				else
-					(localproc_0 20 3) ; "You don't have your identification with you."
+					(LocPrint 20 3)
 				)
 			)
-			((Said 'talk/man,jerk')
+			((Said 'chat/dude,jerk')
 				(= local16 0)
 				(switch local4
 					(0
 						(larrySound play:)
-						(localproc_0 20 4) ; "Hi, I'm Larry...Larry Laffer."
+						(LocPrint 20 4)
 					)
 					(1
-						(localproc_0 20 5) ; "Know any places where cute girls hang out?"
+						(LocPrint 20 5)
 						(= local16 1)
 					)
 					(2
-						(localproc_0 20 6) ; "Do you see that cute blond over there? What a knockout!"
+						(LocPrint 20 6)
 					)
 					(3
-						(localproc_0 20 7) ; "I'm starring in a new movie...called 'Looking for Love In Several Wrong Places.' You should check it out!"
+						(LocPrint 20 7)
 					)
 					(4
-						(localproc_0 20 8) ; "Do you know when the bus to Coarsegold will arrive?"
+						(LocPrint 20 8)
 						(= local16 2)
 					)
 					(5
-						(localproc_0 20 9) ; "If you get a chance, call my producers at Sierra and tell them I might be a little late."
-						(localproc_0 20 10) ; "Say that I've run into woman troubles, and I'm tied up right now."
-						(localproc_0 20 11) ; "Thanks."
+						(LocPrint 20 9)
+						(LocPrint 20 10)
+						(LocPrint 20 11)
 					)
 				)
 				(if (< local4 5)
@@ -127,15 +133,15 @@
 					(= local4 0)
 				)
 			)
-			((Said 'yes')
+			((Said 'affirmative')
 				(switch local16
 					(1
-						(localproc_0 20 12) ; "Well, next time I'm in town we should get down and party!"
+						(LocPrint 20 12)
 					)
 					(2
-						(localproc_0 20 13) ; "Good. I hope it comes soon. The producer and director will be really upset if I don't get to Coarsegold soon."
+						(LocPrint 20 13)
 					)
-					(else
+					(else 
 						(event claimed: 0)
 					)
 				)
@@ -144,10 +150,10 @@
 			((Said 'no')
 				(switch local16
 					(1
-						(localproc_0 20 14) ; "Well don't feel bad, 'cause I don't either."
+						(LocPrint 20 14)
 					)
 					(2
-						(localproc_0 20 15) ; "Well, I hope it comes soon."
+						(LocPrint 20 15)
 					)
 					(else
 						(event claimed: 0)
@@ -161,7 +167,7 @@
 
 (instance larryActions of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -170,23 +176,29 @@
 			(1
 				(switch (Random 0 1)
 					(0
-						(larry setLoop: 4 setCycle: End)
+						(larry
+							setLoop: 4
+							setCycle: EndLoop
+						)
 					)
 					(1
-						(larry setLoop: 3 setCycle: End)
+						(larry
+							setLoop: 3
+							setCycle: EndLoop
+						)
 					)
 				)
 				(= cycles (Random 40 60))
 			)
 			(2
-				(larry setCycle: Beg)
+				(larry setCycle: BegLoop)
 				(self changeState: 0)
 			)
 		)
 	)
 )
 
-(instance guard of Act
+(instance guard of Actor
 	(properties)
 )
 
@@ -194,42 +206,46 @@
 	(properties)
 )
 
-(instance rm20 of Rm
+(instance rm20 of Room
 	(properties
 		picture 20
-		style 8
+		style DISSOLVE
 	)
-
-	(method (dispose)
-		(manScript dispose:)
-		(keithScript dispose:)
-		(guardScript dispose:)
-		(gFeatures eachElementDo: #dispose 84)
-		(super dispose:)
-	)
-
+	
 	(method (init)
-		(Load rsVIEW 1)
-		(Load rsVIEW 0)
-		(Load rsVIEW 77)
-		(Load rsVIEW 31)
-		(Load rsVIEW 76)
+		(Load VIEW 1)
+		(Load VIEW 0)
+		(Load VIEW 77)
+		(Load VIEW 31)
+		(Load VIEW 76)
 		(super init:)
-		(= gPerspective 70)
-		(= global212 3)
-		(= global211 1)
+		(= perspective 70)
+		(= gunFireState gunPROHIBITED)
+		(= gunNotNeeded 1)
 		(User canInput: 1)
-		(if (or (not (IsFlag 40)) (!= gPrevRoomNum 40))
+		(if
+			(or
+				(not (Btst fKeithFollows))
+				(!= prevRoomNum 40)
+			)
 			(= local2 1)
 		)
-		(if (and (gEgo has: 16) (IsFlag 40)) ; plane_ticket
+		(if
+			(and
+				(ego has: iPlaneTicket)
+				(Btst fKeithFollows)
+			)
 			(= local2 2)
 		)
-		(if (== gPrevRoomNum 40)
+		(if (== prevRoomNum 40)
 			(= local2 3)
-			(SetFlag 40)
+			(Bset fKeithFollows)
 		)
-		(if (and (== gPrevRoomNum 17) (not (gEgo has: 16))) ; plane_ticket
+		(if
+			(and
+				(== prevRoomNum 17)
+				(not (ego has: iPlaneTicket))
+			)
 			(= local2 0)
 		)
 		(guard
@@ -268,26 +284,45 @@
 			init:
 			addToPic:
 		)
-		(manStanding view: 81 posn: 92 140 loop: 1 cel: 0 init: stopUpd:)
+		(manStanding
+			view: 81
+			posn: 92 140
+			loop: 1
+			cel: 0
+			init:
+			stopUpd:
+		)
 		(larry init:)
-		(self setLocales: 153)
+		(self setLocales: regFieldKit)
 		(self setScript: rm20Script)
+	)
+	
+	(method (dispose)
+		(manScript dispose:)
+		(keithScript dispose:)
+		(guardScript dispose:)
+		(features eachElementDo: #dispose #delete)
+		(super dispose:)
 	)
 )
 
 (instance rm20Script of Script
 	(properties)
-
+	
 	(method (doit)
-		(if (and (< (gEgo x:) 12) (not local5))
+		(if
+			(and
+				(< (ego x?) 12)
+				(not local5)
+			)
 			(switch local2
 				(0
-					(localproc_0 20 16) ; "The door to the plane is closed because there IS no plane!"
-					(gEgo setMotion: MoveTo 110 124)
+					(LocPrint 20 16)
+					(ego setMotion: MoveTo 110 124)
 				)
 				(1
-					(localproc_0 20 17) ; "The flight just departed. You missed it. Too bad!"
-					(gEgo setMotion: MoveTo 110 124)
+					(LocPrint 20 17)
+					(ego setMotion: MoveTo 110 124)
 				)
 				(2
 					(if (not local14)
@@ -300,20 +335,29 @@
 				)
 			)
 		)
-		(cond
-			((and (not (gCast contains: global112)) (IsFlag 40) local8)
+		(cond 
+			(
+				(and
+					(not (cast contains: keith))
+					(Btst fKeithFollows)
+					local8
+				)
 				(keithScript changeState: 0)
 			)
-			((and (== (gEgo onControl: 1) 4096) (not local17))
+			(
+				(and
+					(== (ego onControl: 1) cLRED)
+					(not local17)
+				)
 				(= local17 1)
-				(if (!= gPrevRoomNum 17)
+				(if (!= prevRoomNum 17)
 					(self changeState: 4)
 				else
 					(self changeState: 5)
 				)
 			)
 		)
-		(cond
+		(cond 
 			((> local0 1)
 				(-- local0)
 			)
@@ -322,84 +366,114 @@
 				(manScript cue:)
 			)
 		)
-		(if (and (> (gEgo y:) 127) (> (gEgo x:) 104))
+		(if
+			(and
+				(> (ego y?) 127)
+				(> (ego x?) 104)
+			)
 			(= local5 1)
 		else
 			(= local5 0)
 		)
-		(cond
-			((and (not local7) local8 (== (gEgo onControl: 1) 16384))
-				(localproc_0 20 18) ; "Whoops! You almost had a nasty tumble when you tried to go down the 'Up' escalator."
+		(cond 
+			(
+				(and
+					(not local7)
+					local8
+					(== (ego onControl: 1) cYELLOW)
+				)
+				(LocPrint 20 18)
 				(= local7 1)
 			)
-			((and local7 (!= (gEgo onControl: 1) 16384))
-				(= local7 0)
-			)
+			(
+				(and
+					local7
+					(!= (ego onControl: 1) cYELLOW)
+				)
+				(= local7 0))
 		)
-		(cond
-			((<= (gEgo y:) 140)
-				(if (!= (mod (gEgo view:) 2) 0)
-					(gEgo view: (- (gEgo view:) 1))
+		(cond 
+			((<= (ego y?) 140)
+				(if (!= (mod (ego view?) 2) 0)
+					(ego view: (- (ego view?) 1))
 				)
 			)
-			((!= (mod (gEgo view:) 2) 1)
-				(gEgo view: (+ (gEgo view:) 1))
+			((!= (mod (ego view?) 2) 1)
+				(ego view: (+ (ego view?) 1))
 			)
 		)
 		(if
 			(and
-				(== (gEgo onControl: 1) 8192)
-				(== (gEgo loop:) 3)
+				(== (ego onControl: 1) cLMAGENTA)
+				(== (ego loop?) 3)
 				(not local6)
-				(or local9 (!= gPrevRoomNum 17) (not (gEgo has: 0))) ; hand_gun
+				(or
+					guardShownBadge
+					(!= prevRoomNum 17)
+					(not (ego has: 0))
+				)
 			)
 			(= local6 1)
-			(if (and (> (++ local18) 2) (== (mod local18 2) 0))
-				(localproc_0 20 19) ; "The guard says: "I'm gettin' dizzy watchin' you go in and out of this gate, mac.""
+			(if
+				(and
+					(> (++ local18) 2)
+					(== (mod local18 2) 0)
+				)
+				(LocPrint 20 19)
 			)
 		)
-		(if (and local6 (!= (gEgo onControl: 1) 8192))
+		(if
+			(and
+				local6
+				(!= (ego onControl: 1) cLMAGENTA)
+			)
 			(= local6 0)
 		)
 		(if
 			(and
-				(== (gEgo onControl: 1) 8192)
-				(== (gEgo loop:) 3)
-				(not local9)
-				(== gPrevRoomNum 17)
+				(== (ego onControl: 1) cLMAGENTA)
+				(== (ego loop?) 3)
+				(not guardShownBadge)
+				(== prevRoomNum 17)
 			)
-			(cond
+			(cond 
 				((not local10)
 					(guardScript changeState: 3)
 				)
 				(local11
-					(cond
-						((gEgo has: 0) ; hand_gun
+					(cond 
+						((ego has: 0)
 							(guardScript changeState: 10)
 						)
 						((< local18 3)
-							(localproc_0 20 20) ; "You pass through the metal detector without setting off the alarm."
+							(LocPrint 20 20)
 						)
 					)
 				)
 			)
 		)
-		(if local13
+		(if
+			local13
 			(guardScript changeState: 18)
 		)
-		(if (and global204 (not local15) (gEgo inRect: 105 132 168 168))
+		(if
+			(and
+				gunDrawn
+				(not local15)
+				(ego inRect: 105 132 168 168)
+			)
 			(guardScript changeState: 21)
 		)
 		(super doit:)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(NormalEgo)
-				(if (== gPrevRoomNum 17)
+				(if (== prevRoomNum 17)
 					(HandsOff)
-					(gEgo
+					(ego
 						view: 1
 						posn: 197 210
 						init:
@@ -411,13 +485,13 @@
 						setMotion: MoveTo 208 161 self
 					)
 				else
-					(gEgo
+					(ego
 						view: 1
 						posn: 15 124
 						init:
 						setMotion: MoveTo 153 124
 					)
-					((= global112 (Act new:))
+					((= keith (Actor new:))
 						view: 20
 						setCycle: Walk
 						posn: 24 124
@@ -425,11 +499,11 @@
 					)
 					(= local8 1)
 					(keithScript changeState: 8)
-					(SetFlag 40)
+					(Bset fKeithFollows)
 				)
 			)
 			(1
-				(gEgo
+				(ego
 					setLoop: -1
 					setCel: -1
 					setPri: -1
@@ -440,23 +514,26 @@
 					startUpd:
 				)
 				(NormalEgo)
-				(if (IsFlag 40)
+				(if (Btst fKeithFollows)
 					(self cue:)
 				else
 					(HandsOn)
 				)
 			)
 			(2
-				(gEgo setMotion: MoveTo 238 167 self)
+				(ego setMotion: MoveTo 238 167 self)
 			)
 			(3
-				(gEgo illegalBits: 0 setLoop: 1)
+				(ego
+					illegalBits: 0
+					setLoop: 1
+				)
 				(= local8 1)
 			)
 			(4
-				(gEgo setMotion: 0)
-				(localproc_0 20 21 83) ; "Keith sees You leaving and says: "Hey, Sonny! Wait for me!""
-				(global112
+				(ego setMotion: 0)
+				(LocPrint 20 21 83)
+				(keith
 					ignoreActors: 0
 					setLoop: -1
 					setMotion: MoveTo 158 133 self
@@ -464,265 +541,284 @@
 			)
 			(5
 				(HandsOff)
-				(if (gCast contains: global112)
-					(global112 setMotion: MoveTo 158 170)
+				(if (cast contains: keith)
+					(keith setMotion: MoveTo 158 170)
 				)
-				(gEgo
+				(ego
 					setLoop: 3
 					setCel: 0
 					setPri: 11
-					setMotion: MoveTo (- (gEgo x:) 20) 204 self
+					setMotion: MoveTo (- (ego x?) 20) 204 self
 					init:
 					ignoreActors:
 					illegalBits: 0
 				)
 			)
 			(6
-				(if (gCast contains: global112)
-					(if (== gPrevRoomNum 17)
+				(if (cast contains: keith)
+					(if (== prevRoomNum 17)
 						(keithScript changeState: 4)
 					else
-						(global112 setMotion: MoveTo 250 170)
-						(= gPerspective 0)
-						(gCurRoom newRoom: 17)
+						(keith setMotion: MoveTo 250 170)
+						(= perspective 0)
+						(curRoom newRoom: 17)
 					)
 				else
-					(= gPerspective 0)
-					(gCurRoom newRoom: 17)
+					(= perspective 0)
+					(curRoom newRoom: 17)
 				)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(switch (event type:)
-			(evSAID
-				(cond
+		(switch (event type?)
+			(saidEvent
+				(cond 
 					((Said 'look>')
-						(cond
-							((Said '[<at,around][/!*,chamber,gate]')
+						(cond 
+							((Said '[<at,around][/noword,chamber,gate]')
 								(if local5
-									(localproc_0 20 22) ; "The boarding and receiving area is equipped with a metal detector. A security guard mans his post."
+									(LocPrint 20 22)
 								else
-									(localproc_0 20 23) ; "You're in the connecting tunnel between the gate and the plane. Out the window you see just how busy Lytton Airport has become."
+									(LocPrint 20 23)
 								)
 							)
 							((Said '/pane')
-								(if (< (gEgo x:) 150)
-									(localproc_0 20 24) ; "You gaze out across the runway and think of places far away."
+								(if (< (ego x?) 150)
+									(LocPrint 20 24)
 								else
-									(localproc_0 20 25) ; "You look out past the parking lot, and see the city in the distance."
+									(LocPrint 20 25)
 								)
 							)
-							((or (Said '<up') (Said '/ceiling'))
-								(localproc_0 20 26) ; "Looks solid enough. Probably won't cave in."
+							(
+								(or
+									(Said '<up')
+									(Said '/ceiling')
+								)
+								(LocPrint 20 26)
 							)
-							((or (Said '<down') (Said '/floor'))
-								(localproc_0 20 27) ; "The carpet really needs cleaning. The gum chewers seem to have been having a field day."
+							(
+								(or
+									(Said '<down')
+									(Said '/floor')
+								)
+								(LocPrint 20 27)
 							)
 							((Said '/bench')
 								(if local5
-									(localproc_0 20 28) ; "The chairs are for the comfort of the waiting passengers, even though they appear to be made deliberately uncomfortable."
+									(LocPrint 20 28)
 								else
-									(localproc_0 20 29) ; "They don't put chairs in places like this."
+									(LocPrint 20 29)
 								)
 							)
 							((Said '/painting')
 								(if
 									(and
-										(< (gEgo y:) 140)
-										(> (gEgo x:) 140)
+										(< (ego y?) 140)
+										(> (ego x?) 140)
 										local5
 									)
-									(localproc_0 20 30) ; "The painting reminds you of a place you would like to be."
+									(LocPrint 20 30)
 								else
-									(localproc_0 20 31) ; "You have to be closer to see the painting clearly."
+									(LocPrint 20 31)
 								)
 							)
 							((Said '/rope')
-								(if (and (< (gEgo x:) 150) local5)
-									(localproc_0 20 32) ; "It's a velveteen braided rope similar to the ones found in some movie theaters."
+								(if
+									(and
+										(< (ego x?) 150)
+										local5
+									)
+									(LocPrint 20 32)
 								else
-									(localproc_0 20 33) ; "You're too far away."
+									(LocPrint 20 33)
 								)
 							)
 							((Said '/wall')
-								(localproc_0 20 34) ; "The pale blue paint is a nice touch. There is a painting on the wall behind the three gentlemen."
+								(LocPrint 20 34)
 							)
 							((Said '/guard')
-								(localproc_0 20 35) ; "The rotund guard doesn't look like he is having fun."
+								(LocPrint 20 35)
 							)
 							((Said '/escalator')
 								(if local5
-									(localproc_0 20 36) ; "Nothing unusual about it. You ride up one side, and down the other."
+									(LocPrint 20 36)
 								else
-									(localproc_0 20 37) ; "Get out of the tunnel and you can see it."
+									(LocPrint 20 37)
 								)
 							)
-							((Said '/woman,woman,blonde')
-								(if (<= (gEgo y:) 137)
-									(localproc_0 20 38) ; "Huh??"
+							((Said '/broad,broad,blonde')
+								(if (<= (ego y?) 137)
+									(LocPrint 20 38)
 								else
-									(localproc_0 20 39) ; "The long-haired blonde looks pretty interesting."
+									(LocPrint 20 39)
 								)
 							)
 							((Said '/men,crowd,passenger')
-								(localproc_0 20 40) ; "A motley-looking crew of passengers waits for a flight."
+								(LocPrint 20 40)
 							)
-							((Said '/man,person')
-								(cond
-									((gEgo inRect: 160 124 200 135)
-										(localproc_0 20 41) ; "This man looks bored."
+							((Said '/dude,person')
+								(cond 
+									((ego inRect: 160 124 200 135)
+										(LocPrint 20 41)
 									)
-									((gEgo inRect: 200 124 222 135)
-										(localproc_0 20 42) ; "This man looks very bored."
+									((ego inRect: 200 124 222 135)
+										(LocPrint 20 42)
 									)
-									((gEgo inRect: 108 128 163 147)
-										(localproc_0 20 35) ; "The rotund guard doesn't look like he is having fun."
+									((ego inRect: 108 128 163 147)
+										(LocPrint 20 35)
 									)
-									((gEgo inRect: 83 128 115 136)
-										(localproc_0 20 43) ; "Groovy!"
+									((ego inRect: 83 128 115 136)
+										(LocPrint 20 43)
 									)
 									(else
-										(localproc_0 20 44) ; "You look at no one in particular."
+										(LocPrint 20 44)
 									)
 								)
 							)
 						)
 					)
 					((Said 'sat[<down][/bench]')
-						(localproc_0 20 45) ; "There is no place to sit."
+						(LocPrint 20 45)
 					)
 					((Said 'move,get/painting')
-						(localproc_0 20 46) ; "Sorry! It's bolted to the wall."
+						(LocPrint 20 46)
 					)
 					((Said 'move,remove,break,cut,hoist,get/rope')
-						(if (and (< (gEgo x:) 150) local5)
-							(localproc_0 20 47) ; "That's totally unnecessary! Just walk through the metal detector."
+						(if
+							(and
+								(< (ego x?) 150)
+								local5
+							)
+							(LocPrint 20 47)
 						else
-							(localproc_0 20 33) ; "You're too far away."
+							(LocPrint 20 33)
 						)
 					)
-					((Said 'show,flash/badge')
-						(if (gEgo has: 7) ; wallet
+					((Said 'display,flash/badge')
+						(if (ego has: iWallet)
 							(if local5
-								(cond
-									((gEgo inRect: 222 124 265 135)
-										(localproc_0 20 2) ; "I didn't do it! She made me!"
+								(cond 
+									((ego inRect: 222 124 265 135)
+										(LocPrint 20 2)
 									)
-									((gEgo inRect: 163 124 221 135)
+									((ego inRect: 163 124 221 135)
 										(switch (Random 0 3)
 											(0
-												(localproc_0 20 48) ; "Who do you think you are....Don Johnson? What's your story?"
+												(LocPrint 20 48)
 											)
 											(1
-												(localproc_0 20 49) ; "Boy! I've never seen a shinier badge!"
+												(LocPrint 20 49)
 											)
 											(2
-												(localproc_0 20 50) ; "I'm gonna plead the fifth amendment."
+												(LocPrint 20 50)
 											)
 											(3
-												(localproc_0 20 51) ; "Gee! You're a real cop!"
+												(LocPrint 20 51)
 											)
 										)
 									)
-									((gEgo inRect: 83 128 115 136)
-										(localproc_0 20 52) ; "The long-haired blonde says, "Hey, man! Why don't you flash your badge on someone who cares.""
+									((ego inRect: 83 128 115 136)
+										(LocPrint 20 52)
 									)
-									((gCast contains: local12)
-										(= local9 1)
-										(SetScore 2 98)
+									((cast contains: newProp)
+										(= guardShownBadge 1)
+										(SolvePuzzle 2 fGateGuardShownBadge)
 									)
-									((gEgo inRect: 108 128 163 147)
-										(if (not local9)
-											(= local9 1)
-											(SetScore 2 98)
+									((ego inRect: 108 128 163 147)
+										(if (not guardShownBadge)
+											(= guardShownBadge 1)
+											(SolvePuzzle 2 fGateGuardShownBadge)
 											(= local10 1)
 											(guardScript changeState: 0)
 										else
-											(localproc_0 20 53) ; "OK, Bonds! I SAW your badge! I KNOW you're a cop!"
+											(LocPrint 20 53)
 										)
 									)
-									(else
-										(localproc_0 20 54) ; "Nobody can see your badge right now."
-									)
+									(else (LocPrint 20 54))
 								)
 							else
-								(localproc_0 20 54) ; "Nobody can see your badge right now."
+								(LocPrint 20 54)
 							)
 						else
-							(localproc_0 20 3) ; "You don't have your identification with you."
+							(LocPrint 20 3)
 						)
 					)
-					((Said 'show/mugshot,painting,[shot<mug]')
+					((Said 'display/mugshot,painting,[shot<mug]')
 						(if
 							(and
-								(not (gEgo has: 12)) ; new_mug_shot
-								(not (gEgo has: 23)) ; old_mug_shot
+								(not (ego has: iNewMugShot))
+								(not (ego has: iOldMugShot))
 							)
-							(localproc_0 20 55) ; "You don't have it."
+							(LocPrint 20 55)
 						else
-							(localproc_0 20 56) ; "Nobody recognizes Bains' picture."
+							(LocPrint 20 56)
 						)
 					)
-					((or (Said 'draw,pull,use,show/9mm') (Said 'fire,kill'))
-						(cond
-							((not (gEgo has: 0)) ; hand_gun
-								(proc0_13) ; "You don't have your gun."
+					(
+						(or
+							(Said 'draw,pull,use,display/9mm')
+							(Said 'fire,kill')
+						)
+						(cond 
+							((not (ego has: iHandGun))
+								(DontHaveGun)
 							)
-							((not (gEgo inRect: 108 128 163 147))
-								(localproc_0 20 57) ; "What for??"
+							((not (ego inRect: 108 128 163 147))
+								(LocPrint 20 57)
 							)
 							(
 								(and
-									(>= (guardScript state:) 14)
-									(<= (guardScript state:) 17)
+									(>= (guardScript state?) 14)
+									(<= (guardScript state?) 17)
 								)
-								(localproc_0 20 58) ; "Not now while he's frisking you."
+								(LocPrint 20 58)
 							)
 							(else
-								(localproc_0 20 59 25 4) ; "Uh-oh! Perhaps now is not a good time (and here is not a good place) to be taking your gun out."
+								(LocPrint 20 59 25 4)
 								(guardScript changeState: 21)
 							)
 						)
 					)
-					((Said 'talk>')
-						(cond
-							((Said '/woman,woman,blonde')
-								(if (gEgo inRect: 60 140 120 165)
-									(if (not local3)
+					((Said 'chat>')
+						(cond 
+							((Said '/broad,broad,blonde')
+								(if (ego inRect: 60 140 120 165)
+									(if
+										(not local3)
 										(manScript changeState: 0)
 									)
 								else
-									(localproc_0 20 38) ; "Huh??"
+									(LocPrint 20 38)
 								)
 							)
 							((Said '/guard,cop')
-								(if (gEgo inRect: 108 128 163 147)
-									(localproc_0 20 60) ; "He doesn't seem real talkative."
+								(if (ego inRect: 108 128 163 147)
+									(LocPrint 20 60)
 								else
-									(localproc_0 20 61) ; "He can't hear you at this distance."
+									(LocPrint 20 61)
 								)
 							)
-							((Said '/man')
-								(cond
-									((gEgo inRect: 160 124 200 135)
-										(localproc_0 20 62) ; "He doesn't say anything, and he's not Larry."
+							((Said '/dude')
+								(cond 
+									((ego inRect: 160 124 200 135)
+										(LocPrint 20 62)
 									)
-									((gEgo inRect: 200 124 222 135)
-										(localproc_0 20 63) ; "Airports are such a drag, especially sitting next to this guy here (referring to the man in white)."
+									((ego inRect: 200 124 222 135)
+										(LocPrint 20 63)
 									)
-									((gEgo inRect: 83 128 115 136)
-										(localproc_0 20 64) ; "The long-haired blonde says, "What's your trip, man?""
+									((ego inRect: 83 128 115 136)
+										(LocPrint 20 64)
+									)					
+									((ego inRect: 60 140 120 165)
+										(LocPrint 20 65)
 									)
-									((gEgo inRect: 60 140 120 165)
-										(localproc_0 20 65) ; "You hear a high-pitched voice say "Huh?""
-									)
-									((gEgo inRect: 108 128 163 147)
-										(localproc_0 20 66) ; "Hello. Have a nice day."
+									((ego inRect: 108 128 163 147)
+										(LocPrint 20 66)
 									)
 									(else
-										(localproc_0 20 67) ; "There is no one close enough to talk to."
+										(LocPrint 20 67)
 									)
 								)
 							)
@@ -736,7 +832,7 @@
 
 (instance manScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -746,7 +842,7 @@
 				(= local0 20)
 			)
 			(1
-				(localproc_0 20 68) ; "The guy turns around and says, "What's the matter with you, bud?""
+				(LocPrint 20 68)
 				(= local0 20)
 			)
 			(2
@@ -759,13 +855,13 @@
 
 (instance keithScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				((= global112 (Act new:))
+				((= keith (Actor new:))
 					view: 20
-					setCycle: Fwd
+					setCycle: Forward
 					setLoop: 2
 					setCel: 1
 					xStep: 3
@@ -779,60 +875,63 @@
 				)
 			)
 			(1
-				(global112
+				(keith
 					setPri: -1
 					setLoop: -1
 					setCel: -1
 					setCycle: Walk
 					ignoreActors: 0
-					illegalBits: $a000
+					illegalBits: cWHITE ;-24576
 					setMotion: MoveTo 204 164 self
 				)
-				(gEgo illegalBits: $8000 setLoop: -1)
+				(ego
+					illegalBits: cWHITE ;-32768
+					setLoop: -1
+				)
 			)
 			(2
 				(HandsOn)
-				(global112 setMotion: MoveTo 111 168 self)
+				(keith setMotion: MoveTo 111 168 self)
 			)
 			(3
-				(global112 loop: 0)
+				(keith loop: 0)
 			)
 			(4
-				(global112
+				(keith
 					ignoreActors: 0
 					setPri: -1
 					setMotion: MoveTo 260 165 self
 				)
 			)
 			(5
-				(global112 setMotion: MoveTo 260 162 self)
+				(keith setMotion: MoveTo 260 162 self)
 			)
 			(6
-				(global112
+				(keith
 					setLoop: 3
 					setCel: 0
 					setPri: 11
-					setMotion: MoveTo (- (global112 x:) 20) 204 self
+					setMotion: MoveTo (- (keith x?) 20) 204 self
 					init:
 					ignoreActors:
 					illegalBits: 0
 				)
 			)
 			(7
-				(= gPerspective 0)
-				(gCurRoom newRoom: 17)
+				(= perspective 0)
+				(curRoom newRoom: 17)
 			)
 			(8
-				(global112 setMotion: MoveTo 132 124 self)
+				(keith setMotion: MoveTo 132 124 self)
 			)
 			(9
-				(global112 setMotion: MoveTo 150 132 self)
+				(keith setMotion: MoveTo 150 132 self)
 			)
 			(10
-				(global112 setMotion: MoveTo 198 134 self)
+				(keith setMotion: MoveTo 198 134 self)
 			)
 			(11
-				(global112 loop: 1 cel: 1)
+				(keith loop: 1 cel: 1)
 			)
 		)
 	)
@@ -840,12 +939,15 @@
 
 (instance guardScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(User canControl: 0)
-				(guard ignoreActors: 0 setMotion: MoveTo 128 133 self)
+				(guard
+					ignoreActors: 0
+					setMotion: MoveTo 128 133 self
+				)
 			)
 			(1
 				(guard loop: 2 cel: 1)
@@ -853,7 +955,7 @@
 				(self cue:)
 			)
 			(2
-				(localproc_0 20 69) ; "You show your badge, and the security guard says... "Pass right on through, Officer. Just remember...no partaking of the spirits.""
+				(LocPrint 20 69)
 				(guard loop: 0)
 				(RedrawCast)
 				(User canControl: 1)
@@ -861,56 +963,76 @@
 			(3
 				(= local10 1)
 				(HandsOff)
-				(gEgo setMotion: 0)
-				(if (gEgo has: 0) ; hand_gun
-					(localproc_0 20 70 25 4) ; "As you walk into the magnetic field, your gun sets off an alarm."
+				(ego setMotion: 0)
+				(if (ego has: 0)
+					(LocPrint 20 70 25 4)
 				else
-					(localproc_0 20 71 25 4) ; "As you walk into the magnetic field, something sets off an alarm."
+					(LocPrint 20 71 25 4)
 				)
-				(guard setCycle: Walk setMotion: MoveTo 140 133 self)
+				(guard
+					setCycle: Walk
+					setMotion: MoveTo 140 133 self
+				)
 			)
 			(4
 				(guard setMotion: MoveTo 149 133 self)
 			)
 			(5
-				(guard loop: 2 cel: 4)
+				(guard
+					loop: 2
+					cel: 4
+				)
 				(self cue:)
 			)
 			(6
-				(localproc_0 20 72 25 5 83) ; "One minute, sir!" the portly security guard says. "Please empty your pockets and walk through the detector again."
-				(gEgo setMotion: MoveTo 155 144 self)
+				(LocPrint 20 72 25 5 83)
+				(ego setMotion: MoveTo 155 144 self)
 			)
 			(7
-				(gEgo setMotion: MoveTo 138 144)
+				(ego setMotion: MoveTo 138 144)
 				(guard setMotion: MoveTo 128 133 self)
 			)
 			(8
-				(gEgo cel: 6)
-				(guard loop: 0 cel: 1)
+				(ego cel: 6)
+				(guard
+					loop: 0
+					cel: 1
+				)
 				(self cue:)
 			)
 			(9
 				(HandsOn)
 				(= local11 1)
-				(localproc_0 20 73 25 4 83) ; "You remove everything from your pockets and try it again."
+				(LocPrint 20 73 25 4 83)
 			)
 			(10
 				(HandsOff)
 				(= local11 0)
 				(User canControl: 0)
-				(localproc_0 20 74 25 4) ; "Walking through the detector, your gun again sets off the alarm."
-				(localproc_0 20 75 25 4) ; "Getting serious, the security guard says..."Hey, Mac! Are you packing a gun or something?""
+				(LocPrint 20 74 25 4)
+				(LocPrint 20 75 25 4)
 				(self cue:)
 			)
 			(11
-				(gEgo illegalBits: 0 setMotion: MoveTo 162 134 self)
+				(ego
+					illegalBits: 0
+					setMotion: MoveTo 162 134 self
+				)
 			)
 			(12
-				(gEgo illegalBits: $8000 loop: 1 cel: 7)
-				(guard loop: 6 cel: 0 setCycle: End self)
+				(ego
+					illegalBits: cWHITE ;-32768
+					loop: 1
+					cel: 7
+				)
+				(guard
+					loop: 6
+					cel: 0
+					setCycle: EndLoop self
+				)
 			)
 			(13
-				(localproc_0 20 76 25 4 83) ; ""Freeze right where you are, fella!" orders the guard."
+				(LocPrint 20 76 25 4 83)
 				(self cue:)
 			)
 			(14
@@ -926,9 +1048,9 @@
 				(self cue:)
 			)
 			(16
-				(gEgo hide:)
+				(ego hide:)
 				(guard hide:)
-				((= local12 (Prop new:))
+				((= newProp (Prop new:))
 					view: 31
 					loop: 8
 					cel: 0
@@ -936,18 +1058,18 @@
 					init:
 					startUpd:
 					cycleSpeed: 3
-					setCycle: End self
+					setCycle: EndLoop self
 				)
 				(User canInput: 1)
 			)
 			(17
-				(localproc_0 20 77 25 4 83) ; "The guard pats you down, finds and removes your gun, and says to you..."
-				(if local9
-					(localproc_0 20 78) ; "The next time you're packin' iron, and you want to pass through a metal detector, think about identifying yourself."
+				(LocPrint 20 77 25 4 83)
+				(if guardShownBadge
+					(LocPrint 20 78)
 					(HandsOn)
 					(= local13 1)
 				else
-					(localproc_0 20 79) ; ""Okay, you pistol-packin' dude. You're under arrest!"
+					(LocPrint 20 79)
 					(EgoDead
 						{As you have just discovered, you have to use your head if you're a cop. You didn't, and now this guy's going to arrest YOU!}
 					)
@@ -955,31 +1077,51 @@
 			)
 			(18
 				(= local13 0)
-				(local12 dispose:)
-				(guard ignoreActors: 0 show:)
-				(gEgo illegalBits: $8000 posn: 162 134 show:)
+				(newProp dispose:)
+				(guard
+					ignoreActors: 0 
+					show:
+				)
+				(ego
+					illegalBits: cWHITE ;-32768
+					posn: 162 134
+					show:
+				)
 				(self cue:)
 			)
 			(19
-				(guard setLoop: 1 setCycle: Walk setMotion: MoveTo 128 133 self)
+				(guard
+					setLoop: 1
+					setCycle: Walk
+					setMotion: MoveTo 128 133 self
+				)
 			)
 			(20
 				(guard setLoop: 0)
 				(User canControl: 1)
-				(localproc_0 20 80 25 4 83) ; "OK, Mr. Homicide Detective Bonds...go ahead with your business."
+				(LocPrint 20 80 25 4 83)
 			)
 			(21
 				(= local15 1)
-				(guard setCycle: Walk setMotion: MoveTo 151 133 self)
+				(guard
+					setCycle: Walk
+					setMotion: MoveTo 151 133 self
+				)
 			)
 			(22
-				(guard setLoop: 4 setCycle: End self)
+				(guard
+					setLoop: 4
+					setCycle: EndLoop self
+				)
 			)
 			(23
-				(guard setLoop: 5 setCycle: End self)
+				(guard
+					setLoop: 5
+					setCycle: EndLoop self
+				)
 			)
 			(24
-				(gEgo hide:)
+				(ego hide:)
 				((View new:)
 					view: 76
 					loop: 7
@@ -989,7 +1131,7 @@
 					ignoreActors:
 					addToPic:
 				)
-				(Print 20 81 #at -1 116 #draw) ; "You draw your weapon just as the guard goes for his. Being in fear of his life, the security guard blows you into eternity."
+				(Print 20 81 #at -1 116 #draw)
 				(self cue:)
 			)
 			(25
@@ -1003,48 +1145,53 @@
 
 (instance boardingScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(HandsOff)
-				(localproc_0 20 82 25 5 83) ; "The flight attendant at the entrance to the airplane asks you for your ticket."
-				(global112
+				(LocPrint 20 82 25 5 83)
+				(keith
 					illegalBits: 0
 					ignoreActors:
 					startUpd:
 					setLoop: 0
 					setMotion: MoveTo 155 139 self
 				)
-				(gEgo put: 16 16) ; plane_ticket
+				(ego put: iPlaneTicket 16)
 			)
 			(1
-				(localproc_0 20 83 83) ; "You hand your ticket to the attendant as you board the plane."
-				(global112 setLoop: 1)
+				(LocPrint 20 83 83)
+				(keith setLoop: 1)
 				(self cue:)
 			)
 			(2
-				(localproc_0 20 84 83) ; "Keith flashes his badge at the security guard and hollers: "Hey, Sonny! I'm right behind you!""
-				(global112 setLoop: 3 setMotion: MoveTo 155 124 self)
+				(LocPrint 20 84 83)
+				(keith
+					setLoop: 3
+					setMotion: MoveTo 155 124 self
+				)
 			)
 			(3
-				(global112 setLoop: 1 setMotion: MoveTo -5 124 self)
+				(keith
+					setLoop: 1
+					setMotion: MoveTo -5 124 self
+				)
 			)
 			(4
 				(HandsOn)
-				(if (== global195 1)
-					(= global100 14)
+				(if (== airplaneToSteelton 1)
+					(= gamePhase 14)
 				else
-					(SetFlag 166)
+					(Bset fTriedToGoToHouston)
 				)
-				(= gPerspective 0)
-				(gCurRoom newRoom: 40)
+				(= perspective 0)
+				(curRoom newRoom: 40)
 			)
 			(5
-				(localproc_0 20 85) ; "Have a nice day!"
-				(gEgo setMotion: MoveTo 110 124)
+				(LocPrint 20 85)
+				(ego setMotion: MoveTo 110 124)
 			)
 		)
 	)
 )
-

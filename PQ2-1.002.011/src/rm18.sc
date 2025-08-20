@@ -1,10 +1,10 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 18)
-(include sci.sh)
+(include system.sh)
+(include game.sh)
 (use Main)
-(use Interface)
-(use Avoid)
+(use Intrface)
+(use Avoider)
 (use Motion)
 (use Game)
 (use User)
@@ -16,37 +16,31 @@
 )
 
 (local
-	local0
-	local1
-	local2
-	local3
-	local4
+	propAgent
+	blondeAgent
+	badgeShown
+	mugshotShown
+	checkedList
 )
-
-(procedure (localproc_0)
+(procedure (LocPrint)
 	(Print &rest #at -1 15)
 )
 
-(instance rm18 of Rm
+(instance rm18 of Room
 	(properties
 		picture 18
-		style 1
+		style VSHUTTER
 	)
-
-	(method (dispose)
-		(agentScript dispose:)
-		(super dispose:)
-	)
-
+	
 	(method (init)
 		(super init:)
-		(= gPerspective 70)
-		(= global212 3)
-		(= global211 1)
+		(= perspective 70)
+		(= gunFireState gunPROHIBITED)
+		(= gunNotNeeded 1)
 		(User canInput: 1)
-		(Load rsVIEW 1)
-		(Load rsVIEW 79)
-		((= local0 (Prop new:))
+		(Load VIEW 1)
+		(Load VIEW 79)
+		((= propAgent (Prop new:))
 			view: 79
 			posn: 126 98
 			setLoop: 1
@@ -55,7 +49,7 @@
 			init:
 			stopUpd:
 		)
-		((= local1 (View new:))
+		((= blondeAgent (View new:))
 			view: 79
 			posn: 101 103
 			loop: 3
@@ -127,208 +121,219 @@
 			stopUpd:
 			addToPic:
 		)
-		(self setLocales: 153)
+		(self setLocales: regFieldKit)
 		(self setScript: rm18Script)
+	)
+	
+	(method (dispose)
+		(agentScript dispose:)
+		(super dispose:)
 	)
 )
 
 (instance rm18Script of Script
 	(properties)
-
+	
 	(method (doit)
-		(cond
+		(cond 
 			(
 				(or
-					(and (< (gEgo x:) 2) (> (gEgo y:) 125))
-					(and (< (gEgo y:) 125) (< (gEgo x:) 100))
+					(and (< (ego x?) 2) (> (ego y?) 125))
+					(and (< (ego y?) 125) (< (ego x?) 100))
 				)
-				(= gPerspective 0)
-				(gCurRoom newRoom: 16)
+				(= perspective 0)
+				(curRoom newRoom: 16)
 			)
-			((<= (gEgo y:) 120)
-				(if (!= (mod (gEgo view:) 2) 0)
-					(gEgo view: (- (gEgo view:) 1))
+			((<= (ego y?) 120)
+				(if (!= (mod (ego view?) 2) 0)
+					(ego view: (- (ego view?) 1))
 				)
 			)
-			((!= (mod (gEgo view:) 2) 1)
-				(gEgo view: (+ (gEgo view:) 1))
+			((!= (mod (ego view?) 2) 1)
+				(ego view: (+ (ego view?) 1))
 			)
 		)
 		(super doit:)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(SL enable:)
-				(gEgo
-					view: (if global204 7 else 1)
+				(StatusLine enable:)
+				(ego
+					view: (if gunDrawn 7 else 1)
 					xStep: 3
 					yStep: 2
-					posn: (if (< (gEgo y:) 135) 105 else 4) (gEgo y:)
-					setMotion: MoveTo 350 (gEgo y:)
+					posn: (if (< (ego y?) 135) 105 else 4) (ego y?)
+					setMotion: MoveTo 350 (ego y?)
 					init:
 				)
-				(if (IsFlag 40)
-					((= global112 (Act new:))
+				(if (Btst fKeithFollows)
+					((= keith (Actor new:))
 						view: 20
 						xStep: 3
 						yStep: 2
-						posn: (- (gEgo x:) 26) (gEgo y:)
+						posn: (- (ego x?) 26) (ego y?)
 						setCycle: Walk
-						setAvoider: (Avoid new:)
-						setMotion: Follow gEgo 24
+						setAvoider: (Avoider new:)
+						setMotion: Follow ego 24
 						init:
 					)
 				)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(switch (event type:)
-			(evSAID
-				(cond
-					((Said 'show/mugshot,painting,(shot<mug)')
-						(if (gEgo inRect: 76 113 173 141)
+		(switch (event type?)
+			(saidEvent
+				(cond 
+					((Said 'display/mugshot,painting,(shot<mug)')
+						(if (ego inRect: 76 113 173 141)
 							(agentScript changeState: 3)
 						else
-							(localproc_0 18 0) ; "Get closer to the rental agents so that they can see the mug shot."
+							(LocPrint 18 0)
 						)
 					)
 					((Said 'look>')
-						(cond
+						(cond 
 							((Said '[<at,around][/!*,chamber,building]')
-								(localproc_0 18 1) ; "Looking around, you see a car rental agency and not much else."
+								(LocPrint 18 1)
 							)
 							((Said '/sign,flyer,ad')
-								(if (> (gEgo x:) 95)
+								(if (> (ego x?) 95)
 									(switch (Random 1 3)
 										(1
-											(localproc_0 18 2) ; "The car rental agency's name is "Top Hat.""
+											(LocPrint 18 2)
 										)
 										(2
-											(localproc_0 18 3) ; "CPA stands for "Cheap Prices Available.""
+											(LocPrint 18 3)
 										)
 										(3
-											(localproc_0 18 4) ; "The fine print says: "Our rental cars are for the birds...they're CHEEP!""
+											(LocPrint 18 4)
 										)
 									)
 								else
-									(localproc_0 18 2) ; "The car rental agency's name is "Top Hat.""
+									(LocPrint 18 2)
 								)
 							)
-							((or (Said '<up') (Said '/ceiling'))
-								(localproc_0 18 5) ; "Nice ceiling."
+							(
+								(or
+									(Said '<up')
+									(Said '/ceiling')
+								)
+								(LocPrint 18 5)
 							)
-							((or (Said '<down') (Said '/floor'))
-								(localproc_0 18 6) ; "Nice floor."
+							(
+								(or
+									(Said '<down')
+									(Said '/floor')
+								)
+								(LocPrint 18 6)
 							)
 							((Said '/counter,agency')
-								(localproc_0 18 7) ; "There are two turtle-looking agents behind the rental agency counter."
+								(LocPrint 18 7)
 							)
 							((Said '/hat')
-								(localproc_0 18 8) ; "Top hats, of course!"
+								(LocPrint 18 8)
 							)
 							((Said '/turtle')
-								(localproc_0 18 9) ; "There aren't any real turtles in here."
+								(LocPrint 18 9)
 							)
 							((Said '/pane')
-								(if (== (gEgo loop:) 2)
-									(localproc_0 18 10) ; "Turn around."
+								(if (== (ego loop?) 2)
+									(LocPrint 18 10)
 								else
-									(localproc_0 18 11) ; "Through the window you see the airport tarmac."
+									(LocPrint 18 11)
 								)
 							)
 							((Said '/bench')
-								(localproc_0 18 12) ; "Just a chair."
+								(LocPrint 18 12)
 							)
 							((Said '/rope')
-								(localproc_0 18 13) ; "It's a velveteen braided rope similar to the ones found in some movie theaters."
+								(LocPrint 18 13)
 							)
 							((Said '/painting')
-								(localproc_0 18 14) ; "Another pointlessly pointillistic painting."
+								(LocPrint 18 14)
 							)
-							((Said '/agent,man,woman')
-								(localproc_0 18 15) ; "Dressed in a silly-looking green tux, the Top Hat car rental agent looks back with a blank stare."
+							((Said '/agent,dude,broad')
+								(LocPrint 18 15)
 							)
 							((Said '/list,rental[<customer]')
-								(if (gEgo inRect: 76 113 173 141)
+								(if (ego inRect: 76 113 173 141)
 									(agentScript changeState: 1)
 								else
-									(localproc_0 18 16) ; "No one can hear you from where you're standing."
+									(LocPrint 18 16)
 								)
 							)
 						)
 					)
 					((Said 'ask/auto')
-						(localproc_0 18 17) ; "There are lots of cars outside."
+						(LocPrint 18 17)
 					)
 					(
 						(or
-							(Said
-								'show,get,see,ask/list[<customer,rental,auto]'
-							)
-							(Said '[show,get,see,ask]/list,agreement,rental')
-							(Said 'show,get,see,ask/me/list,rental,agreement')
-							(Said 'talk,ask/agent/customer,rental,list,auto')
+							(Said 'display,get,see,ask/list[<customer,rental,auto]')
+							(Said '[display,get,see,ask]/list,agreement,rental')
+							(Said 'display,get,see,ask/i/list,rental,agreement')
+							(Said 'chat,ask/agent/customer,rental,list,auto')
 						)
-						(if (gEgo inRect: 76 113 173 141)
+						(if (ego inRect: 76 113 173 141)
 							(agentScript changeState: 1)
 						else
-							(localproc_0 18 16) ; "No one can hear you from where you're standing."
+							(LocPrint 18 16)
 						)
 					)
-					((Said 'talk/agent,man,woman')
-						(if (gEgo inRect: 76 113 173 141)
+					((Said 'chat/agent,dude,broad')
+						(if (ego inRect: 76 113 173 141)
 							(agentScript changeState: 0)
 						else
-							(localproc_0 18 16) ; "No one can hear you from where you're standing."
+							(LocPrint 18 16)
 						)
 					)
 					((Said 'read/sign,flyer,ad')
 						(switch (Random 1 3)
 							(1
-								(localproc_0 18 2) ; "The car rental agency's name is "Top Hat.""
+								(LocPrint 18 2)
 							)
 							(2
-								(localproc_0 18 3) ; "CPA stands for "Cheap Prices Available.""
+								(LocPrint 18 3)
 							)
 							(3
-								(localproc_0 18 4) ; "The fine print says: "Our rental cars are for the birds...they're CHEEP!""
+								(LocPrint 18 4)
 							)
 						)
 					)
-					((Said 'show/badge')
-						(if (gEgo inRect: 76 113 173 141)
+					((Said 'display/badge')
+						(if (ego inRect: 76 113 173 141)
 							(agentScript changeState: 2)
 						else
-							(localproc_0 18 18) ; "No one can see your shield from where you're standing."
+							(LocPrint 18 18)
 						)
 					)
 					((Said 'get/list[<rental,customer]')
-						(localproc_0 18 19) ; "That isn't necessary."
+						(LocPrint 18 19)
 					)
-					((Said 'arrest/agent,man,woman,woman')
-						(localproc_0 18 20) ; "Without justification, Bonds, that would be kidnapping!"
+					((Said 'arrest/agent,dude,broad,broad')
+						(LocPrint 18 20)
 					)
-					((Said 'arrest/agent,man,woman,woman')
-						(localproc_0 18 21) ; "You have absolutely no reason to cuff the person."
+					((Said 'arrest/agent,dude,broad,broad')
+						(LocPrint 18 21)
 					)
-					((Said 'fire,kill,hit/agent,man,woman,woman')
-						(localproc_0 18 22) ; "That's a good way for you to wind up making license plates."
+					((Said 'fire,kill,beat/agent,dude,broad,broad')
+						(LocPrint 18 22)
 					)
 					((Said 'rent[/auto]')
-						(localproc_0 18 23) ; "Your own car is outside."
+						(LocPrint 18 23)
 					)
 					((Said 'get/hat')
-						(localproc_0 18 24) ; "You won't need a top hat where you're going."
+						(LocPrint 18 24)
 					)
-					((Said 'thank[/you,man,woman,woman,agent]')
-						(if (gEgo inRect: 76 113 173 141)
+					((Said 'thank[/ya,dude,broad,broad,agent]')
+						(if (ego inRect: 76 113 173 141)
 							(agentScript changeState: 4)
 						else
-							(localproc_0 18 16) ; "No one can hear you from where you're standing."
+							(LocPrint 18 16)
 						)
 					)
 				)
@@ -339,105 +344,107 @@
 
 (instance agentScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(switch (Random 0 3)
 					(0
-						(localproc_0 18 25) ; ""Can I help you?" asks the agent."
+						(LocPrint 18 25)
 					)
 					(1
-						(localproc_0 18 26) ; "The agent looks at you and says..."Dependable transportation is our business.""
+						(LocPrint 18 26)
 					)
 					(2
-						(localproc_0 18 27) ; ""Rest assured, you're in good hands with Top Hat," cracks the agent."
+						(LocPrint 18 27)
 					)
 					(3
-						(localproc_0 18 28) ; "At Top Hat, our cars may be sssslllooooowww, but they're TOPS!"
+						(LocPrint 18 28)
 					)
 				)
 			)
 			(1
-				(= local4 1)
-				(if local2
-					(localproc_0 18 29) ; "Yes sir, Officer. Here are all of the car rental agreements for the last week."
-					(localproc_0 18 30) ; "The Top Hat representative slowly hands you the car rental agreements."
-					(localproc_0 18 31) ; "You carefully look over each car rental agreement. Unable to find anything helpful, you return them to the agent."
+				(= checkedList 1)
+				(if badgeShown
+					(LocPrint 18 29)
+					(LocPrint 18 30)
+					(LocPrint 18 31)
 				else
-					(localproc_0 18 32) ; "What?" snaps the agent. "I'm not going to show our rental agreements to you. They're confidential!"
+					(LocPrint 18 32)
 				)
 			)
 			(2
-				(= local2 1)
+				(= badgeShown 1)
 				(switch (Random 0 1)
-					(0
-						(localproc_0 18 33) ; "You flash your badge at the Top Hat agent and he says... "Oh No! Is my boss in trouble again?""
-					)
+					(0 (LocPrint 18 33))
 					(1
-						(localproc_0 18 34) ; "You whip out your badge..."
-						(localproc_0 18 35) ; "What did I do?" asks the agent. "The last wrong thing I remember doing was running a stop sign, and that was six years ago."
+						(LocPrint 18 34)
+						(LocPrint 18 35)
 					)
 				)
-				(if local4
-					(localproc_0 18 30) ; "The Top Hat representative slowly hands you the car rental agreements."
-					(localproc_0 18 31) ; "You carefully look over each car rental agreement. Unable to find anything helpful, you return them to the agent."
+				(if checkedList
+					(LocPrint 18 30)
+					(LocPrint 18 31)
 				)
 			)
 			(3
-				(= local3 1)
-				(cond
-					(local2
-						(cond
-							((gEgo has: 12) ; new_mug_shot
+				(= mugshotShown 1)
+				(cond 
+					(badgeShown
+						(cond 
+							((ego has: iNewMugShot)
 								(switch (Random 0 1)
 									(0
-										(localproc_0 18 36 82 112) ; "The agent looks at the mug shot and says..."What a mean- looking fellow. Fortunately, I've never seen him before.""
+										(LocPrint 18 36 82 112)
 									)
 									(1
-										(localproc_0 18 37 82 112) ; "You show the mug shot of Bains..."Nope, I've never seen the man before, but he sure looks like he ought to be locked up.""
+										(LocPrint 18 37 82 112)
 									)
 								)
 							)
-							((gEgo has: 23) ; old_mug_shot
+							((ego has: iOldMugShot)
 								(switch (Random 0 1)
 									(0
-										(localproc_0 18 36 82 123) ; "The agent looks at the mug shot and says..."What a mean- looking fellow. Fortunately, I've never seen him before.""
+										(LocPrint 18 36 82 123)
 									)
 									(1
-										(localproc_0 18 37 82 123) ; "You show the mug shot of Bains..."Nope, I've never seen the man before, but he sure looks like he ought to be locked up.""
+										(LocPrint 18 37 82 123)
 									)
 								)
 							)
 							(else
-								(localproc_0 18 38) ; "You don't have a mug shot of Bains to show."
+								(LocPrint 18 38)
 							)
 						)
 					)
-					((or (gEgo has: 12) (gEgo has: 23)) ; new_mug_shot, old_mug_shot
-						(localproc_0 ; "The rental agent takes a good look at the picture, and slowly responds..."Yeah, buddy, you've got a fine looking wife there. She needs a shave, though.""
-							18
-							39
-							82
-							(if (gEgo has: 12) 112 else 123) ; new_mug_shot
+					(
+						(or
+							(ego has: iNewMugShot)
+							(ego has: iOldMugShot)
+						)
+						(LocPrint 18 39 82
+							(if (ego has: 12)
+								112
+							else
+								123
+							)
 						)
 					)
 					(else
-						(localproc_0 18 38) ; "You don't have a mug shot of Bains to show."
+						(LocPrint 18 38)
 					)
 				)
 			)
 			(4
-				(if local2
-					(localproc_0 18 40) ; "Anytime, Officer."
-					(if local3
-						(localproc_0 18 41) ; "Sure hope you get this guy. He looks BAD!"
+				(if badgeShown
+					(LocPrint 18 40)
+					(if mugshotShown
+						(LocPrint 18 41)
 					)
 				else
-					(localproc_0 18 42) ; "You're welcome. Come again to... Top Hat!"
+					(LocPrint 18 42)
 				)
 			)
 		)
 	)
 )
-

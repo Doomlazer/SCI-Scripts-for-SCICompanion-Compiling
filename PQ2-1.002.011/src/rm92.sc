@@ -1,5 +1,4 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 92)
 (include sci.sh)
 (use Main)
@@ -12,12 +11,12 @@
 	rm92 0
 )
 
-(instance rm92 of Rm
+(instance rm92 of Room
 	(properties
 		picture 92
-		style 6
+		style $0006
 	)
-
+	
 	(method (init)
 		(User canInput: 0 canControl: 0)
 		(Load rsVIEW 290)
@@ -164,11 +163,11 @@
 
 (instance rm92Script of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(SL enable:)
+				(StatusLine enable:)
 				(Timer setReal: self 5)
 			)
 			(1
@@ -179,4 +178,3 @@
 		)
 	)
 )
-

@@ -1,9 +1,9 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 6)
-(include sci.sh)
+(include system.sh)
+(include game.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Motion)
 (use Game)
 (use User)
@@ -13,38 +13,36 @@
 (public
 	rm6 0
 )
-
 (synonyms
 	(cop detective)
 )
 
 (local
 	local0
-	local1
+	numPeopleInRoom
 )
-
 (instance James of Feature
 	(properties)
-
+	
 	(method (handleEvent event)
 		(cond
-			((or (event claimed:) (!= (event type:) evSAID))
+			((or (event claimed:) (!= (event type:) saidEvent))
 				(return)
 			)
 			(
 				(not
 					(or
-						(gEgo inRect: 124 128 192 165)
+						(ego inRect: 124 128 192 165)
 						(and
-							(gEgo inRect: 193 145 240 154)
-							(== (gEgo loop:) 1)
+							(ego inRect: 193 145 240 154)
+							(== (ego loop:) 1)
 						)
 					)
 				)
 				(if (not (Said '/james'))
 					(return)
 				else
-					(proc0_7) ; "You're not close enough."
+					(NotClose) ; "You're not close enough."
 				)
 			)
 			((Said 'look/desk')
@@ -84,7 +82,7 @@
 						)
 						(Print 6 8) ; "Oh yes," says Detective Simpson, "we just worked a recent pawn shop burglary."
 						(Print 6 9) ; "Simpson continues, "Taken in that burglary were two shotguns, a 32 automatic with silencer, and ammunition.""
-						(SetScore 2 92)
+						(SolvePuzzle 2 92)
 						(++ local0)
 					)
 					(
@@ -93,7 +91,7 @@
 							(Said '//print,finger,fingerprint,thumb')
 						)
 						(Print 6 10) ; "Affirmative on the prints," says Jim, "we dusted everything. Bains' prints were all over that shotgun."
-						(SetScore 2 93)
+						(SolvePuzzle 2 93)
 						(++ local0)
 					)
 					((or (Said '/number<serial') (Said '//number<serial'))
@@ -114,19 +112,19 @@
 
 (instance William of Feature
 	(properties)
-
+	
 	(method (handleEvent event)
 		(cond
-			((or (event claimed:) (!= (event type:) evSAID))
+			((or (event claimed:) (!= (event type:) saidEvent))
 				(return)
 			)
 			(
 				(not
 					(or
-						(gEgo inRect: 190 128 239 146)
+						(ego inRect: 190 128 239 146)
 						(and
-							(gEgo inRect: 193 145 240 154)
-							(== (gEgo loop:) 3)
+							(ego inRect: 193 145 240 154)
+							(== (ego loop:) 3)
 						)
 					)
 				)
@@ -134,11 +132,11 @@
 					((not (Said '/cole,willie,jerome'))
 						(return)
 					)
-					((== local1 0)
+					((== numPeopleInRoom 0)
 						(Print 6 13) ; "Detective Jerome is not here right now."
 					)
 					(else
-						(proc0_7) ; "You're not close enough."
+						(NotClose) ; "You're not close enough."
 					)
 				)
 			)
@@ -146,7 +144,7 @@
 				(Print 6 14) ; "This is the desk of detective William Jerome."
 			)
 			((Said 'ask')
-				(if (== local1 0)
+				(if (== numPeopleInRoom 0)
 					(Print 6 13) ; "Detective Jerome is not here right now."
 				else
 					(Print 6 15) ; "I'm sorry Sonny, but I can't help you with that."
@@ -154,7 +152,7 @@
 			)
 			((or (Said '/cole,willie,jerome,man,cop>') (Said 'hello>'))
 				(cond
-					((== local1 0)
+					((== numPeopleInRoom 0)
 						(event claimed: 1)
 						(Print 6 13) ; "Detective Jerome is not here right now."
 					)
@@ -191,54 +189,66 @@
 
 (instance Robert of Feature
 	(properties)
-
+	
 	(method (handleEvent event)
-		(cond
-			((or (event claimed:) (!= (event type:) evSAID))
+		(cond 
+			(
+				(or
+					(event claimed?)
+					(!= (event type?) saidEvent)
+				)
 				(return)
 			)
-			((not (gEgo inRect: 56 120 120 146))
-				(cond
+			((not (ego inRect: 56 120 120 146))
+				(cond 
 					((not (Said '/lieutenant,bob,adams'))
 						(return)
 					)
-					((<= local1 1)
-						(Print 6 22) ; "Lieutenant Adams is not here right now."
+					((<= numPeopleInRoom 1)
+						(Print 6 22)
 					)
 					(else
-						(proc0_7) ; "You're not close enough."
+						(NotClose)
 					)
 				)
 			)
 			((Said 'look/desk')
-				(Print 6 23) ; "This is the desk where Lieutenant Adams counts down to his retirement."
+				(Print 6 23)
 			)
 			((Said 'ask')
-				(if (<= local1 1)
-					(Print 6 22) ; "Lieutenant Adams is not here right now."
+				(if (<= numPeopleInRoom 1)
+					(Print 6 22)
 				else
-					(Print 6 24) ; "I haven't been working any burglaries that have involved homicides, Sonny."
+					(Print 6 24)
 				)
 			)
-			((or (Said '/lieutenant,bob,adams,man,cop>') (Said 'hello>'))
-				(cond
-					((<= local1 1)
+			(
+				(or
+					(Said '/lieutenant,bob,adams,dude,cop>')
+					(Said 'hello>')
+				)
+				(cond 
+					((<= numPeopleInRoom 1)
 						(event claimed: 1)
-						(Print 6 22) ; "Lieutenant Adams is not here right now."
+						(Print 6 22)
 					)
 					((Said 'look')
-						(Print 6 25) ; "Lieutenant Adams seems to be pondering what he will do when he retires."
+						(Print 6 25)
 					)
-					((or (Said 'talk') (Said 'hello'))
+					(
+						(or
+							(Said 'chat')
+							(Said 'hello')
+						)
 						(switch (Random 0 2)
 							(0
-								(Print 6 26) ; "Lieutenant Adams tells you, "I could care less about this joint. I'm just sitting here biding my time, and waiting for my pension.""
+								(Print 6 26)
 							)
 							(1
-								(Print 6 27) ; "I don't know what I'm doing here," says the Lieutenant, "I'd rather sell motor homes in Siberia !"
+								(Print 6 27)
 							)
 							(2
-								(Print 6 28) ; "The Lieutenant says to you, "Hey Sonny, I'll trade you these lieutenant bars for a one way ticket to Mexico""
+								(Print 6 28)
 							)
 						)
 					)
@@ -247,8 +257,8 @@
 					)
 				)
 			)
-			((Said '/yes')
-				(Print 6 29) ; "Just kidding, I like Chinese food."
+			((Said '/affirmative')
+				(Print 6 29)
 			)
 		)
 	)
@@ -256,19 +266,19 @@
 
 (instance Laura of Feature
 	(properties)
-
+	
 	(method (handleEvent event)
 		(cond
-			((or (event claimed:) (!= (event type:) evSAID))
+			((or (event claimed:) (!= (event type:) saidEvent))
 				(return)
 			)
 			(
 				(not
 					(or
-						(gEgo inRect: 137 116 300 129)
+						(ego inRect: 137 116 300 129)
 						(and
-							(gEgo inRect: 137 116 300 135)
-							(== (gEgo loop:) 3)
+							(ego inRect: 137 116 300 135)
+							(== (ego loop:) 3)
 						)
 					)
 				)
@@ -276,11 +286,11 @@
 					((not (Said '/holt,woman'))
 						(return)
 					)
-					((> local1 2)
+					((> numPeopleInRoom 2)
 						(Print 6 30) ; "Detective Gomez is not here right now."
 					)
 					(else
-						(proc0_7) ; "You're not close enough."
+						(NotClose) ; "You're not close enough."
 					)
 				)
 			)
@@ -291,7 +301,7 @@
 				(Print 6 32) ; "No thanks, my husband may not like it."
 			)
 			((Said 'ask')
-				(if (> local1 2)
+				(if (> numPeopleInRoom 2)
 					(Print 6 30) ; "Detective Gomez is not here right now."
 				else
 					(Print 6 33) ; "I'm sorry, but I can't help you with that."
@@ -299,7 +309,7 @@
 			)
 			((or (Said '/holt,woman,cop>') (Said 'hello>'))
 				(cond
-					((> local1 2)
+					((> numPeopleInRoom 2)
 						(event claimed: 1)
 						(Print 6 30) ; "Detective Gomez is not here right now."
 					)
@@ -337,105 +347,144 @@
 
 (instance Computer of Feature
 	(properties)
-
+	
 	(method (handleEvent event)
-		(cond
-			((or (event claimed:) (!= (event type:) evSAID))
+		(cond 
+			(
+				(or
+					(event claimed?)
+					(!= (event type?) saidEvent)
+				)
 				(return)
 			)
-			((not (gEgo inRect: 193 145 240 154))
+			((not (ego inRect: 193 145 240 154))
 				(if (Said '/computer')
-					(proc0_7) ; "You're not close enough."
+					(NotClose)
 				else
 					(return)
 				)
 			)
 			((Said 'look/desk')
-				(Print 6 40) ; "On this desk rests a workable computer."
+				(Print 6 40)
 			)
 			((Said 'turn<on/computer')
-				(Print 6 41) ; "Look at it first."
+				(Print 6 41)
 			)
 			((Said 'look,use/computer')
-				(gCurRoom newRoom: 8)
+				(curRoom newRoom: 8)
 			)
 		)
 	)
 )
 
-(instance rm6 of Rm
+(instance rm6 of Room
 	(properties
 		picture 6
-		style 5
+		style WIPEDOWN
 	)
-
-	(method (dispose)
-		(gFeatures eachElementDo: #dispose 84)
-		(super dispose:)
-	)
-
+	
 	(method (init)
-		(Load rsVIEW 1)
-		(Load rsVIEW 68)
+		(Load VIEW 1)
+		(Load VIEW 68)
 		(super init:)
 		(self setFeatures: Laura James William Robert Computer)
-		(self setLocales: 153 156)
+		(self setLocales: regFieldKit regOffice)
 		(HandsOn)
 		(= local0 0)
-		(= local1 (Random 0 4))
-		(= global212 3)
-		(if (!= gPrevRoomNum 8)
+		(= numPeopleInRoom (Random 0 4))
+		(= gunFireState gunPROHIBITED)
+		(if (!= prevRoomNum 8)
 			(User prevDir: 1)
-			(gEgo posn: 87 158 setMotion: MoveTo 87 10)
+			(ego
+				posn: 87 158
+				setMotion: MoveTo 87 10
+			)
 		)
-		(gEgo view: 1 setCycle: Walk illegalBits: $8000 init:)
-		(if (<= local1 2)
-			((View new:) view: 68 posn: 185 125 loop: 0 cel: 0 init: addToPic:)
+		(ego
+			view: 1
+			setCycle: Walk
+			illegalBits: cWHITE ;-32768
+			init:
 		)
-		(if (!= local1 0)
-			((View new:) view: 68 posn: 206 142 loop: 0 cel: 1 init: addToPic:)
+		(if (<= numPeopleInRoom 2)
+			((View new:) ;laura
+				view: 68
+				posn: 185 125
+				loop: 0
+				cel: 0
+				init:
+				addToPic:
+			)
 		)
-		((View new:) view: 68 posn: 182 148 loop: 0 cel: 3 init: addToPic:)
-		(if (> local1 1)
-			((View new:) view: 68 posn: 92 112 loop: 0 cel: 2 init: addToPic:)
+		(if (!= numPeopleInRoom 0)
+			((View new:) ;William 
+				view: 68
+				posn: 206 142
+				loop: 0
+				cel: 1
+				init:
+				addToPic:
+			)
+		)
+		((View new:) ;James
+			view: 68
+			posn: 182 148
+			loop: 0
+			cel: 3
+			init:
+			addToPic:
+		)
+		(if (> numPeopleInRoom 1)
+			((View new:) ;Adams
+				view: 68
+				posn: 92 112
+				loop: 0
+				cel: 2
+				init:
+				addToPic:
+			)
 		)
 		(self setScript: rm6Script)
+	)
+	
+	(method (dispose)
+		(features eachElementDo: #dispose #delete)
+		(super dispose:)
 	)
 )
 
 (instance rm6Script of Script
 	(properties)
-
+	
 	(method (doit)
-		(if (> (gEgo y:) 160)
-			(gCurRoom newRoom: 2)
+		(if (> (ego y?) 160)
+			(curRoom newRoom: 2)
 		)
 		(super doit:)
 	)
-
+	
 	(method (handleEvent event)
-		(switch (event type:)
-			(evSAID
-				(cond
+		(switch (event type?)
+			(saidEvent
+				(cond 
 					((Said 'look>')
-						(cond
+						(cond 
 							((Said '/flyer,painting')
-								(Print 6 42) ; "Looking at the peaceful, relaxing poster of the South Sea Isles almost throws your brain into neutral."
+								(Print 6 42)
 							)
 							((Said '/wastebasket,garbage')
-								(Print 6 43) ; "The wastebasket is over-flowing with discarded paper."
+								(Print 6 43)
 							)
 							((Said '[<at,around][/(!*,chamber,office)]')
-								(Print 6 44) ; "The Burglary Office is furnished with the regular stuff, bulletin boards, desks, a wall map, bookcase and computer."
+								(Print 6 44)
 							)
 						)
 					)
 					((Said 'empty,clean[/newspaper,garbage,basket]')
-						(Print 6 45) ; "The people in Burglary will do that...someday."
+						(Print 6 45)
 					)
 				)
 			)
 		)
 	)
 )
-

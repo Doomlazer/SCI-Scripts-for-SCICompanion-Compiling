@@ -17,22 +17,22 @@
 			(toList delete: (NodeValue node))
 		)
 		
-		(= egox (gEgo x?))
-		(= egoy (gEgo y?))
-		(= heading (gEgo heading?))
+		(= egox (ego x?))
+		(= egoy (ego y?))
+		(= heading (ego heading?))
 		
 		(= extraDist
 			(cond
-				((< heading 90)	(GetDistance egox egoy 320 0)) ;SCRNWIDE=320
-				((< heading 180)	(GetDistance egox egoy 320 200)) ;scrnhigh=200
-				((< heading 270)	(GetDistance egox egoy 0 200)) 
+				((< heading 90)	(GetDistance egox egoy SCRNWIDE 0)) 
+				((< heading 180)	(GetDistance egox egoy SCRNWIDE SCRNHIGH)) 
+				((< heading 270)	(GetDistance egox egoy 0 SCRNHIGH)) 
 				((< heading 360)	(GetDistance egox egoy 0 0)) 
 			)
 		)
 		
 		(repeat
 			
-			(= objMin 0)		;reset for each pass
+			(= objMin NULL)		;reset for each pass
 			(= distMin $7fff)		;largest positive int available = 32k-1
 			
 			(for	
@@ -76,6 +76,4 @@
 			
 		);repeat loop
 	);sortedCpy procedure
-
-
 

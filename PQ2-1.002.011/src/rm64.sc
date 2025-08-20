@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 64)
 (include sci.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Extra)
 (use Motion)
 (use Game)
@@ -16,8 +15,8 @@
 )
 
 (local
-	[local0 100]
-	local100
+	[str 100]
+	egoX
 	local101
 	local102
 	local103
@@ -28,16 +27,15 @@
 	local108
 	local109
 )
-
-(procedure (localproc_0)
+(procedure (localproc_000c)
 	(Print &rest #at -1 40)
 )
 
-(instance bubble of Act
+(instance bubble of Actor
 	(properties)
 )
 
-(instance carp of Act
+(instance carp of Actor
 	(properties)
 )
 
@@ -73,32 +71,25 @@
 	(properties)
 )
 
-(instance rm64 of Rm
+(instance rm64 of Room
 	(properties
 		picture 64
-		style 8
+		style $0008
 	)
-
-	(method (dispose)
-		(carpScript dispose:)
-		(airScript dispose:)
-		(DisposeScript 988)
-		(super dispose:)
-	)
-
+	
 	(method (init)
 		(User canInput: 1)
 		(Load rsVIEW 12)
 		(Load rsVIEW 91)
 		(Load rsVIEW 161)
-		(= local106 (if (IsFlag 7) 6 else 2))
+		(= local106 (if (Btst 7) 6 else 2))
 		(theWaves
 			view: 91
 			loop: 1
 			cel: 0
 			posn: 58 17
 			setPri: 15
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 1
 			init:
 		)
@@ -109,7 +100,7 @@
 			posn: 27 23
 			setPri: 15
 			init:
-			setCycle: Fwd
+			setCycle: Forward
 		)
 		(bubbles
 			view: 91
@@ -118,9 +109,9 @@
 			posn: 5 35
 			setPri: 15
 			init:
-			setCycle: Fwd
+			setCycle: Forward
 		)
-		(if (< global110 30)
+		(if (< howFast 30)
 			(theWaves stopUpd:)
 			(waterFall stopUpd:)
 			(bubbles stopUpd:)
@@ -218,7 +209,7 @@
 			ignoreActors:
 			addToPic:
 		)
-		(if (IsItemAt 14) ; makeshift_knife
+		(if (InRoom 14)
 			(knife
 				view: 91
 				loop: 3
@@ -242,16 +233,21 @@
 		(super init:)
 		(self setScript: rm64Script)
 	)
-
+	
+	(method (dispose)
+		(carpScript dispose:)
+		(airScript dispose:)
+		(DisposeScript 988)
+		(super dispose:)
+	)
+	
 	(method (handleEvent event &tmp temp0)
-		(if (event claimed:)
-			(return)
-		)
-		(switch (event type:)
+		(if (event claimed?) (return))
+		(switch (event type?)
 			(evKEYBOARD
 				(if
 					(or
-						(== (= temp0 (event message:)) KEY_F6)
+						(== (= temp0 (event message?)) KEY_F6)
 						(== temp0 KEY_F8)
 						(== temp0 KEY_F10)
 					)
@@ -261,15 +257,13 @@
 				)
 			)
 			(evSAID
-				(cond
-					((Said '/briefcase')
-						(Print 64 0) ; "You don't have your field kit."
-					)
+				(cond 
+					((Said '/briefcase') (Print 64 0))
 					(
 						(Said
 							'remove,(get<off)/belt,bcv,tank,fin,mask,suit,equipment'
 						)
-						(Print 64 1) ; "Taking off your scuba equipment is not a good idea."
+						(Print 64 1)
 					)
 					(
 						(Said
@@ -277,17 +271,12 @@
 						)
 						(airScript changeState: 0)
 					)
-					((Said 'swim/waterfall')
-						(Print 64 2) ; "You don't need to."
-					)
-					((or (Said '<up') (Said '/rise,lid') (Said 'rise'))
-						(rm64Script changeState: 3)
-					)
+					((Said 'swim/waterfall') (Print 64 2))
+					(
+					(or (Said '<up') (Said '/rise,lid') (Said 'rise')) (rm64Script changeState: 3))
 					((Said 'look>')
-						(cond
-							((Said '/waterfall')
-								(localproc_0 64 3) ; "It's just a small waterfall."
-							)
+						(cond 
+							((Said '/waterfall') (localproc_000c 64 3))
 							(
 								(Said
 									'/air,pressure,(supply[<air]),(tank[<air]),(gauge[<air,pressure])'
@@ -295,311 +284,189 @@
 								(airScript changeState: 0)
 							)
 							(
-								(Said
-									'[<at,around][/!*,clearwater,water,garbage,crud]'
-								)
-								(localproc_0 64 4) ; "Gazing into inner space, you see various items of junk scattered along the river bottom. You see huge boulders upriver, and a perpendicular wall on the far side."
-							)
-							((Said '<up')
-								(localproc_0 64 5) ; "You see sunlight rippling through from the surface."
-							)
+							(Said '[<at,around][/!*,clearwater,water,garbage,crud]') (localproc_000c 64 4))
+							((Said '<up') (localproc_000c 64 5))
 							(
 								(or
 									(Said '/bottom,muck,bed[<clearwater]')
 									(Said '<down,ahead')
 									(Said '/object,dirt')
 								)
-								(cond
-									((gEgo inRect: 106 94 165 124)
-										(localproc_0 64 6) ; "Its just a waterlogged piece of paper."
-									)
-									((gEgo inRect: 240 94 284 122)
-										(localproc_0 64 6) ; "Its just a waterlogged piece of paper."
-									)
+								(cond 
+									((ego inRect: 106 94 165 124) (localproc_000c 64 6))
+									((ego inRect: 240 94 284 122) (localproc_000c 64 6))
 									(
 										(and
-											(IsItemAt 14) ; makeshift_knife
+											(InRoom 14)
 											(or
-												(and
-													(gEgo
-														inRect: 92 128 150 152
-													)
-													(== (gEgo loop:) 0)
-												)
-												(and
-													(gEgo
-														inRect: 150 128 184 152
-													)
-													(== (gEgo loop:) 1)
-												)
-												(and
-													(gEgo
-														inRect: 120 133 160 139
-													)
-													(== (gEgo loop:) 2)
-												)
-												(and
-													(gEgo
-														inRect: 120 135 160 165
-													)
-													(== (gEgo loop:) 3)
-												)
+												(and (ego inRect: 92 128 150 152) (== (ego loop?) 0))
+												(and (ego inRect: 150 128 184 152) (== (ego loop?) 1))
+												(and (ego inRect: 120 133 160 139) (== (ego loop?) 2))
+												(and (ego inRect: 120 135 160 165) (== (ego loop?) 3))
 											)
 										)
-										(localproc_0 64 7) ; "You notice a glint of light reflecting off of an object."
+										(localproc_000c 64 7)
 									)
-									((gEgo inRect: 155 105 193 141)
-										(localproc_0 64 8) ; "You see an old rusted-out can."
-									)
-									((gEgo inRect: 50 107 106 132)
-										(localproc_0 64 9) ; "It's just a good-for-nothing piece of metal."
-									)
-									((gEgo inRect: 193 134 240 164)
-										(localproc_0 64 10) ; "The bottle is just part of the junk. It has no value."
-									)
-									(else
-										(localproc_0 64 11) ; "There is a lot of mud and trash on the river bottom. You will have to search it for clues or evidence."
-									)
+									((ego inRect: 155 105 193 141) (localproc_000c 64 8))
+									((ego inRect: 50 107 106 132) (localproc_000c 64 9))
+									((ego inRect: 193 134 240 164) (localproc_000c 64 10))
+									(else (localproc_000c 64 11))
 								)
 							)
 							((Said '/newspaper')
 								(if
 									(or
-										(gEgo inRect: 106 94 165 124)
-										(gEgo inRect: 240 94 284 122)
+										(ego inRect: 106 94 165 124)
+										(ego inRect: 240 94 284 122)
 									)
-									(localproc_0 64 12) ; "It's too wet to read. It's of no use."
+									(localproc_000c 64 12)
 								else
-									(localproc_0 64 13) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
+									(localproc_000c 64 13)
 								)
 							)
 							((Said '/can[<beer,coca]')
-								(if (gEgo inRect: 155 105 193 141)
-									(localproc_0 64 8) ; "You see an old rusted-out can."
+								(if (ego inRect: 155 105 193 141)
+									(localproc_000c 64 8)
 								else
-									(localproc_0 64 13) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
+									(localproc_000c 64 13)
 								)
 							)
 							((Said '/metal,scrap')
-								(if (gEgo inRect: 50 107 106 132)
-									(localproc_0 64 9) ; "It's just a good-for-nothing piece of metal."
+								(if (ego inRect: 50 107 106 132)
+									(localproc_000c 64 9)
 								else
-									(localproc_0 64 13) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
+									(localproc_000c 64 13)
 								)
 							)
 							((Said '/light,metal,glint,knife')
-								(if (IsItemAt 14) ; makeshift_knife
+								(if (InRoom 14)
 									(if
 										(or
-											(and
-												(gEgo inRect: 92 128 150 152)
-												(== (gEgo loop:) 0)
-											)
-											(and
-												(gEgo
-													inRect: 150 128 184 152
-												)
-												(== (gEgo loop:) 1)
-											)
-											(and
-												(gEgo
-													inRect: 120 133 160 139
-												)
-												(== (gEgo loop:) 2)
-											)
-											(and
-												(gEgo
-													inRect: 120 135 160 165
-												)
-												(== (gEgo loop:) 3)
-											)
+											(and (ego inRect: 92 128 150 152) (== (ego loop?) 0))
+											(and (ego inRect: 150 128 184 152) (== (ego loop?) 1))
+											(and (ego inRect: 120 133 160 139) (== (ego loop?) 2))
+											(and (ego inRect: 120 135 160 165) (== (ego loop?) 3))
 										)
-										(localproc_0 64 14) ; "You need to get it first."
+										(localproc_000c 64 14)
 									else
-										(localproc_0 64 13) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
+										(localproc_000c 64 13)
 									)
 								else
 									(event claimed: 0)
 								)
 							)
 							((Said '/bottle,glass')
-								(if (gEgo inRect: 193 134 240 164)
-									(localproc_0 64 10) ; "The bottle is just part of the junk. It has no value."
+								(if (ego inRect: 193 134 240 164)
+									(localproc_000c 64 10)
 								else
-									(localproc_0 64 13) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
+									(localproc_000c 64 13)
 								)
 							)
-							((Said '/cave')
-								(localproc_0 64 15) ; "Although it looks like there's a cave, there really isn't."
-							)
-							((Said '/rock,boulder')
-								(localproc_0 64 16) ; "You see large and small rocks. You see nothing of interest yet."
-							)
-							((Said '/plant,bush,grass')
-								(localproc_0 64 17) ; "A common variety of river bottom plant."
-							)
-							((Said '<behind/rock')
-								(localproc_0 64 18) ; "You find nothing behind any of the rocks."
-							)
+							((Said '/cave') (localproc_000c 64 15))
+							((Said '/rock,boulder') (localproc_000c 64 16))
+							((Said '/plant,bush,grass') (localproc_000c 64 17))
+							((Said '<behind/rock') (localproc_000c 64 18))
 							(
 								(or
 									(Said '/fish,carp,sucker')
 									(Said '/school[<fish,carp,sucker]')
 								)
-								(localproc_0 64 19) ; "You look at a small school of "scaly-skinned" sucker fish, otherwise known as "carp". They are incompatible with the gullet, due to the numerous amount of bones."
+								(localproc_000c 64 19)
 							)
 						)
 					)
-					((Said 'move/rock')
-						(localproc_0 64 20) ; "If you could move any of these rocks, you wouldn't need to pack a gun."
-					)
-					((Said '[get]/shit')
-						(localproc_0 64 21) ; "As your wet suit fills, you think to yourself... "Why did I do that?""
-					)
-					((Said '[get]/leak')
-						(localproc_0 64 22) ; "A warm feeling comes over you."
-					)
+					((Said 'move/rock') (localproc_000c 64 20))
+					((Said '[get]/crap') (localproc_000c 64 21))
+					((Said '[get]/leak') (localproc_000c 64 22))
 					((Said 'get,move,pull,hoist,remove>')
-						(cond
-							((Said '/muck,garbage')
-								(localproc_0 64 23) ; "What for??"
-							)
-							((Said '/grass,plant')
-								(localproc_0 64 24) ; "Why tear up the natural habitat of the "scaly-skinned" sucker fish?"
-							)
-							((Said '/fish,carp,sucker')
-								(localproc_0 64 25) ; "They taste terrible, and besides...they're NOT evidence!"
-							)
+						(cond 
+							((Said '/muck,garbage') (localproc_000c 64 23))
+							((Said '/grass,plant') (localproc_000c 64 24))
+							((Said '/fish,carp,sucker') (localproc_000c 64 25))
 							((Said '/newspaper')
 								(if
 									(or
-										(gEgo inRect: 106 94 165 124)
-										(gEgo inRect: 240 94 284 122)
+										(ego inRect: 106 94 165 124)
+										(ego inRect: 240 94 284 122)
 									)
-									(localproc_0 64 12) ; "It's too wet to read. It's of no use."
+									(localproc_000c 64 12)
 								else
-									(localproc_0 64 26) ; "You know it's there somewhere, but you can't seem to lay your hands on it."
+									(localproc_000c 64 26)
 								)
 							)
 							((Said '/can[<beer,coca]')
-								(if (gEgo inRect: 155 105 193 141)
-									(localproc_0 64 27) ; "You take the can, look at it, and discard it."
+								(if (ego inRect: 155 105 193 141)
+									(localproc_000c 64 27)
 								else
-									(localproc_0 64 26) ; "You know it's there somewhere, but you can't seem to lay your hands on it."
+									(localproc_000c 64 26)
 								)
 							)
 							((Said '/metal,scrap')
-								(if (gEgo inRect: 50 107 106 132)
-									(localproc_0 64 28) ; "You don't need it."
+								(if (ego inRect: 50 107 106 132)
+									(localproc_000c 64 28)
 								else
-									(localproc_0 64 26) ; "You know it's there somewhere, but you can't seem to lay your hands on it."
+									(localproc_000c 64 26)
 								)
 							)
 							((Said '/bottle')
-								(if (gEgo inRect: 193 134 240 164)
-									(localproc_0 64 29) ; "It's broken and worthless."
+								(if (ego inRect: 193 134 240 164)
+									(localproc_000c 64 29)
 								else
-									(localproc_0 64 26) ; "You know it's there somewhere, but you can't seem to lay your hands on it."
+									(localproc_000c 64 26)
 								)
 							)
 							((Said '/knife')
-								(if (IsItemAt 14) ; makeshift_knife
+								(if (InRoom 14)
 									(if
 										(or
-											(and
-												(gEgo inRect: 92 128 150 152)
-												(== (gEgo loop:) 0)
-											)
-											(and
-												(gEgo
-													inRect: 150 128 184 152
-												)
-												(== (gEgo loop:) 1)
-											)
-											(and
-												(gEgo
-													inRect: 120 133 160 139
-												)
-												(== (gEgo loop:) 2)
-											)
-											(and
-												(gEgo
-													inRect: 120 135 160 165
-												)
-												(== (gEgo loop:) 3)
-											)
+											(and (ego inRect: 92 128 150 152) (== (ego loop?) 0))
+											(and (ego inRect: 150 128 184 152) (== (ego loop?) 1))
+											(and (ego inRect: 120 133 160 139) (== (ego loop?) 2))
+											(and (ego inRect: 120 135 160 165) (== (ego loop?) 3))
 										)
 										(knife posn: 0 0)
-										(gEgo get: 14) ; makeshift_knife
-										(SetScore 2)
-										(localproc_0 64 30 83) ; "After picking it up, you look at the object, which is sharpened to a point. All of a sudden, in your head, a light comes on."
-										(localproc_0 64 31 83) ; "You remember what the prisoner said; how the suspect held a makeshift knife on the jailer during the escape."
-										(localproc_0 64 32 83) ; "You slip the knife into your belt and keep it as evidence."
+										(ego get: 14)
+										(SolvePuzzle 2)
+										(localproc_000c 64 30 83)
+										(localproc_000c 64 31 83)
+										(localproc_000c 64 32 83)
 									else
-										(Print 64 33) ; "You see nothing like that. But then, you must be close to objects to see them underwater."
+										(Print 64 33)
 									)
 								else
-									(proc0_8) ; "You already took it."
+									(AlreadyTook)
 								)
 							)
 							((Said '/object')
-								(cond
+								(cond 
 									(
 										(or
-											(gEgo inRect: 106 94 165 124)
-											(gEgo inRect: 240 94 284 122)
+											(ego inRect: 106 94 165 124)
+											(ego inRect: 240 94 284 122)
 										)
-										(localproc_0 64 12) ; "It's too wet to read. It's of no use."
+										(localproc_000c 64 12)
 									)
-									((gEgo inRect: 155 105 193 141)
-										(localproc_0 64 27) ; "You take the can, look at it, and discard it."
-									)
-									((gEgo inRect: 50 107 106 132)
-										(localproc_0 64 28) ; "You don't need it."
-									)
-									((gEgo inRect: 193 134 240 164)
-										(localproc_0 64 29) ; "It's broken and worthless."
-									)
+									((ego inRect: 155 105 193 141) (localproc_000c 64 27))
+									((ego inRect: 50 107 106 132) (localproc_000c 64 28))
+									((ego inRect: 193 134 240 164) (localproc_000c 64 29))
 									(
 										(and
-											(IsItemAt 14) ; makeshift_knife
+											(InRoom 14)
 											(or
-												(and
-													(gEgo
-														inRect: 92 128 150 152
-													)
-													(== (gEgo loop:) 0)
-												)
-												(and
-													(gEgo
-														inRect: 150 128 184 152
-													)
-													(== (gEgo loop:) 1)
-												)
-												(and
-													(gEgo
-														inRect: 120 133 160 139
-													)
-													(== (gEgo loop:) 2)
-												)
-												(and
-													(gEgo
-														inRect: 120 135 160 165
-													)
-													(== (gEgo loop:) 3)
-												)
+												(and (ego inRect: 92 128 150 152) (== (ego loop?) 0))
+												(and (ego inRect: 150 128 184 152) (== (ego loop?) 1))
+												(and (ego inRect: 120 133 160 139) (== (ego loop?) 2))
+												(and (ego inRect: 120 135 160 165) (== (ego loop?) 3))
 											)
 										)
 										(knife posn: 0 0)
-										(gEgo get: 14) ; makeshift_knife
-										(SetScore 2)
-										(localproc_0 64 30 83) ; "After picking it up, you look at the object, which is sharpened to a point. All of a sudden, in your head, a light comes on."
-										(localproc_0 64 31 83) ; "You remember what the prisoner said; how the suspect held a makeshift knife on the jailer during the escape."
-										(localproc_0 64 32 83) ; "You slip the knife into your belt and keep it as evidence."
+										(ego get: 14)
+										(SolvePuzzle 2)
+										(localproc_000c 64 30 83)
+										(localproc_000c 64 31 83)
+										(localproc_000c 64 32 83)
 									)
-									(else
-										(localproc_0 64 26 83) ; "You know it's there somewhere, but you can't seem to lay your hands on it."
-									)
+									(else (localproc_000c 64 26 83))
 								)
 							)
 						)
@@ -612,11 +479,9 @@
 
 (instance rm64Script of Script
 	(properties)
-
+	
 	(method (doit)
-		(if (> local108 1)
-			(-- local108)
-		)
+		(if (> local108 1) (-- local108))
 		(if (== local108 1)
 			(= local108 0)
 			(if (== local109 1)
@@ -626,45 +491,44 @@
 			)
 		)
 		(if (not local103)
-			(gEgo x: (+ 1 (gEgo x:)))
-			(if (> local102 1)
-				(-- local102)
-			)
+			(ego x: (+ 1 (ego x?)))
+			(if (> local102 1) (-- local102))
 			(if (== local102 1)
 				(= local102 0)
 				(rm64Script changeState: 1)
 			)
-			(cond
-				((== (gEgo edgeHit:) EDGE_RIGHT)
-					(gCurRoom newRoom: 63)
-				)
+			(cond 
+				((== (ego edgeHit?) 2) (curRoom newRoom: 63))
 				(
 					(and
 						(or
-							(and (< (gEgo x:) 83) (< (gEgo y:) 92))
-							(and (> (gEgo x:) 285) (< (gEgo y:) 92))
+							(and (< (ego x?) 83) (< (ego y?) 92))
+							(and (> (ego x?) 285) (< (ego y?) 92))
 						)
 						(== local107 0)
 					)
-					(localproc_0 64 34) ; "It's a real tight fit back here, and you can't see a thing."
+					(localproc_000c 64 34)
 					(= local107 1)
 				)
-				((and (> (gEgo x:) 105) (< (gEgo x:) 265))
-					(= local107 0)
-				)
+				((and (> (ego x?) 105) (< (ego x?) 265)) (= local107 0))
 			)
 		)
-		(if (and (> global191 0) (>= local105 0))
-			(-= global191 2)
+		(if (and (> scubaTankOxygen 0) (>= local105 0))
+			(= scubaTankOxygen (- scubaTankOxygen 2))
 			(= local105 local106)
 		)
-		(if (> local105 0)
-			(-- local105)
-		)
-		(cond
-			((and (or (<= 0 global191 6) (> global191 2300)) (not local103))
-				(localproc_0 64 35) ; ""ARRGGGHH!!!"....This is your final word as blackness overcomes you. Next time, be more aware of the requirements of diving."
-				(if (IsFlag 7)
+		(if (> local105 0) (-- local105))
+		(cond 
+			(
+				(and
+					(or
+						(and (<= 0 scubaTankOxygen) (<= scubaTankOxygen 6))
+						(> scubaTankOxygen 2300)
+					)
+					(not local103)
+				)
+				(localproc_000c 64 35)
+				(if (Btst 7)
 					(EgoDead
 						{As you fight for air, blackness overcomes you. Next time, be more aware of your air tank's reserve.}
 					)
@@ -674,36 +538,44 @@
 					)
 				)
 			)
-			((and (<= 8 global191 15) (not local103))
+			(
+				(and
+					(<= 8 scubaTankOxygen)
+					(<= scubaTankOxygen 15)
+					(not local103)
+				)
 				(airScript changeState: 2)
-				(= global191 7)
-				(localproc_0 64 36) ; "Your mind is starting to go hazy as you realize that your air supply is gone."
+				(= scubaTankOxygen 7)
+				(localproc_000c 64 36)
 			)
-			((and (<= 40 global191 50) (not local103))
+			(
+				(and
+					(<= 40 scubaTankOxygen)
+					(<= scubaTankOxygen 50)
+					(not local103)
+				)
 				(airScript changeState: 2)
-				(= global191 39)
-				(localproc_0 64 37) ; "You are having trouble getting enough air."
+				(= scubaTankOxygen 39)
+				(localproc_000c 64 37)
 			)
 		)
-		(if (> local104 1)
-			(-- local104)
-		)
+		(if (> local104 1) (-- local104))
 		(if (== local104 1)
 			(= local104 0)
 			(airScript changeState: 2)
 		)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(gEgo
+				(ego
 					view: 12
 					setStep: 3 2
-					posn: 290 (gEgo y:)
+					posn: 290 (ego y?)
 					setCycle: Walk
-					setMotion: MoveTo -10 (gEgo y:)
-					illegalBits: $8000
+					setMotion: MoveTo -10 (ego y?)
+					illegalBits: -32768
 					init:
 				)
 				(bubble
@@ -720,25 +592,17 @@
 				(= local102 (Random 18 26))
 			)
 			(1
-				(switch (gEgo loop:)
-					(0
-						(= local100 (+ (gEgo x:) 21))
-					)
-					(1
-						(= local100 (- (gEgo x:) 21))
-					)
-					(2
-						(= local100 (gEgo x:))
-					)
-					(3
-						(= local100 (gEgo x:))
-					)
+				(switch (ego loop?)
+					(0 (= egoX (+ (ego x?) 21)))
+					(1 (= egoX (- (ego x?) 21)))
+					(2 (= egoX (ego x?)))
+					(3 (= egoX (ego x?)))
 				)
 				(bubble
-					posn: local100 (gEgo y:)
+					posn: egoX (ego y?)
 					startUpd:
-					setPri: (gEgo priority:)
-					setMotion: MoveTo (+ local100 30) 15 self
+					setPri: (ego priority?)
+					setMotion: MoveTo (+ egoX 30) 15 self
 				)
 			)
 			(2
@@ -748,30 +612,30 @@
 			(3
 				(User canControl: 0 canInput: 0)
 				(= local103 1)
-				(gEgo
+				(ego
 					view: 489
 					setLoop: 3
 					cycleSpeed: 2
 					illegalBits: 0
 					ignoreActors:
-					setCycle: End self
+					setCycle: EndLoop self
 				)
 			)
 			(4
-				(= global189 16)
-				(gEgo
+				(= diverState 16)
+				(ego
 					setLoop: 5
 					setStep: 5 3
 					setPri: 15
 					cycleSpeed: 0
-					setCycle: Fwd
-					setMotion: MoveTo (+ (gEgo x:) 90) 55 self
+					setCycle: Forward
+					setMotion: MoveTo (+ (ego x?) 90) 55 self
 				)
 			)
 			(5
 				(DisposeScript 988)
-				(gContinuousMusic stop:)
-				(gCurRoom newRoom: 62)
+				(cSound stop:)
+				(curRoom newRoom: 62)
 			)
 		)
 	)
@@ -779,7 +643,7 @@
 
 (instance airScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -788,12 +652,12 @@
 				(self cue:)
 			)
 			(1
-				(Format @local0 64 38 global191) ; "%u"
-				(Display @local0 dsCOORD 54 30 dsCOLOR 14 dsBACKGROUND 1)
+				(Format @str 64 38 scubaTankOxygen)
+				(Display @str dsCOORD 54 30 dsCOLOR 14 dsBACKGROUND 1)
 			)
 			(2
 				(DrawCel 161 4 1 40 16 1)
-				(Display @local0 dsCOORD 54 30 dsCOLOR 1 dsBACKGROUND 1)
+				(Display @str dsCOORD 54 30 dsCOLOR 1 dsBACKGROUND 1)
 			)
 		)
 	)
@@ -801,11 +665,16 @@
 
 (instance carpScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(carp setLoop: 1 setCel: 1 setMotion: MoveTo 65 191 setCycle: 0)
+				(carp
+					setLoop: 1
+					setCel: 1
+					setMotion: MoveTo 65 191
+					setCycle: 0
+				)
 				(= local109 0)
 				(= local108 100)
 			)
@@ -822,4 +691,3 @@
 		)
 	)
 )
-

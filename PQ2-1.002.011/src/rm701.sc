@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 701)
-(include sci.sh)
+(include game.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Game)
 (use Menu)
 (use System)
@@ -13,93 +12,79 @@
 )
 
 (local
-	[local0 40]
+	[str 40]
 )
-
-(procedure (localproc_0 &tmp temp0)
-	(while ((= temp0 (Event new:)) type:)
-		(temp0 dispose:)
+(procedure (ClearEvents &tmp evt)
+	(while ((= evt (Event new:)) type?)
+		(evt dispose:)
 	)
-	(temp0 dispose:)
+	(evt dispose:)
 )
 
-(procedure (localproc_1 &tmp temp0 temp1)
-	(for ((= temp0 0)) (= temp1 (StrAt @local0 temp0)) ((++ temp0))
+(procedure (localproc_0031 &tmp temp0 temp1)
+	(= temp0 0)
+	(while (= temp1 (StrAt @str temp0))
 		(if (and (>= temp1 97) (<= temp1 122))
-			(StrAt @local0 temp0 (- temp1 32))
+			(StrAt @str temp0 (- temp1 32))
 		)
+		(++ temp0)
 	)
 )
 
-;;;(instance event of Event ; UNUSED
-;;;	(properties)
-;;;)
+;;;(instance event of Event)
 
-(instance rm701 of Rm
+(instance rm701 of Room
 	(properties
 		picture 701
 	)
-
+	
 	(method (init)
+		;skip copy proection prompt
+		(TheMenuBar draw:)
+		(StatusLine enable:)
+		(theGame restart:)
 		(super init:)
 	)
-
-	(method (doit &tmp temp0 temp1)
-		(= temp0 (& (GetTime 1) $0007)) ; SysTime12
-		(= local0 0)
-		(localproc_0)
-		(Print 701 0 #icon 701 0 temp0 #edit @local0 20) ; "TO: Detective Bonds FROM: Captain Hall SUBJECT: ID of evidence photo Please provide the LAST name of the person pictured in the attached evidence photo for homicide case 186751. Please respond in box below, ASAP!"
-		(= gQuit 1)
-		(localproc_1)
-		(switch temp0
+	
+	(method (doit &tmp theCel temp1)
+		(= theCel (& (GetTime TRUE) 7))
+		(= str 0)
+		(ClearEvents)
+		(Print 701 0 #icon 701 0 theCel #edit @str 20)
+		(= quit TRUE)
+		(localproc_0031)
+		(switch theCel
 			(0
-				(if (not (StrCmp @local0 {GRANANDEZ}))
-					(= gQuit 0)
-				)
+				(if (not (StrCmp @str {GRANANDEZ})) (= quit 0))
 			)
 			(1
-				(if (not (StrCmp @local0 {SIMMS}))
-					(= gQuit 0)
-				)
+				(if (not (StrCmp @str {SIMMS})) (= quit 0))
 			)
 			(2
-				(if (not (StrCmp @local0 {TASELLI}))
-					(= gQuit 0)
-				)
+				(if (not (StrCmp @str {TASELLI})) (= quit 0))
 			)
 			(3
-				(if (not (StrCmp @local0 {COLBY}))
-					(= gQuit 0)
-				)
+				(if (not (StrCmp @str {COLBY})) (= quit 0))
 			)
 			(4
-				(if (not (StrCmp @local0 {BAINS}))
-					(= gQuit 0)
-				)
+				(if (not (StrCmp @str {BAINS})) (= quit 0))
 			)
 			(5
-				(if (not (StrCmp @local0 {SNIDER}))
-					(= gQuit 0)
-				)
+				(if (not (StrCmp @str {SNIDER})) (= quit 0))
 			)
 			(6
-				(if (not (StrCmp @local0 {JONES}))
-					(= gQuit 0)
-				)
+				(if (not (StrCmp @str {JONES})) (= quit 0))
 			)
-			(else
-				(if (not (StrCmp @local0 {DICKEY}))
-					(= gQuit 0)
-				)
+			(else 
+				(if (not (StrCmp @str {DICKEY})) (= quit 0))
 			)
 		)
-		(if gQuit
-			(Print 701 1) ; "Sorry Bonds, you'll need to do better than that!"
+		(if quit
+			(Print 701 1)
 		else
-			(MenuBar draw:)
-			(SL enable:)
-			(gGame restart:)
+			(TheMenuBar draw:)
+			(StatusLine enable:)
+			(theGame restart:)
 		)
 	)
 )
-

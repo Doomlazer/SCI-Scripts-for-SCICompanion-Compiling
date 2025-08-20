@@ -1,10 +1,11 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 60)
-(include sci.sh)
+(include system.sh)
+(include game.sh)
+(include keys.sh)
 (use Main)
-(use Interface)
-(use Avoid)
+(use Intrface)
+(use Avoider)
 (use Sound)
 (use Motion)
 (use Game)
@@ -17,40 +18,46 @@
 )
 
 (local
-	local0
+	storedInventory
 	local1
-	local2
-	local3
-	local4
-	local5
+	collision
+	newProp
+	newProp_2
+	newProp_3
 	local6
 	local7
 	local8
 	local9
 	local10
-	local11
-	local12
-	local13
-	local14
-	local15
+	car
+	newProp_4
+	moore
+	van
+	showedDivingCertificate
 	local16
 	local17
 	local18
 )
-
-(procedure (localproc_0)
-	(vanDoor view: 154 setLoop: 0 setCel: 2 posn: 290 175 ignoreActors: init:)
+(procedure (localproc_2126)
+	(vanDoor
+		view: 154
+		setLoop: 0
+		setCel: 2
+		posn: 290 175
+		ignoreActors:
+		init:
+	)
 )
 
-(instance vanDoor of Act
+(instance vanDoor of Actor
 	(properties)
 )
 
-(instance bains of Act
+(instance bains of Actor
 	(properties)
 )
 
-(instance vanBlock of Blk
+(instance vanBlock of Block
 	(properties
 		top 163
 		left 234
@@ -76,90 +83,86 @@
 
 (instance diverScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				((= local14 (Act new:))
+				((= van (Actor new:))
 					view: 154
 					setLoop: 0
 					setCel: 0
 					setStep: 8
-					posn: (if (== global189 4) -66 else 283) 174
+					posn: (if (== diverState 4) -66 else 283) 174
 					ignoreActors:
 					init:
 					setCycle: 0
 				)
-				(gEgo observeBlocks: vanBlock stopUpd:)
-				(switch global189
+				(ego observeBlocks: vanBlock stopUpd:)
+				(switch diverState
 					(4
 						(HandsOff)
-						(gEgo loop: 2 cel: 3)
-						(local14 setMotion: MoveTo 283 174 self)
+						(ego loop: 2 cel: 3)
+						(van setMotion: MoveTo 283 174 self)
 					)
 					(6
-						(local14 cel: 1 addToPic:)
-						(localproc_0)
+						(van cel: 1 addToPic:)
+						(localproc_2126)
 						(self cue:)
 					)
 					(14
 						(if (not global192)
 							(User canControl: 0)
-							(gEgo view: 17)
-							(local14 cel: 1 addToPic:)
-							(localproc_0)
+							(ego view: 17)
+							(van cel: 1 addToPic:)
+							(localproc_2126)
 						else
-							(local14 cel: 0 addToPic:)
+							(van cel: 0 addToPic:)
 						)
 					)
 					(16
 						(if (not global192)
 							(User canControl: 0)
-							(gEgo view: 17)
-							(local14 cel: 1 addToPic:)
-							(localproc_0)
+							(ego view: 17)
+							(van cel: 1 addToPic:)
+							(localproc_2126)
 						else
-							(local14 cel: 0 addToPic:)
+							(van cel: 0 addToPic:)
 						)
 					)
 					(8
-						(local14 cel: 1 addToPic:)
-						(local13 posn: 223 139 setMotion: Follow gEgo 500)
-						(localproc_0)
+						(van cel: 1 addToPic:)
+						(moore posn: 223 139 setMotion: Follow ego 500)
+						(localproc_2126)
 						(self cue:)
 					)
-					(else
-						(local14 cel: 0 addToPic:)
+					(else 
+						(van cel: 0 addToPic:)
 						(self cue:)
 					)
 				)
 			)
 			(1
-				(if (< global189 6)
-					(= global189 5)
-					(= global211 1)
-					(= global212 3)
-					(local14 loop: 5 cel: 1 stopUpd: addToPic:)
+				(if (< diverState 6)
+					(= diverState 5)
+					(= gunNotNeeded 1)
+					(= gunFireState 3)
+					(van loop: 5 cel: 1 stopUpd: addToPic:)
 					(HandsOn)
-					(localproc_0)
+					(localproc_2126)
 				)
-				(local13 setCycle: Walk startUpd: loop: 0)
-				(cond
-					((== gPrevRoomNum 66)
-						(local13 posn: 223 139)
-						(= global212 3)
+				(moore setCycle: Walk startUpd: loop: 0)
+				(cond 
+					((== prevRoomNum 66)
+						(moore posn: 223 139)
+						(= gunFireState 3)
 						(diverScript changeState: 27)
 					)
-					((>= global189 11)
-						(local13 posn: -40 77)
-					)
-					((== global189 8)
-						(Print 60 0) ; "I'm waiting, Bonds!"
-					)
+					((>= diverState 11) (moore posn: -40 77))
+					((== diverState 8) (Print 60 0))
 					(else
-						(= global212 3)
+						(= gunFireState gunPROHIBITED)
 						(HandsOff)
-						(local13
+						(moore
 							loop: 0
 							setStep: 3 2
 							ignoreActors:
@@ -172,61 +175,57 @@
 			)
 			(2
 				(HandsOn)
-				(local13 ignoreActors: 0)
+				(moore ignoreActors: 0)
 				(vanDoor stopUpd:)
-				(local13 setMotion: Follow gEgo 500)
-				(if (== global189 5)
-					(Print 60 1 #at -1 70 #draw) ; "Officer Moore says..."Well, here I am, Bonds. What can I do for you?""
-				)
-				(if (< global189 8)
-					(= global189 6)
-				)
+				(moore setMotion: Follow ego 500)
+				(if (== diverState 5) (Print 60 1 #at -1 70 #draw))
+				(if (< diverState 8) (= diverState 6))
 			)
 			(3
 				(HandsOff)
 				(User canInput: 1)
-				(= global189 7)
-				(Print 60 2 #at -1 70 #draw) ; "I don't like diving alone, and I'm the only diver available," Moore says. "You wouldn't happen to have a scuba certification card, would you?"
-				(Print 60 3) ; "You say "Yes, I do.""
-				(if (or (not (gEgo has: 7)) (not (IsFlag 33))) ; wallet
-					(Print 60 4) ; "You think to yourself: "Now, where did I put that?""
+				(= diverState 7)
+				(Print 60 2 #at -1 70 #draw)
+				(Print 60 3)
+				(if (or (not (ego has: 7)) (not (Btst 33)))
+					(Print 60 4)
 				)
-				(= local15 1)
+				(= showedDivingCertificate 1)
 				(= local16 60)
 			)
 			(4
-				(Print 60 5 #at -1 70) ; ""Well? If you have it, show it to me," Officer Moore says impatiently."
+				(Print 60 5 #at -1 70)
 				(= local16 60)
 			)
 			(5
-				(= local15 0)
-				(Print 60 6) ; "Sorry. I can't take you with me without a diving certificate."
+				(= showedDivingCertificate 0)
+				(Print 60 6)
 				(self changeState: 8)
 			)
 			(6
 				(= local17 1)
-				(Print 60 7 #icon 164 0 0) ; "You show your scuba certification card to the diver."
-				(Print 60 8 #at -1 70) ; "OK. Wait here while I change."
+				(Print 60 7 #icon 164 0 0)
+				(Print 60 8 #at -1 70)
 				(self changeState: 9)
 			)
 			(8
 				(= local17 0)
-				(Print 60 9 #at -1 70) ; "Reluctantly, Officer Moore says to you..."Ok, I don't like it, but I'll go ahead and dive alone. I just hope my supervisor doesn't catch me.""
-				(Print 60 8 #at -1 70) ; "OK. Wait here while I change."
+				(Print 60 9 #at -1 70)
+				(Print 60 8 #at -1 70)
 				(self cue:)
 			)
 			(9
 				(HandsOff)
-				(local13
+				(moore
 					setStep: 3 2
 					ignoreActors: 0
 					observeBlocks: vanBlock
-					setAvoider: (Avoid new:)
+					setAvoider: (Avoider new:)
 					setMotion: MoveTo 230 184 self
 				)
 			)
 			(10
-				(local13
+				(moore
 					illegalBits: 0
 					ignoreActors:
 					setMotion: MoveTo 289 186 self
@@ -237,15 +236,15 @@
 			)
 			(12
 				(vanDoor stopUpd:)
-				(local13 setMotion: MoveTo 290 182 self)
+				(moore setMotion: MoveTo 290 182 self)
 			)
 			(13
-				(local13 setLoop: 3)
-				(= global189 8)
+				(moore setLoop: 3)
+				(= diverState 8)
 				(self cue:)
 			)
 			(14
-				(local13 hide:)
+				(moore hide:)
 				(vanDoor setMotion: MoveTo 290 175)
 				(= seconds 5)
 			)
@@ -253,7 +252,7 @@
 				(vanDoor setMotion: MoveTo 270 175 self)
 			)
 			(16
-				(local13
+				(moore
 					view: 22
 					posn: 289 184
 					loop: 2
@@ -264,9 +263,12 @@
 				)
 			)
 			(17
-				(Print 60 10 #time 4) ; "Wow! This guy's a quick-change artist!"
+				(Print 60 10 #time 4)
 				(vanDoor setMotion: MoveTo 290 175)
-				(local13 setLoop: -1 setMotion: MoveTo 220 139 self)
+				(moore
+					 setLoop: -1
+					 setMotion: MoveTo 220 139 self
+				)
 			)
 			(18
 				(vanDoor stopUpd:)
@@ -275,35 +277,33 @@
 			(19
 				(if local17
 					(HandsOn)
-					(local13 loop: 0 stopUpd:)
-					(gEgo loop: 1)
-					(Print 60 11 #at -1 50 #draw) ; "Ok, Bonds," says Moore, "the equipment is in the van. Just take what you need."
+					(moore loop: 0 stopUpd:)
+					(ego loop: 1)
+					(Print 60 11 #at -1 50 #draw)
 				else
-					(Print 60 12 #at -1 50) ; "Don't leave me here." says the diver, "Just stand by 'till I come out of the river."
-					(local13 setMotion: MoveTo 180 85 self)
+					(Print 60 12 #at -1 50)
+					(moore setMotion: MoveTo 180 85 self)
 					(= global157 500)
 				)
 			)
 			(20
-				(local13
+				(moore
 					view: 98
 					cel: 0
 					setLoop: 7
-					setCycle: End
+					setCycle: EndLoop
 					posn: 178 63
 					setMotion: MoveTo 180 54 self
 				)
-				(= global189 10)
+				(= diverState 10)
 				(= global192 1)
-				(Print 60 13 #at -1 45 #draw) ; "Officer Moore puts his mask and fins on, climbs into the water, and disappears from sight beneath the surface."
+				(Print 60 13 #at -1 45 #draw)
 				(HandsOn)
 			)
-			(21
-				(local13 stopUpd:)
-			)
+			(21 (moore stopUpd:))
 			(22
 				(HandsOff)
-				(gEgo
+				(ego
 					setLoop: 3
 					setMotion: MoveTo 289 187 self
 					ignoreActors:
@@ -314,22 +314,22 @@
 				(vanDoor startUpd: setMotion: MoveTo 270 175 self)
 			)
 			(24
-				(gEgo setMotion: MoveTo 289 185 self)
+				(ego setMotion: MoveTo 289 185 self)
 			)
 			(25
-				(gEgo hide:)
+				(ego hide:)
 				(vanDoor setMotion: MoveTo 290 175 self)
 			)
 			(26
 				(HandsOn)
-				(gCurRoom newRoom: 66)
+				(curRoom newRoom: 66)
 			)
 			(27
 				(HandsOff)
 				(vanDoor setMotion: MoveTo 270 175 self)
 			)
 			(28
-				(gEgo
+				(ego
 					view: 17
 					posn: 289 186
 					loop: 5
@@ -341,26 +341,26 @@
 			)
 			(29
 				(vanDoor setMotion: MoveTo 290 175)
-				(gEgo setMotion: MoveTo 220 188 self)
+				(ego setMotion: MoveTo 220 188 self)
 			)
 			(30
-				(gEgo setMotion: MoveTo 216 150 self)
+				(ego setMotion: MoveTo 216 150 self)
 			)
 			(31
-				(gEgo setMotion: MoveTo 212 81 self)
-				(local13 illegalBits: 0 setMotion: MoveTo 180 78)
+				(ego setMotion: MoveTo 212 81 self)
+				(moore illegalBits: 0 setMotion: MoveTo 180 78)
 			)
 			(32
-				(Print 60 14 #at -1 45) ; "Officer Moore puts his mask and fins on, climbs into the water, and disappears from sight beneath the surface. You quickly put on your fins and follow him into the swiftly-moving river."
-				(local13
+				(Print 60 14 #at -1 45)
+				(moore
 					view: 98
 					cel: 0
 					setLoop: 7
-					setCycle: End
+					setCycle: EndLoop
 					posn: 178 63
 					setMotion: MoveTo 180 54
 				)
-				(gEgo
+				(ego
 					view: 98
 					posn: 211 70
 					cel: 0
@@ -368,41 +368,50 @@
 					setStep: 1 1
 					cycleSpeed: 2
 					setMotion: MoveTo 210 66
-					setCycle: End self
+					setCycle: EndLoop self
 				)
 			)
 			(33
-				(local13 stopUpd:)
-				(gEgo setLoop: 1 setCycle: Fwd)
+				(moore stopUpd:)
+				(ego setLoop: 1 setCycle: Forward)
 				(= seconds 2)
 			)
 			(34
-				(gEgo setLoop: 2 setCycle: End self)
+				(ego setLoop: 2 setCycle: EndLoop self)
 			)
 			(35
-				(gEgo setLoop: 3 setCycle: End self)
+				(ego setLoop: 3 setCycle: EndLoop self)
 			)
 			(36
-				(if (and (== global191 2200) (IsFlag 7) (IsFlag 6))
-					(SetScore 6)
+				(if
+				(and (== scubaTankOxygen 2200) (Btst 7) (Btst 6))
+					(SolvePuzzle 6)
 				)
-				(gEgo setLoop: 4 setCycle: Fwd)
+				(ego setLoop: 4 setCycle: Forward)
 				(= seconds 2)
 			)
 			(37
-				(gEgo setLoop: 6 setMotion: MoveTo 210 63 setCycle: End self)
+				(ego
+					setLoop: 6
+					setMotion: MoveTo 210 63
+					setCycle: EndLoop self
+				)
 			)
 			(38
-				(gEgo setLoop: 7 setMotion: MoveTo 210 50 setCycle: End self)
+				(ego
+					setLoop: 7
+					setMotion: MoveTo 210 50
+					setCycle: EndLoop self
+				)
 			)
 			(39
 				(HandsOn)
-				(gEgo hide: setLoop: -1)
-				(gCurRoom newRoom: 63)
+				(ego hide: setLoop: -1)
+				(curRoom newRoom: 63)
 			)
 			(40
-				(= global189 13)
-				(local13
+				(= diverState 13)
+				(moore
 					posn: 50 78
 					view: 22
 					setLoop: -1
@@ -411,40 +420,32 @@
 				)
 			)
 			(41
-				(= global184 1)
-				(Print 60 15) ; "There you are, Sonny! I've found the body. Come with me."
-				(local13 setMotion: MoveTo -30 90)
+				(= removedBodyFromRiver 1)
+				(Print 60 15)
+				(moore setMotion: MoveTo -30 90)
 			)
 			(42
 				(= global192 1)
 				(HandsOff)
-				(gEgo
+				(ego
 					illegalBits: 0
 					ignoreActors:
-					setMotion:
-						MoveTo
-						180
-						(if (< (gEgo y:) 112)
-							112
-						else
-							(gEgo y:)
-						)
-						self
+					setMotion: MoveTo 180 (if (< (ego y?) 112) 112 else (ego y?)) self
 				)
 			)
 			(43
-				(if global184
-					(Print 60 16) ; "After recovering the body of the jailer, you hurry to change back into street clothes."
+				(if removedBodyFromRiver
+					(Print 60 16)
 				else
-					(Print 60 17) ; "Exhausted and frustrated, you hurry to change back into your street clothes."
+					(Print 60 17)
 				)
-				(gEgo setMotion: MoveTo 180 188 self)
+				(ego setMotion: MoveTo 180 188 self)
 			)
 			(44
-				(gEgo setMotion: MoveTo 288 188 self)
+				(ego setMotion: MoveTo 288 188 self)
 			)
 			(45
-				(gEgo
+				(ego
 					setLoop: 3
 					setMotion: MoveTo 285 188 self
 					ignoreActors:
@@ -455,34 +456,36 @@
 				(vanDoor setMotion: MoveTo 270 175 self)
 			)
 			(47
-				(gEgo setMotion: MoveTo 289 182 self)
+				(ego setMotion: MoveTo 289 182 self)
 			)
 			(48
-				(gEgo hide:)
+				(ego hide:)
 				(vanDoor setMotion: MoveTo 290 175 self)
 			)
 			(49
-				(Print 60 18) ; "Back in the van, you change your clothes, and pick up all your things."
-				(for ((= local0 0)) (<= local0 37) ((++ local0))
-					(if (IsItemAt local0 66)
-						(gEgo get: local0)
+				(Print 60 18)
+				(= storedInventory 0)
+				(while (<= storedInventory 37)
+					(if (InRoom storedInventory 66)
+						(ego get: storedInventory)
 					)
+					(++ storedInventory)
 				)
 				(= seconds 6)
 			)
 			(50
-				(gEgo setLoop: -1)
+				(ego setLoop: -1)
 				(vanDoor setMotion: MoveTo 270 175 self)
 			)
 			(51
-				(gEgo
+				(ego
 					view: 0
 					posn: 289 184
 					loop: 5
 					cel: 1
 					show:
 					setMotion: MoveTo 289 188 self
-					illegalBits: $8000
+					illegalBits: -32768
 					ignoreActors:
 				)
 			)
@@ -492,91 +495,73 @@
 			)
 			(53
 				(vanDoor addToPic:)
-				(if (not global184)
-					(self changeState: 40)
-				)
+				(if (not removedBodyFromRiver) (self changeState: 40))
 			)
 		)
 	)
 )
 
-(instance rm60 of Rm
+(instance rm60 of Room
 	(properties
 		picture 60
-		style 7
+		style $0007
 	)
-
-	(method (doit)
-		(cond
-			((> local16 1)
-				(-- local16)
-			)
-			((== local16 1)
-				(= local16 0)
-				(switch (diverScript state:)
-					(3
-						(diverScript changeState: 4)
-					)
-					(4
-						(diverScript changeState: 5)
-					)
-				)
-			)
-		)
-		(if (and local15 (gEgo has: 7) (IsFlag 33)) ; wallet
-			(= local15 0)
-			(diverScript changeState: 6)
-		)
-		(super doit:)
-	)
-
-	(method (dispose)
-		(diverScript dispose:)
-		(bainsScript dispose:)
-		(super dispose:)
-	)
-
+	
 	(method (init)
 		(super init:)
-		(self setLocales: 153 155)
-		(Load rsVIEW 0)
-		(Load rsVIEW 4)
-		(Load rsVIEW 6)
-		(Load rsVIEW 20)
-		(Load rsVIEW 90)
-		(if (and (not global183) (== global111 3))
-			(Load rsVIEW 53)
-			(Load rsVIEW 97)
-			(Load rsVIEW 14)
-			(Load rsVIEW 15)
-			(Load rsVIEW 76)
-			(Load rsSOUND 33)
-			(Load rsSOUND 41)
-			(Load rsSOUND 41)
-			(Load rsSOUND 39)
+		(self setLocales: regFieldKit regCove)
+		(Load VIEW 0)
+		(Load VIEW 4)
+		(Load VIEW 6)
+		(Load VIEW 20)
+		(Load VIEW 90)
+		(if
+			(and
+				(not shotAtBainsInCove)
+				(== global111 3)
+			)
+			(Load VIEW 53)
+			(Load VIEW 97)
+			(Load VIEW 14)
+			(Load VIEW 15)
+			(Load VIEW 76)
+			(Load SOUND 33)
+			(Load SOUND 41)
+			(Load SOUND 41)
+			(Load SOUND 39)
 		)
-		(Load rsVIEW 154)
-		(Load rsVIEW 22)
-		(Load rsVIEW 98)
-		(Load rsVIEW 17)
-		(Load rsVIEW 21)
-		((= local13 (Act new:)) view: 21 posn: -100 0 init: stopUpd:)
-		(= global211 (!= global100 5))
-		(if (and (not global183) (== global111 3))
-			(= global212 0)
+		(Load VIEW 154)
+		(Load VIEW 22)
+		(Load VIEW 98)
+		(Load VIEW 17)
+		(Load VIEW 21)
+		((= moore (Actor new:))
+			view: 21
+			posn: -100 0
+			init:
+			stopUpd:
+		)
+		(= gunNotNeeded (!= gamePhase phaseCOVE))
+		(if (and (not shotAtBainsInCove) (== global111 3))
+			(= gunFireState 0)
 		else
-			(= global212 2)
+			(= gunFireState 2)
 		)
-		(if (< global111 3)
-			(= global189 0)
-		)
+		(if (< global111 3) (= diverState 0))
 		(NormalEgo)
-		(gEgo illegalBits: $c000 init:)
-		((= global112 (Act new:)) view: 20 posn: 1000 1000 init: stopUpd:)
-		(if (> global189 2)
-			(= global187 0)
+		(ego
+			illegalBits: cWHITE;-16384
+			init:
 		)
-		((= local3 (Prop new:))
+		((= keith (Actor new:))
+			view: 20
+			posn: 1000 1000
+			illegalBits: cWHITE
+			init:
+			stopUpd:
+		)
+		(if (> diverState 2) (= global187 0))
+		((= newProp (Prop new:))
 			view: 90
 			posn: 74 97
 			cel: (if (== global208 1) 4 else 0)
@@ -585,7 +570,7 @@
 			init:
 			stopUpd:
 		)
-		((= local4 (Prop new:))
+		((= newProp_2 (Prop new:))
 			view: 90
 			posn: 60 131
 			cel: (if (== global208 2) 4 else 0)
@@ -594,7 +579,7 @@
 			init:
 			stopUpd:
 		)
-		((= local5 (Prop new:))
+		((= newProp_3 (Prop new:))
 			view: 90
 			posn: 10 165
 			cel: (if (== global208 3) 4 else 0)
@@ -603,29 +588,24 @@
 			init:
 			stopUpd:
 		)
-		(switch gPrevRoomNum
-			(66
-				(gEgo hide:)
-			)
+		(switch prevRoomNum
+			(66 (ego hide:))
 			(61
-				(if (not global183)
+				(if (not shotAtBainsInCove)
 					(bainsMusic number: 38 loop: -1 play:)
 				)
-				(gEgo
-					posn: 300 (gEgo y:)
-					setMotion: MoveTo -10 (gEgo y:)
-				)
+				(ego posn: 300 (ego y?) setMotion: MoveTo -10 (ego y?))
 				(User prevDir: 7)
-				(if (and (== global131 13) (== global189 0))
-					(global112
+				(if (and (== currentCar 13) (== diverState 0))
+					(keith
 						view: 20
-						posn: (+ (gEgo x:) 90) (gEgo y:)
-						setAvoider: Avoid
-						setMotion: Follow gEgo 87
+						posn: (+ (ego x?) 90) (ego y?)
+						setAvoider: Avoider
+						setMotion: Follow ego 87
 						setCycle: Walk
 					)
 				)
-				(if (and (not global183) (== global111 3))
+				(if (and (not shotAtBainsInCove) (== global111 3))
 					(bains
 						view: 15
 						loop: 0
@@ -639,36 +619,31 @@
 				)
 			)
 			(62
-				(gEgo
-					posn: 20 (gEgo y:)
-					setMotion: MoveTo 350 (gEgo y:)
-				)
+				(ego posn: 20 (ego y?) setMotion: MoveTo 350 (ego y?))
 				(User prevDir: 3)
-				(if (== global131 13)
-					(cond
+				(if (== currentCar 13)
+					(cond 
 						(global187
-							(if (not global186)
-								(SetFlag 55)
-							)
-							(if (not (IsFlag 55))
-								(SetFlag 55)
-								(= global189 1)
-								(global112
+							(if (not bainsInCoveTimer) (Bset 55))
+							(if (not (Btst 55))
+								(Bset 55)
+								(= diverState 1)
+								(keith
 									view: 20
 									posn: 138 102
 									setCycle: Walk
 									setMotion: MoveTo 360 150
 								)
-								(Print 60 19) ; "You have NEVER seen Keith move this fast!"
+								(Print 60 19)
 							)
 						)
-						((== global189 0)
-							(global112
-								view: (if global188 53 else 20)
+						((== diverState 0)
+							(keith
+								view: (if bainsInCoveState 53 else 20)
 								posn: 181 115
 								setCycle: Walk
-								setAvoider: Avoid
-								setMotion: Follow gEgo 60
+								setAvoider: Avoider
+								setMotion: Follow ego 60
 							)
 						)
 					)
@@ -677,296 +652,272 @@
 		)
 		(self setScript: rm60Script)
 	)
+	
+	(method (doit)
+		(cond 
+			((> local16 1) (-- local16))
+			((== local16 1)
+				(= local16 0)
+				(switch (diverScript state?)
+					(3 (diverScript changeState: 4))
+					(4 (diverScript changeState: 5))
+				)
+			)
+		)
+		(if
+		(and showedDivingCertificate (ego has: 7) (Btst 33))
+			(= showedDivingCertificate 0)
+			(diverScript changeState: 6)
+		)
+		(super doit:)
+	)
+	
+	(method (dispose)
+		(diverScript dispose:)
+		(bainsScript dispose:)
+		(super dispose:)
+	)
 )
 
 (instance rm60Script of Script
 	(properties)
-
+	
 	(method (doit)
-		(cond
+		(cond 
 			(local18 0)
-			((> (gEgo y:) 205)
+			((> (ego y?) 205)
 				(switch (Random 0 2)
-					(0
-						(Print 60 20) ; "It's a long walk to anywhere, Sonny."
-					)
-					(1
-						(Print 60 21) ; "Even the squirrels around here know not to go into the street."
-					)
-					(2
-						(Print 60 22) ; "A bag lady across the street gives you a dirty look, then hurries on her way."
-					)
+					(0 (Print 60 20))
+					(1 (Print 60 21))
+					(2 (Print 60 22))
 				)
-				(gEgo setMotion: MoveTo (gEgo x:) 176)
+				(ego setMotion: MoveTo (ego x?) 176)
 			)
-			((== (gEgo edgeHit:) EDGE_RIGHT)
-				(gContinuousMusic fade:)
-				(gCurRoom newRoom: 61)
-			)
-			((== (gEgo edgeHit:) EDGE_LEFT)
-				(gCurRoom newRoom: 62)
-			)
-			((and (== global189 8) (gEgo inRect: 282 175 299 184))
-				(diverScript changeState: 22)
-			)
-			((== global189 12)
-				(diverScript changeState: 40)
-			)
+			((== (ego edgeHit?) 2) (cSound fade:) (curRoom newRoom: 61))
+			((== (ego edgeHit?) 4) (curRoom newRoom: 62))
+			(
+			(and (== diverState 8) (ego inRect: 282 175 299 184)) (diverScript changeState: 22))
+			((== diverState 12) (diverScript changeState: 40))
 			(
 				(and
-					(>= (gEgo x:) 10)
-					(== (gEgo view:) 17)
-					(== gPrevRoomNum 62)
+					(>= (ego x?) 10)
+					(== (ego view?) 17)
+					(== prevRoomNum 62)
 					(not global192)
 				)
 				(diverScript changeState: 42)
 			)
 			(
 				(and
-					(not global183)
+					(not shotAtBainsInCove)
 					(== global111 3)
 					(not local6)
-					(< (gEgo x:) 240)
+					(< (ego x?) 240)
 				)
-				(= global183 1)
-				(if (== global131 13)
-					(global112 view: 53 setMotion: MoveTo 181 112)
+				(= shotAtBainsInCove 1)
+				(if (== currentCar 13)
+					(keith view: 53 setMotion: MoveTo 181 112)
 				)
 				(bainsScript changeState: 1)
 			)
-			((and (== global189 3) (< (gEgo y:) 157) (> 257 (gEgo x:) 68))
-				(= global189 4)
-				(local13 setScript: diverScript)
+			(
+				(and
+					(== diverState 3)
+					(< (ego y?) 157)
+					(> 257 (ego x?))
+					(> (ego x?) 68)
+				)
+				(= diverState 4)
+				(moore setScript: diverScript)
 			)
-			(global188
-				(global112 view: 53)
+			(bainsInCoveState
+				(keith view: 53)
 			)
 		)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(if (and (>= global189 5) (>= global111 3))
-					(local13
-						view: (if (>= global189 8) 22 else 21)
-						posn: (if (== global189 12) 150 else -100) 126
+				(if (and (>= diverState 5) (>= global111 3))
+					(moore
+						view: (if (>= diverState 8) 22 else 21)
+						posn: (if (== diverState 12) 150 else -100) 126
 						setCycle: Walk
 						setScript: diverScript
 					)
 				)
 			)
 			(1
-				(gEgo setMotion: 148 (+ (gEgo y:) 4))
+				(ego setMotion: 148 (+ (ego y?) 4))
 			)
 		)
 	)
-
+	
 	(method (handleEvent event &tmp temp0)
-		(if (event claimed:)
-			(return)
-		)
-		(switch (event type:)
-			(evKEYBOARD
-				(= temp0 (event message:))
+		(if (event claimed?) (return))
+		(switch (event type?)
+			(keyDown
+				(= temp0 (event message?))
 				(if
 					(and
-						(== (gEgo view:) 17)
-						(or (== temp0 KEY_F6) (== temp0 KEY_F8) (== temp0 KEY_F10))
+						(== (ego view?) 17)
+						(or
+							(== temp0 KEY_F6)
+							(== temp0 KEY_F8)
+							(== temp0 KEY_F10)
+						)
 					)
-					(Print 60 23) ; "You didn't go scuba diving with your gun."
+					(Print 60 23)
 					(event claimed: 1)
 				else
 					(event claimed: 0)
 				)
 			)
-			(evSAID
-				(cond
+			(saidEvent
+				(cond 
 					((Said 'check,look/air,gauge,equipment')
-						(if (!= (gEgo view:) 17)
-							(Print 60 24) ; "You don't have any scuba equipment."
+						(if (!= (ego view?) 17)
+							(Print 60 24)
 						else
-							(Print 60 25) ; "Your tank of air is exhausted, and so are you."
+							(Print 60 25)
 						)
 					)
-					((Said 'frisk/billfold')
-						(event claimed: 0)
-					)
-					((Said 'show/badge,billfold')
-						(if local15
-							(Print 60 26) ; "Officer Moore wants to see your diving certificate. Not your badge."
+					((Said 'frisk/billfold') (event claimed: 0))
+					((Said 'display/badge,billfold')
+						(if showedDivingCertificate
+							(Print 60 26)
 						else
-							(Print 60 27) ; "Who are you trying to impress?"
+							(Print 60 27)
 						)
 					)
-					((Said 'change[/cloth]')
-						(Print 60 28) ; "Out here in public? That's illegal!"
-					)
+					((Said 'change[/cloth]') (Print 60 28))
 					(
 						(and
-							local15
-							(Said 'find,get,show,frisk,look/card,certificate')
+							showedDivingCertificate
+							(Said 'find,get,display,frisk,look/card,certificate')
 						)
-						(Print 60 29) ; "You know you've seen it somewhere, but where?"
+						(Print 60 29)
 					)
-					((Said 'talk/cop,man,diver,diver')
+					((Said 'chat/cop,dude,diver,diver')
 						(if
 							(and
-								(gCast contains: local13)
-								(< (gEgo distanceTo: local13) 40)
+								(cast contains: moore)
+								(< (ego distanceTo: moore) 40)
 							)
-							(Print 60 30) ; "Officer Moore says, "Hi, Sonny.""
+							(Print 60 30)
 						else
-							(Print 60 31) ; "He can't hear you."
+							(Print 60 31)
 						)
 					)
 					((Said 'apprehend,chase/bains')
-						(if (and (== global111 3) global183 global188)
-							(Print 60 32) ; "I wouldn't advise it, but it's up to you."
+						(if (and (== global111 3) shotAtBainsInCove bainsInCoveState)
+							(Print 60 32)
 						else
-							(Print 60 33) ; "That's a fine idea... but how?"
+							(Print 60 33)
 						)
 					)
 					((or (Said '/police,freeze') (Said 'freeze'))
-						(if (and (== global111 3) global183 global188)
-							(Print 60 34) ; ""HALT! POLICE!!" you shout."
+						(if (and (== global111 3) shotAtBainsInCove bainsInCoveState)
+							(Print 60 34)
 						else
-							(Print 60 35) ; "Who are you talking to?"
+							(Print 60 35)
 						)
 					)
-					((Said 'look,hit,get,talk/bains,suspect')
-						(cond
-							(local1
-								(Print 60 36) ; "Bains' face is a mask of hatred."
-							)
-							((and (== global111 3) global183 global188)
-								(Print 60 37) ; "Are you serious??? This man is trying to kill you!"
-							)
-							(else
-								(Print 60 33) ; "That's a fine idea... but how?"
-							)
+					((Said 'look,beat,get,chat/bains,suspect')
+						(cond 
+							(local1 (Print 60 36))
+							((and (== global111 3) shotAtBainsInCove bainsInCoveState) (Print 60 37))
+							(else (Print 60 33))
 						)
 					)
 					((Said 'look,read/heart,initials')
-						(if (gEgo inRect: 0 114 60 145)
-							(Print 60 38) ; "The memories return as you read, "M.W + S.B""
-							(Print 60 39) ; "You carved those initials one night in high school. Marie wanted to watch the submarine races, but they were called off due to low tide."
+						(if (ego inRect: 0 114 60 145)
+							(Print 60 38)
+							(Print 60 39)
 						else
-							(Print 60 40) ; "You can't read the initials from way over here."
+							(Print 60 40)
 						)
 					)
-					((or (Said 'open/door,van') (Said 'enter,(get<in)/van,bus'))
-						(if (and (> global189 2) (>= global111 3))
-							(if (== global189 8)
-								(Print 60 41) ; "Just walk up to it."
-							else
-								(Print 60 42) ; "You have no reason to do that."
-							)
+					(
+						(or
+							(Said 'open/door,van')
+							(Said 'enter,(get<in)/van,bus')
+						)
+						(if (and (> diverState 2) (>= global111 3))
+							(if (== diverState 8) (Print 60 41) else (Print 60 42))
 						else
-							(Print 60 43) ; "That's nowhere to be seen."
+							(Print 60 43)
 						)
 					)
-					((Said 'get,drive,rob/van,bus')
-						(Print 60 44) ; "The van's not yours."
-					)
+					((Said 'get,drive,rob/van,bus') (Print 60 44))
 					(
 						(Said
 							'find,get,frisk,look/clue,blood,mark,footprint,(print<feet)'
 						)
-						(Print 60 45) ; "You look, but can't find any evidence here."
+						(Print 60 45)
 					)
 					((Said 'look>')
-						(cond
-							((Said '/diver,diver,cop,man')
-								(cond
+						(cond 
+							((Said '/diver,diver,cop,dude')
+								(cond 
 									(
-										(and
-											(gCast contains: local13)
-											(local13 inRect: 0 0 320 190)
-										)
-										(Print 60 46) ; "Officer Moore is in top physical condition. He's an energetic and happy kind of guy."
-									)
-									((Said '/man')
-										(event claimed: 0)
-									)
-									(else
-										(Print 60 47) ; "He's not here."
-									)
+									(and (cast contains: moore) (moore inRect: 0 0 320 190)) (Print 60 46))
+									((Said '/dude') (event claimed: 0))
+									(else (Print 60 47))
 								)
 							)
-							((Said '/auto')
-								(if local1
-									(Print 60 48) ; "Bains has jumped into his getaway car, and is speeding off."
-								else
-									(Print 60 49) ; "There are no cars here."
-								)
-							)
+							((Said '/auto') (if local1 (Print 60 48) else (Print 60 49)))
 							((Said '/plate')
-								(cond
-									(local1
-										(Print 60 50) ; "All you can make out, as the car whizzes by you, is "C03"."
-									)
-									((and (>= global189 5) (== global100 5))
-										(Print 60 51) ; "The van's license plate is of no interest to you."
-									)
-									(else
-										(Print 60 52) ; "There are no license plates here."
-									)
+								(cond 
+									(local1 (Print 60 50))
+									((and (>= diverState 5) (== gamePhase 5)) (Print 60 51))
+									(else (Print 60 52))
 								)
 							)
 							((Said '/van,bus,pane,door')
-								(if (and (> global189 2) (>= global111 3))
-									(Print 60 53) ; "This is a 'Special Forces' van, used just for unusual circumstances."
+								(if (and (> diverState 2) (>= global111 3))
+									(Print 60 53)
 								else
-									(Print 60 43) ; "That's nowhere to be seen."
+									(Print 60 43)
 								)
 							)
-							((Said '<behind/tree')
-								(Print 60 54) ; "You look, but find nothing behind the tree."
-							)
-							((Said '<below/bush')
-								(Print 60 55) ; "You look, but find nothing under the bush."
-							)
+							((Said '<behind/tree') (Print 60 54))
+							((Said '<below/bush') (Print 60 55))
 							((Said '/tree')
-								(if (gEgo inRect: 0 117 62 147)
-									(Print 60 56) ; "You look and see a heart, with initials, carved into the trunk of the tree."
+								(if (ego inRect: 0 117 62 147)
+									(Print 60 56)
 								else
-									(Print 60 57) ; "From this distance, it looks like any other oak tree."
+									(Print 60 57)
 								)
 							)
-							((Said '[<at,around][/(!*,cove,area)]')
-								(Print 60 58) ; "This is Cotton Cove. It brings back many memories of your youth."
-							)
+							((Said '[<at,around][/(!*,cove,area)]') (Print 60 58))
 						)
 					)
-					((Said '/clue')
-						(Print 60 59) ; "You look all around, but find nothing."
-					)
-					((Said '/bullet')
-						(Print 60 60) ; "You look, but don't see any expended shells."
-					)
+					((Said '/clue') (Print 60 59))
+					((Said '/bullet') (Print 60 60))
 					(
 						(or
-							(Said 'answer,ask/[diver,man]')
-							(Said '[answer,ask]/diver,man')
+							(Said 'answer,ask/[diver,dude]')
+							(Said '[answer,ask]/diver,dude')
 							(Said 'help,dive,swim,frisk,find')
 							(Said '/swim,dive,help')
 							(Said 'go,jump/lake,clearwater,water')
 							(Said 'let//dive,swim,find,frisk,look,get')
 							(Said 'let/look,frisk,find,dive,get,go')
 						)
-						(if (> global189 5)
-							(if (< (gEgo distanceTo: local13) 40)
-								(if (== global189 6)
+						(if (> diverState 5)
+							(if (< (ego distanceTo: moore) 40)
+								(if (== diverState 6)
 									(diverScript changeState: 3)
 								else
-									(Print 60 33) ; "That's a fine idea... but how?"
+									(Print 60 33)
 								)
 							else
-								(Print 60 61) ; "Officer Moore can't hear you. You'd better get closer."
+								(Print 60 61)
 							)
 						else
-							(Print 60 62) ; "That's a fine idea. But how?"
+							(Print 60 62)
 						)
 					)
 				)
@@ -977,31 +928,29 @@
 
 (instance bainsScript of Script
 	(properties)
-
+	
 	(method (doit)
 		(super doit:)
-		(cond
-			((> local8 1)
-				(-- local8)
-			)
-			((== local8 1)
-				(self cue:)
-			)
+		(cond 
+			((> local8 1) (-- local8))
+			((== local8 1) (self cue:))
 		)
 		(if global205
 			(if (== local10 0)
-				(if local7
-					(Print 60 63 #at -1 24) ; "Although shaking from surprise, confusion, and fear, you somehow manage to return fire!"
-				)
-				(if (and global183 (or (not global166) (!= global205 4)))
-					(Print 60 64 #at -1 20) ; "Unfortunately, however, the flight of your bullet misses its target, and the killer continues his ambush!"
+				(if local7 (Print 60 63 #at -1 24))
+				(if
+					(and
+						shotAtBainsInCove
+						(or (not gunSightsAligned) (!= global205 4))
+					)
+					(Print 60 64 #at -1 20)
 					(= local10 1)
 				else
 					(= local10 2)
 					(= global208
-						(cond
-							((< (gEgo y:) 114) 1)
-							((< (gEgo y:) 148) 2)
+						(cond 
+							((< (ego y?) 114) 1)
+							((< (ego y?) 148) 2)
 							(else 3)
 						)
 					)
@@ -1011,38 +960,32 @@
 			(= global205 0)
 		)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
-			(0
-				(bains stopUpd:)
-			)
+			(0 (bains stopUpd:))
 			(1
 				(bainsMusic number: 33 loop: 1 play:)
 				(bains
 					view: 14
 					posn:
 						-10
-						(cond
-							((> 135 (gEgo y:) 112) 119)
-							((> (gEgo y:) 134)
-								(- (gEgo y:) 8)
-							)
+						(cond 
+							((and (> 135 (ego y?)) (> (ego y?) 112)) 119)
+							((> (ego y?) 134) (- (ego y?) 8))
 							(else 100)
 						)
 					setCycle: Walk
 					setMotion:
 						MoveTo
-						(cond
-							((> 135 (gEgo y:) 112) 52)
-							((> (gEgo y:) 134) 46)
+						(cond 
+							((and (> 135 (ego y?)) (> (ego y?) 112)) 52)
+							((> (ego y?) 134) 46)
 							(else 82)
 						)
-						(cond
-							((> 135 (gEgo y:) 112) 119)
-							((> (gEgo y:) 134)
-								(- (gEgo y:) 4)
-							)
+						(cond 
+							((and (> 135 (ego y?)) (> (ego y?) 112)) 119)
+							((> (ego y?) 134) (- (ego y?) 4))
 							(else 100)
 						)
 						self
@@ -1050,7 +993,13 @@
 			)
 			(2
 				(bainsShot play:)
-				(bains view: 15 loop: 0 cel: 0 cycleSpeed: 1 setCycle: End)
+				(bains
+					view: 15
+					loop: 0
+					cel: 0
+					cycleSpeed: 1
+					setCycle: EndLoop
+				)
 				(if (== (++ local7) 3)
 					(HandsOff)
 					(self changeState: 6)
@@ -1066,82 +1015,70 @@
 			)
 			(4
 				(= local6 1)
-				(= global186 1200)
-				(= global188 1)
+				(= bainsInCoveTimer 1200)
+				(= bainsInCoveState 1)
 				(bains
 					view: 14
 					loop: 1
 					cel: 2
 					setCycle: Walk
-					setMotion: MoveTo -25 (bains y:)
+					setMotion: MoveTo -25 (bains y?)
 				)
-				(if (== (gEgo view:) 97)
+				(if (== (ego view?) 97)
 					(self changeState: 8)
 				else
 					(switch global208
 						(1
-							(local3 setCycle: End self startUpd:)
+							(newProp setCycle: EndLoop self startUpd:)
 						)
 						(2
-							(local4 setCycle: End self startUpd:)
+							(newProp_2 setCycle: EndLoop self startUpd:)
 						)
 						(3
-							(local5 setCycle: End self startUpd:)
+							(newProp_3 setCycle: EndLoop self startUpd:)
 						)
 					)
 				)
 			)
 			(5
-				(local3 addToPic:)
-				(local4 addToPic:)
-				(local5 addToPic:)
-				(SetFlag 125)
-				(cond
-					(local7
-						(Print 60 65 #at -1 20) ; "Although the flight of your bullet misses its target, it comes close enough to cause the suspect to take leg bail."
-					)
-					(global183
-						(Print 60 66) ; "As Bains comes running towards you, you notice the gun in his hand, analyze the situation quickly, and take action. Although your bullet misses its mark, it comes close enough for the suspect to take leg bail."
-					)
-					(else
-						(EgoDead 60 67) ; "Your nerves on edge, you fired wildly into the bushes. Was it Bains, or a little boy playing? Without knowing, you should not have discharged your weapon. Next time, be sure you are in danger before firing."
-					)
+				(newProp addToPic:)
+				(newProp_2 addToPic:)
+				(newProp_3 addToPic:)
+				(Bset fGotPoints)
+				(cond 
+					(local7 (Print 60 65 #at -1 20))
+					(shotAtBainsInCove (Print 60 66))
+					(else (EgoDead 60 67))
 				)
-				(SetScore 4)
+				(SolvePuzzle 4)
 				(bains setScript: carScript)
 			)
 			(6
-				(gEgo
+				(ego
 					view: 97
 					loop:
-						(switch (gEgo loop:)
-							(0 4)
-							(3 4)
-							(1 3)
-							(2 3)
-						)
+					(switch (ego loop?)
+						(0 4)
+						(3 4)
+						(1 3)
+						(2 3)
+					)
 					cel: 0
 					cycleSpeed: 1
 					init:
-					setCycle: End self
+					setCycle: EndLoop self
 					setMotion: 0
 				)
 			)
 			(7
-				(Print 60 68 #at -1 20) ; "Just before taking a hot round in the chest, you hear Bains yell... "This one's for you, PIG!!!""
+				(Print 60 68 #at -1 20)
 				(self changeState: 4)
 			)
-			(8
-				(= seconds 2)
-			)
+			(8 (= seconds 2))
 			(9
 				(switch local10
-					(1
-						(EgoDead 60 69) ; "Too bad, so sad, you've been had. But wait! All is not lost. Just restore your game and begin again. Next time though, make sure your gun is properly sighted in and pointed in the right direction."
-					)
-					(else
-						(EgoDead 60 70) ; "Too bad, so sad, you've been had. But wait! All is not lost. Just restore your game and begin again. Next time though, you might try returning gun fire before it's too late."
-					)
+					(1 (EgoDead 60 69))
+					(else  (EgoDead 60 70))
 				)
 			)
 		)
@@ -1150,31 +1087,30 @@
 
 (instance carScript of Script
 	(properties)
-
+	
 	(method (doit)
 		(super doit:)
-		(if (and global188 global183)
-			(++ local9)
-		)
-		(if (and global188 (> local9 120))
+		(if (and bainsInCoveState shotAtBainsInCove) (++ local9))
+		(if (and bainsInCoveState (> local9 120))
 			(carScript changeState: 1)
 		)
 		(if
 			(and
-				(< 10 (- (gEgo x:) (local11 x:)) 64)
-				(> 14 (- (local11 y:) (gEgo y:)))
-				(> (local11 x:) -64)
-				(< (self state:) 5)
+				(< 10 (- (ego x?) (car x?)))
+				(< (- (ego x?) (car x?)) 64)
+				(> 14 (- (car y?) (ego y?)))
+				(> (car x?) -64)
+				(< (self state?) 5)
 			)
 			(self changeState: 5)
 		)
-		(local12 posn: (- (local11 x:) 48) (+ (local11 y:) 6))
+		(newProp_4 posn: (- (car x?) 48) (+ (car y?) 6))
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				((= local11 (Act new:))
+				((= car (Actor new:))
 					view: 94
 					setStep: 18 10
 					setLoop: 1
@@ -1185,7 +1121,7 @@
 					ignoreActors:
 					stopUpd:
 				)
-				((= local12 (Prop new:))
+				((= newProp_4 (Prop new:))
 					view: 94
 					loop: 2
 					cel: 0
@@ -1197,103 +1133,83 @@
 			(1
 				(carSound number: 39 loop: 1 priority: 12 play:)
 				(= local1 1)
-				(global112 setMotion: Follow local11 500)
-				(= global188 0)
-				(local11
+				(keith setMotion: Follow car 500)
+				(= bainsInCoveState 0)
+				(car
 					setMotion:
 						MoveTo
-						(gEgo x:)
-						(if (> (gEgo y:) 140)
-							(gEgo y:)
-						else
-							140
-						)
+						(ego x?)
+						(if (> (ego y?) 140) (ego y?) else 140)
 						self
 					startUpd:
 				)
-				(local12 setCycle: Fwd startUpd:)
+				(newProp_4 setCycle: Forward startUpd:)
 			)
 			(2
-				(local11
+				(car
 					setMotion:
 						MoveTo
 						430
-						(if (> (gEgo y:) 120)
-							(+ (gEgo y:) 35)
-						else
-							140
-						)
+						(if (> (ego y?) 120) (+ (ego y?) 35) else 140)
 						self
 				)
 			)
 			(3
-				(if (== global131 13)
-					(Print 60 71) ; ""That was BAINS!" shouts Keith."
-					(global112 setMotion: MoveTo 187 118 self)
-					(= global212 2)
+				(if (== currentCar 13)
+					(Print 60 71)
+					(keith setMotion: MoveTo 187 118 self)
+					(= gunFireState 2)
 				)
 			)
-			(4
-				(= local1 0)
-			)
+			(4 (= local1 0))
 			(5
-				(local11
-					setMotion:
-						MoveTo
-						430
-						(if (> (gEgo y:) 120)
-							(+ (gEgo y:) 28)
-						else
-							140
-						)
+				(car
+					setMotion: MoveTo 430 (if (> (ego y?) 120) (+ (ego y?) 28) else 140)
 				)
-				(if (== global131 13)
-					(global112
-						illegalBits: $8000
+				(if (== currentCar 13)
+					(keith
+						illegalBits: -32768
 						ignoreActors: 0
-						setMotion: Follow gEgo 20
+						setMotion: Follow ego 20
 						startUpd:
 					)
 				)
-				((= local2 (Act new:))
+				((= collision (Actor new:))
 					view: 76
-					posn: (gEgo x:) (gEgo y:)
+					posn: (ego x?) (ego y?)
 					loop: 5
 					cel: 0
 					setMotion: 0
 					cycleSpeed: 2
 					init:
-					setCycle: End self
+					setCycle: EndLoop self
 				)
-				(gEgo dispose:)
+				(ego dispose:)
 				(= local18 1)
 			)
 			(6
 				(HandsOff)
-				(local2
+				(collision
 					setLoop: 6
 					cel: 0
-					setMotion: MoveTo (+ (local2 x:) 20) (local2 y:)
-					setCycle: End self
+					setMotion: MoveTo (+ (collision x?) 20) (collision y?)
+					setCycle: EndLoop self
 				)
 			)
 			(7
-				(local2 setLoop: 7 setCel: 0 stopUpd: addToPic:)
+				(collision setLoop: 7 setCel: 0 stopUpd: addToPic:)
 				(= seconds 2)
 			)
 			(8
-				(if (== global131 13)
-					(global112 loop: 1)
-					(Print 60 72 #draw) ; "Gee, Sonny, did YOU see THAT?!" gasps Keith. "Sonny. Sonny? SONNY!?"
+				(if (== currentCar 13)
+					(keith loop: 1)
+					(Print 60 72 #draw)
 				)
 				(= seconds 4)
 			)
 			(9
-				(if (== global131 13)
-					(EgoDead 60 73) ; "Don't worry; Keith will explain in his report how he heroically 'watched your back'."
-				)
+				(if (== currentCar 13) (EgoDead 60 73))
 			)
 		)
 	)
 )
-

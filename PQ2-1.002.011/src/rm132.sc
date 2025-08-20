@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 132)
 (include sci.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Motion)
 (use Game)
 (use Actor)
@@ -13,33 +12,32 @@
 )
 
 (local
-	[local0 3]
+	[waste 3]
 	local3
 )
-
-(instance rm132 of Rm
+(instance rm132 of Room
 	(properties
 		picture 200
-		style 0
+		style $0000
 	)
-
+	
 	(method (init)
 		(super init:)
-		(self setRegions: 205) ; sewer
-		(gEgo
-			view: (if (not global204) 0 else 6)
+		(self setRegions: 205)
+		(ego
+			view: (if (not gunDrawn) 0 else 6)
 			x:
-				(switch gPrevRoomNum
+				(switch prevRoomNum
 					(129
-						(if (<= (gEgo x:) 200) 80 else 155)
+						(if (<= (ego x?) 200) 80 else 155)
 					)
 					(131 15)
 				)
 			y:
-				(switch gPrevRoomNum
+				(switch prevRoomNum
 					(129 95)
 					(131
-						(if (<= (gEgo y:) 115) 95 else 135)
+						(if (<= (ego y?) 115) 95 else 135)
 					)
 				)
 			init:
@@ -56,80 +54,71 @@
 			init:
 			stopUpd:
 		)
-		((= [local0 0] (Prop new:))
+		((= [waste 0] (Prop new:))
 			view: 99
 			loop: 2
 			cel: 2
 			posn: 210 189
 			setPri: 0
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 2
 			ignoreActors: 1
 			init:
 		)
-		((= [local0 1] (Prop new:))
+		((= [waste 1] (Prop new:))
 			view: 99
 			loop: 1
 			cel: 2
 			posn: 65 124
 			setPri: 0
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 2
 			ignoreActors: 1
 			init:
 		)
-		((= [local0 2] (Prop new:))
+		((= [waste 2] (Prop new:))
 			view: 99
 			loop: 2
 			cel: 0
 			posn: 163 153
 			setPri: 0
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 2
 			ignoreActors: 1
 			init:
 		)
-		(if (< global110 60)
-			([local0 0] stopUpd:)
-			([local0 1] stopUpd:)
+		(if (< howFast 60)
+			([waste 0] stopUpd:)
+			([waste 1] stopUpd:)
 		)
-		(if (< global110 30)
-			([local0 2] stopUpd:)
-		)
-		(gRatObj
+		(if (< howFast 30) ([waste 2] stopUpd:))
+		(sewerRat
 			name: 4
 			setLoop: 2
 			illegalBits: 0
 			posn: 70 66
 			ignoreActors: 1
 			init:
-			setMotion: MoveTo -100 66 gRatObj
+			setMotion: MoveTo -100 66 sewerRat
 		)
-		(gLightObj posn: 190 78 ignoreActors: 1 init: stopUpd:)
-		(global115 posn: 91 54 ignoreActors: 1 init: stopUpd:)
+		(sewerLight posn: 190 78 ignoreActors: 1 init: stopUpd:)
+		(sewerLight2 posn: 91 54 ignoreActors: 1 init: stopUpd:)
 	)
-
+	
 	(method (doit)
-		(cond
-			(global139 0)
-			((<= (gEgo x:) 5)
-				(gCurRoom newRoom: 131)
-			)
-			((gEgo inRect: 70 70 165 94)
-				(gCurRoom newRoom: 129)
-			)
-			((gEgo inRect: 160 190 320 195)
+		(cond 
+			(sewerCutscene 0)
+			((<= (ego x?) 5) (curRoom newRoom: 131))
+			((ego inRect: 70 70 165 94) (curRoom newRoom: 129))
+			((ego inRect: 160 190 320 195)
 				(if (not local3)
 					(= local3 1)
-					(Print 132 0) ; "You're at a dead end."
-					(gEgo setMotion: MoveTo (gEgo x:) 180)
+					(Print 132 0)
+					(ego setMotion: MoveTo (ego x?) 180)
 				)
 			)
-			(else
-				(= local3 0)
-			)
+			(else (= local3 0))
 		)
 		(super doit:)
 	)
 )
-

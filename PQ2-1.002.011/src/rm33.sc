@@ -1,9 +1,10 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 33)
-(include sci.sh)
+(include game.sh)
+(include system.sh)
+(include keys.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Motion)
 (use Game)
 (use User)
@@ -12,46 +13,43 @@
 
 (public
 	rm33 0
-	proc33_1 1
+	ExitPersonalCar 1
 )
 
 (local
 	local0
-	local1
+	thePrevRoomNum
 	local2
 	local3
 	local4
 	local5
 	local6
 	local7
-	local8
+	newProp
+)
+(procedure (ExitPersonalCar)
+	(if (and (== local6 local4) (== local7 local5))
+		(Print 33 0)
+		(ego setPri: -1)
+		(if (and (Btst 165) (== thePrevRoomNum 25))
+			(= thePrevRoomNum 225)
+		)
+		(ego setStep: 3 2)
+		(curRoom newRoom: thePrevRoomNum)
+	else
+		(Print 33 1)
+	)
 )
 
-(procedure (localproc_0)
-	(if (== global100 8)
-		(= global158 10)
-	)
+(procedure (localproc_000e)
+	(if (== gamePhase 8) (= captainWarningTimer 10))
 	(lines startUpd:)
 	(extraScene hide:)
 	(rightScene show: startUpd:)
 	(leftScene show: startUpd:)
 	(= local0 1)
-	(= global130 33)
-	(ClearFlag 40)
-)
-
-(procedure (proc33_1)
-	(if (and (== local6 local4) (== local7 local5))
-		(Print 33 0) ; "OK."
-		(gEgo setPri: -1)
-		(if (and (IsFlag 165) (== local1 25))
-			(= local1 225)
-		)
-		(gEgo setStep: 3 2)
-		(gCurRoom newRoom: local1)
-	else
-		(Print 33 1) ; "It would probably be a good idea to wait until you've arrived."
-	)
+	(= roomCarParked 33)
+	(Bclr 40)
 )
 
 (instance sonny of View
@@ -70,15 +68,15 @@
 	(properties)
 )
 
-(instance lines of Act
+(instance lines of Actor
 	(properties)
 )
 
-(instance rightScene of Act
+(instance rightScene of Actor
 	(properties)
 )
 
-(instance leftScene of Act
+(instance leftScene of Actor
 	(properties)
 )
 
@@ -114,15 +112,15 @@
 	(properties)
 )
 
-;;;(instance leftFwd of Fwd ; UNUSED
+;;;(instance leftFwd of Forward
 ;;;	(properties)
 ;;;)
 ;;;
-;;;(instance rightFwd of Fwd ; UNUSED
+;;;(instance rightFwd of Forward
 ;;;	(properties)
 ;;;)
 ;;;
-;;;(instance lineFwd of Fwd ; UNUSED
+;;;(instance lineFwd of Forward
 ;;;	(properties)
 ;;;)
 
@@ -130,40 +128,35 @@
 	(properties)
 )
 
-(instance rm33 of Rm
+(instance rm33 of Room
 	(properties
 		picture 33
-		style 0
+		style $0000
 	)
-
-	(method (dispose)
-		(aTimer dispose: delete:)
-		(super dispose:)
-	)
-
+	
 	(method (init)
 		(super init:)
 		(HandsOff)
 		(User canInput: 1)
-		(gCurRoom setLocales: 153)
-		(Load rsVIEW 71)
-		(Load rsVIEW 200)
-		(Load rsVIEW 269)
-		(gEgo
+		(curRoom setLocales: 153)
+		(Load VIEW 71)
+		(Load VIEW 200)
+		(Load VIEW 269)
+		(ego
 			setPri: -1
 			setLoop: -1
 			setCel: -1
 			posn: 0 0
 			ignoreActors: 0
-			illegalBits: $8000
+			illegalBits: -32768
 			init:
 		)
-		(= global131 33)
+		(= currentCar 33)
 		(= local0 0)
-		(= global204 0)
-		(= local1 gPrevRoomNum)
+		(= gunDrawn 0)
+		(= thePrevRoomNum prevRoomNum)
 		(= local6
-			(switch gPrevRoomNum
+			(switch prevRoomNum
 				(14 0)
 				(25 60)
 				(225 60)
@@ -177,7 +170,7 @@
 			)
 		)
 		(= local7
-			(switch gPrevRoomNum
+			(switch prevRoomNum
 				(14 100)
 				(25 120)
 				(29 120)
@@ -190,33 +183,15 @@
 			)
 		)
 		(switch local6
-			(0
-				(Load rsVIEW 329)
-			)
-			(60
-				(Load rsVIEW 332)
-			)
-			(120
-				(Load rsVIEW 331)
-			)
-			(180
-				(Load rsVIEW 328)
-			)
-			(220
-				(Load rsVIEW 326)
-			)
-			(140
-				(Load rsVIEW 334)
-			)
-			(40
-				(Load rsVIEW 333)
-			)
-			(62
-				(Load rsVIEW 330)
-			)
-			(122
-				(Load rsVIEW 327)
-			)
+			(0 (Load VIEW 329))
+			(60 (Load VIEW 332))
+			(120 (Load VIEW 331))
+			(180 (Load VIEW 328))
+			(220 (Load VIEW 326))
+			(140 (Load VIEW 334))
+			(40 (Load VIEW 333))
+			(62 (Load VIEW 330))
+			(122 (Load VIEW 327))
 		)
 		(= local5 local7)
 		(= local4 local6)
@@ -224,67 +199,56 @@
 			(= local2 1)
 			(gloveBoxScript changeState: 0)
 		)
-		(if (or (== global100 5) (== global100 10))
-			(if global159
-				(= global159 3)
-			)
-			(if global158
-				(= global158 3)
+		(if (or (== gamePhase 5) (== gamePhase 10))
+			(if global159 (= global159 3))
+			(if captainWarningTimer
+				(= captainWarningTimer 3)
 				(= global159 600)
 			)
 		)
 		(self setScript: rm33Script)
 	)
+	
+	(method (dispose)
+		(aTimer dispose: delete:)
+		(super dispose:)
+	)
 )
 
 (instance rm33Script of Script
 	(properties)
-
+	
 	(method (doit)
 		(if local0
-			(if (not (< global110 30))
-				(cond
-					((<= (hand y:) 156)
-						(hand posn: 145 (+ (hand y:) 1))
-					)
-					((>= (hand y:) 160)
-						(hand posn: 145 (- (hand y:) 1))
-					)
-					(else
-						(hand posn: 145 (+ (hand y:) (Random -2 2)))
-					)
+			(if (not (< howFast 30))
+				(cond 
+					((<= (hand y?) 156) (hand posn: 145 (+ (hand y?) 1)))
+					((>= (hand y?) 160) (hand posn: 145 (- (hand y?) 1)))
+					(else (hand posn: 145 (+ (hand y?) (Random -2 2))))
 				)
 			)
-			(if (and (or (== global159 1) (== global158 1)) (not local3))
+			(if
+				(and
+					(or (== global159 1) (== captainWarningTimer 1))
+					(not local3)
+				)
 				(= local3 1)
 				(self changeState: 1)
 			else
-				(if (> global159 1)
-					(-- global159)
-				)
-				(if (> global158 1)
-					(-- global158)
-				)
+				(if (> global159 1) (-- global159))
+				(if (> captainWarningTimer 1) (-- captainWarningTimer))
 			)
-			(cond
-				((> local6 local4)
-					(-- local6)
-				)
-				((< local6 local4)
-					(++ local6)
-				)
-				((> local7 local5)
-					(-- local7)
-				)
-				((< local7 local5)
-					(++ local7)
-				)
+			(cond 
+				((> local6 local4) (-- local6))
+				((< local6 local4) (++ local6))
+				((> local7 local5) (-- local7))
+				((< local7 local5) (++ local7))
 				((and local0 (not local3))
-					(if (and (IsFlag 165) (== local1 25))
-						(= local1 225)
+					(if (and (Btst 165) (== thePrevRoomNum 25))
+						(= thePrevRoomNum 225)
 					)
-					(gEgo setStep: 3 2)
-					(gCurRoom newRoom: local1)
+					(ego setStep: 3 2)
+					(curRoom newRoom: thePrevRoomNum)
 				)
 			)
 		else
@@ -294,11 +258,11 @@
 		)
 		(super doit:)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(PutItem 34) ; car_registration
+				(PutInRoom 34)
 				(sonny
 					view: 71
 					posn: 78 104
@@ -349,7 +313,7 @@
 					posn: 149 114
 					setPri: 2
 					setLoop: 4
-					setCycle: Fwd
+					setCycle: Forward
 					illegalBits: 0
 					init:
 					stopUpd:
@@ -360,7 +324,7 @@
 					setPri: 0
 					setLoop: 0
 					cel: 1
-					setCycle: Fwd
+					setCycle: Forward
 					illegalBits: 0
 					init:
 					stopUpd:
@@ -371,16 +335,21 @@
 					posn: 218 103
 					setPri: 0
 					setLoop: 1
-					setCycle: Fwd
+					setCycle: Forward
 					illegalBits: 0
 					init:
 					stopUpd:
 					hide:
 				)
-				(hand view: 71 posn: 145 159 setPri: 12 loop: 0 init: cel: 3)
-				(if (< global110 30)
-					(hand stopUpd:)
+				(hand
+					view: 71
+					posn: 145 159
+					setPri: 12
+					loop: 0
+					init:
+					cel: 3
 				)
+				(if (< howFast 30) (hand stopUpd:))
 				(extraScene
 					view:
 						(switch local6
@@ -403,22 +372,20 @@
 					stopUpd:
 				)
 			)
-			(1
-				(= seconds 5)
-			)
+			(1 (= seconds 5))
 			(2
-				((= local8 (Prop new:))
+				((= newProp (Prop new:))
 					view: 163
 					posn: 148 69
 					setPri: 13
 					init:
-					setCycle: Fwd
+					setCycle: Forward
 				)
 				(= seconds 3)
 			)
 			(3
-				(Print 33 2 #at -1 120) ; "Suddenly, in your rear-view mirror, you notice the flashing lights of a police cruiser."
-				(Print 33 3 #at -1 120) ; ""What did I do now?" you think to yourself, as you pull over to the curb."
+				(Print 33 2 #at -1 120)
+				(Print 33 3 #at -1 120)
 				(leftScene cycleSpeed: 1 setMotion: MoveTo 98 104)
 				(rightScene cycleSpeed: 1 setMotion: MoveTo 212 102)
 				(lines cycleSpeed: 1 setMotion: MoveTo 140 114)
@@ -438,177 +405,103 @@
 				(= seconds 4)
 			)
 			(6
-				(Print 33 4 #at -1 120) ; "You don't recognize the young traffic cop who approaches your window."
+				(Print 33 4 #at -1 120)
 				(= seconds 3)
 			)
 			(7
-				(Print 33 5 #at -1 120) ; "Officer Bonds," he says nervously, "Captain Hall wants to see you."
-				(Print 33 6) ; "uh..." he continues, "the APB says that it's URGENT! You're to report to him IMMEDIATELY... uh, OK?"
+				(Print 33 5 #at -1 120)
+				(Print 33 6)
 				(NormalEgo)
-				(gCurRoom newRoom: 300)
+				(curRoom newRoom: 300)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event &tmp temp0)
-		(if (event claimed:)
-			(return)
-		)
-		(switch (event type:)
-			(evKEYBOARD
+		(if (event claimed?) (return))
+		(switch (event type?)
+			(keyDown
 				(if
 					(or
-						(== (= temp0 (event message:)) KEY_F6)
+						(== (= temp0 (event message?)) KEY_F6)
 						(== temp0 KEY_F8)
 						(== temp0 KEY_F10)
 					)
-					(Print 33 7) ; "You don't need your gun in the car."
+					(Print 33 7)
 					(event claimed: 1)
 				else
 					(event claimed: 0)
 				)
 			)
-			(evSAID
-				(cond
-					((Said 'extender/dispatch')
-						(Print 33 8) ; "You don't have a police radio in your personal car."
-					)
-					((Said 'look/ignition')
-						(if (IsItemAt 2 0) ; key_ring
-							(Print 33 9) ; "Your keys are in the ignition."
-						else
-							(Print 33 10) ; "There's nothing special about your car's ignition system."
-						)
-					)
-					((Said 'look/speedometer,speed')
-						(if local0
-							(Print 33 11) ; "Your speedometer indicates you're within the local 35 mph speed limit."
-						else
-							(Print 33 12) ; "You're getting nowhere fast."
-						)
-					)
+			(saidEvent
+				(cond 
+					((Said 'extender/dispatch') (Print 33 8))
+					((Said 'look/ignition') (if (InRoom 2 0) (Print 33 9) else (Print 33 10)))
+					((Said 'look/speedometer,speed') (if local0 (Print 33 11) else (Print 33 12)))
 					((Said 'look/pane')
-						(Print 33 13) ; "Outside the car's window, you see..."
+						(Print 33 13)
 						(switch local6
-							(0
-								(Print 33 14) ; "... the newly built Lytton Airport parking lot and terminal building."
-							)
-							(60
-								(Print 33 15) ; "... the Snuggler's Inn. Sleezy and cheap, it's a motel for the down-and-out."
-							)
-							(120
-								(Print 33 16) ; "Arnie's restaurant. Their food is good, and the service is adequate."
-							)
-							(180
-								(Print 33 17) ; "Oak Tree Mall. This is Lytton's major shopping area."
-							)
-							(220
-								(Print 33 18) ; "Cotton Cove. It's a poorly-kept-up park. It holds many fond memories from your youth."
-							)
-							(140
-								(Print 33 19) ; "... the underground parking structure of the new Lytton Justice Building. The city jail's entrance is nearby."
-							)
-							(40
-								(Print 33 20) ; "... a typical American neighborhood. You're parked in front of Marie Wilkan's house."
-							)
-							(62
-								(Print 33 21) ; "... the warehouse district. A lot goes down around here, free from prying eyes."
-							)
-							(122
-								(Print 33 22) ; "... the Lytton Police Station and parking lot. The detective's entrance is nearby."
-							)
-							(else
-								(Print 33 23) ; "... the streets of Lytton as they fly by."
-							)
+							(0 (Print 33 14))
+							(60 (Print 33 15))
+							(120 (Print 33 16))
+							(180 (Print 33 17))
+							(220 (Print 33 18))
+							(140 (Print 33 19))
+							(40 (Print 33 20))
+							(62 (Print 33 21))
+							(122 (Print 33 22))
+							(else  (Print 33 23))
 						)
 					)
 					((Said 'look/mirror')
 						(if local3
-							(Print 33 24) ; "You see flashing lights behind you."
+							(Print 33 24)
 						else
 							(switch (Random 0 2)
-								(0
-									(Print 33 25) ; "You're getting paranoid. Don't worry... nobody's following you."
-								)
-								(1
-									(Print 33 26) ; "Don't be so vain!"
-								)
-								(2
-									(Print 33 27) ; "You look in the mirror and think to yourself... "You good looking devil you!""
-								)
+								(0 (Print 33 25))
+								(1 (Print 33 26))
+								(2 (Print 33 27))
 							)
 						)
 					)
-					((Said 'look/dash')
-						(Print 33 28) ; "Your car's dashboard looks like any other economy car's."
-						(if (IsItemAt 2 0) ; key_ring
-							(Print 33 29) ; "In the ignition, you see keys on a ring."
-						)
-					)
-					((Said 'look/key,ring')
-						(if (IsItemAt 2 0) ; key_ring
-							(Print 33 29) ; "In the ignition, you see keys on a ring."
-						else
-							(event claimed: 0)
-						)
-					)
-					((Said 'look/wheel[<steering]')
-						(Print 33 30) ; "The brown "rubber" of the steering wheel is very stylishly molded."
-					)
-					((Said 'look/back,(bench<back)')
-						(Print 33 31) ; "You see an adventure gamer looking over your shoulder."
-					)
-					((Said 'look/air,tree,home,cloud')
-						(Print 33 32) ; "You look, but the view isn't that good from here."
-					)
-					((Said 'adjust')
-						(Print 33 0) ; "OK."
-					)
-					((Said '/extender')
-						(Print 33 33) ; "Click..."
-						(Print 33 34) ; "Nothing. The radio's warranty has expired. But that's ok - it sounded terrible anyway."
-					)
+					((Said 'look/dash') (Print 33 28) (if (InRoom 2 0) (Print 33 29)))
+					((Said 'look/key,ring') (if (InRoom 2 0) (Print 33 29) else (event claimed: 0)))
+					((Said 'look/wheel[<steering]') (Print 33 30))
+					((Said 'look/back,(bench<back)') (Print 33 31))
+					((Said 'look/air,tree,home,cloud') (Print 33 32))
+					((Said 'adjust') (Print 33 0))
+					((Said '/extender') (Print 33 33) (Print 33 34))
 					(
 						(or
-							(Said 'wear,fasten,use,buckle,(drop<on)/belt,belt')
+							(Said 'wear,fasten,use,buckle,(deposit<on)/belt,belt')
 							(Said 'buckle')
 						)
-						(Print 33 35) ; "Good idea. Safety first."
+						(Print 33 35)
 					)
-					((Said '(turn<on),look/heat,air,conditioner,fan')
-						(Print 33 36) ; "The car's "automatic climate control system" is on the fritz."
-					)
-					((Said '/tray,ashtray')
-						(Print 33 37) ; "Since you don't smoke, you use the ashtray for change. However, it's empty at the moment."
-					)
-					((Said '/visor')
-						(Print 33 38) ; "The visors are made of cheap plastic. Fortunately, the sun isn't in your eyes right now."
-					)
+					((Said '(turn<on),look/heat,air,conditioner,fan') (Print 33 36))
+					((Said '/tray,ashtray') (Print 33 37))
+					((Said '/visor') (Print 33 38))
 					(
 						(or
-							(Said 'start[/auto,ignition,engine]')
+							(Said 'begin[/auto,ignition,engine]')
 							(Said 'turn/key')
 							(Said 'turn<on/engine,auto')
-							(Said 'drop/key/ignition')
+							(Said 'deposit/key/ignition')
 						)
-						(PutItem 2 0) ; key_ring
-						(Print 33 39) ; "The little gutless-wonder of an engine is running."
+						(PutInRoom 2 0)
+						(Print 33 39)
 					)
 					(
 						(or
-							(Said 'stop[/auto,engine]')
+							(Said 'cease[/auto,engine]')
 							(Said 'turn<off/engine,auto')
 							(Said 'switch<off/engine,auto')
 						)
-						(if (== local4 local6)
-							(Print 33 40) ; "The car's engine is off."
-						else
-							(Print 33 1) ; "It would probably be a good idea to wait until you've arrived."
-						)
+						(if (== local4 local6) (Print 33 40) else (Print 33 1))
 					)
 					((Said 'open/box,compartment')
 						(if (== global137 1)
-							(Print 33 41) ; "The glove box is already open."
+							(Print 33 41)
 						else
 							(= global137 1)
 							(= local2 0)
@@ -617,64 +510,48 @@
 					)
 					((Said 'close/box,compartment')
 						(if (== global137 0)
-							(Print 33 42) ; "The glove box is already closed."
+							(Print 33 42)
 						else
 							(= global137 0)
 							(gloveBoxScript changeState: 2)
 						)
 					)
 					((Said 'look/box,compartment')
-						(if (gCast contains: gloveBox)
-							(gInventory
+						(if (cast contains: gloveBox)
+							(inventory
 								carrying: {In the glove compartment you see:}
 								showSelf: 33
 							)
 						else
-							(Print 33 43) ; "Open the glove box first."
+							(Print 33 43)
 						)
 					)
 					((Said 'get,remove/key,ring')
-						(cond
-							((not (IsItemAt 2 0)) ; key_ring
-								(Print 33 44) ; "There are no keys here."
-							)
-							((not local0)
-								(gEgo get: 2) ; key_ring
-								(Print 33 45) ; "You take the keys from the ignition."
-								(SetScore 1 102)
-							)
-							(else
-								(Print 33 1) ; "It would probably be a good idea to wait until you've arrived."
-							)
+						(cond 
+							((not (InRoom 2 0)) (Print 33 44))
+							((not local0) (ego get: 2) (Print 33 45) (SolvePuzzle 1 102))
+							(else (Print 33 1))
 						)
 					)
 					((Said 'get,remove/card')
-						(cond
-							((gEgo has: 37) ; your_LPD_business_card
-								(proc0_8) ; "You already took it."
-							)
-							((and global137 (IsItemAt 37)) ; your_LPD_business_card
-								(gEgo get: 37) ; your_LPD_business_card
+						(cond 
+							((ego has: 37) (AlreadyTook))
+							((and global137 (InRoom 37))
+								(ego get: 37)
 								(businessCard dispose:)
-								(Print 33 46 #draw) ; "OK"
-								(SetScore 1 103)
+								(Print 33 46 #draw)
+								(SolvePuzzle 1 103)
 							)
-							(else
-								(Print 33 47) ; "You see no card here."
-							)
+							(else (Print 33 47))
 						)
 					)
-					((Said 'drop,replace/card')
-						(cond
-							((not (gEgo has: 37)) ; your_LPD_business_card
-								(proc0_9) ; "You don't have it."
-							)
-							((not global137)
-								(Print 33 43) ; "Open the glove box first."
-							)
+					((Said 'deposit,replace/card')
+						(cond 
+							((not (ego has: 37)) (DontHave))
+							((not global137) (Print 33 43))
 							(else
-								(Print 33 46 #draw) ; "OK"
-								(gEgo put: 37 33) ; your_LPD_business_card
+								(Print 33 46 #draw)
+								(ego put: 37 33)
 								(businessCard
 									view: 269
 									posn: 192 132
@@ -689,11 +566,11 @@
 					)
 					((Said 'look,get/newspaper,registration')
 						(if (== global137 0)
-							(Print 33 48) ; "There is no paper here."
+							(Print 33 48)
 						else
 							(registration startUpd: hide:)
-							(Print 33 49 #mode 1 #draw) ; "This is the vehicle's registration. Careful examination reveals that this car belongs to Sonny Bonds. Why... that's YOU!"
-							(Print 33 50) ; "The registration should stay in the car, so you return it to the glove box."
+							(Print 33 49 #mode 1 #draw)
+							(Print 33 50)
 							(registration show: stopUpd:)
 						)
 					)
@@ -701,112 +578,106 @@
 						(Said
 							'look/building,ave,air,cloud,sun,barn,home,airplane,airport,lot,fence,cove,inn,bush,tree,garage,sign,mall,store,cafe,warehouse'
 						)
-						(Print 33 51) ; "You can't see much from inside the car."
+						(Print 33 51)
 					)
-					((Said 'look[<at,around,in][/!*,auto]')
-						(Print 33 52) ; "You're behind the wheel of your personal car. Marie talked you into trading in your sports car for this... "sensible" compact model."
-					)
-					((Said 'beep,press/horn')
-						(Print 33 53) ; "beeep beeep"
-					)
-					((Said 'drive/auto')
-						(Print 33 54) ; "To drive somewhere, type: "drive to (destination)""
-					)
+					((Said 'look[<at,around,in][/!*,auto]') (Print 33 52))
+					((Said 'beep,press/horn') (Print 33 53))
+					((Said 'drive/auto') (Print 33 54))
 					((Said 'drive,go>')
-						(if (and (== global100 3) (IsFlag 152))
-							(= global100 4)
+						(if (and (== gamePhase phaseMALL) (Btst fBeenAtMallCrimeScene))
+							(= gamePhase 4)
 						)
-						(if (and (== global100 12) (not (IsFlag 165)))
+						(if (and (== gamePhase 12) (not (Btst fDroveToMotel)))
 							(if (Said '/inn[<snuggler,to]')
 								(event claimed: 0)
 							else
-								(SetFlag 165)
+								(Bset fDroveToMotel) ;165
 							)
 						)
-						(PutItem 2 0) ; key_ring
-						(cond
+						(PutInRoom iKeyRing 0) 
+						(cond 
 							(
 								(or
 									(Said '/home[<barn,to]')
 									(Said '/barn[<police,to]')
 									(Said '/office,homicide')
 								)
-								(cond
-									((!= local1 1)
-										(= local1 1)
+								(cond 
+									((!= thePrevRoomNum 1)
+										(= thePrevRoomNum 1)
 										(= local4 122)
 										(= local5 60)
-										(localproc_0)
+										(localproc_000e)
 									)
-									(local0
-										(Print 33 55) ; "You're already going there."
+									(local0 
+										(Print 33 55)
 									)
-									(else
-										(Print 33 56) ; "You're already there."
+									(else 
+										(Print 33 56)
 									)
 								)
 							)
 							((Said '/jail[<lytton,to]')
-								(cond
-									((!= local1 22)
-										(= local1 22)
+								(cond 
+									((!= thePrevRoomNum 22)
+										(= thePrevRoomNum 22)
 										(= local4 140)
 										(= local5 20)
-										(localproc_0)
+										(localproc_000e)
 									)
 									(local0
-										(Print 33 55) ; "You're already going there."
+										(Print 33 55)
 									)
 									(else
-										(Print 33 56) ; "You're already there."
+										(Print 33 56)
 									)
 								)
 							)
 							((Said '/cove[<cotton,to]')
-								(cond
-									((!= local1 61)
-										(= local1 61)
+								(cond 
+									((!= thePrevRoomNum 61)
+										(= thePrevRoomNum 61)
 										(= local4 220)
 										(= local5 0)
-										(localproc_0)
+										(localproc_000e)
 									)
 									(local0
-										(Print 33 55) ; "You're already going there."
+										(Print 33 55)
 									)
 									(else
-										(Print 33 56) ; "You're already there."
+										(Print 33 56)
 									)
 								)
 							)
 							((Said '/airport[<lytton,to]')
-								(cond
-									((!= local1 14)
-										(= local1 14)
+								(cond 
+									((!= thePrevRoomNum 14)
+										(= thePrevRoomNum 14)
 										(= local4 0)
 										(= local5 100)
-										(localproc_0)
+										(localproc_000e)
 									)
 									(local0
-										(Print 33 55) ; "You're already going there."
+										(Print 33 55)
 									)
 									(else
-										(Print 33 56) ; "You're already there."
+										(Print 33 56)
 									)
 								)
 							)
 							((Said '/inn[<snuggler,to]')
-								(cond
-									((!= local1 25)
-										(= local1 25)
+								(cond 
+									((!= thePrevRoomNum 25)
+										(= thePrevRoomNum 25)
 										(= local4 60)
 										(= local5 120)
-										(localproc_0)
+										(localproc_000e)
 									)
 									(local0
-										(Print 33 55) ; "You're already going there."
+										(Print 33 55)
 									)
 									(else
-										(Print 33 56) ; "You're already there."
+										(Print 33 56)
 									)
 								)
 							)
@@ -817,38 +688,35 @@
 									(Said '/ave<peach<lonny<222')
 									(Said '/peach<lonny<222')
 								)
-								(cond
-									((!= local1 31)
-										(= local1 31)
+								(cond 
+									((!= thePrevRoomNum 31)
+										(= thePrevRoomNum 31)
 										(= local4 40)
 										(= local5 80)
-										(localproc_0)
+										(localproc_000e)
 									)
 									(local0
-										(Print 33 55) ; "You're already going there."
+										(Print 33 55)
 									)
 									(else
-										(Print 33 56) ; "You're already there."
+										(Print 33 56)
 									)
 								)
 							)
 							(
-								(or
-									(Said '/cafe[<arnie,to]')
-									(Said '/arnie,date,chow')
-								)
-								(cond
-									((!= local1 29)
-										(= local1 29)
+							(or (Said '/cafe[<arnie,to]') (Said '/arnie,date,chow'))
+								(cond 
+									((!= thePrevRoomNum 29)
+										(= thePrevRoomNum 29)
 										(= local4 120)
 										(= local5 120)
-										(localproc_0)
+										(localproc_000e)
 									)
 									(local0
-										(Print 33 55) ; "You're already going there."
+										(Print 33 55)
 									)
 									(else
-										(Print 33 56) ; "You're already there."
+										(Print 33 56)
 									)
 								)
 							)
@@ -861,28 +729,25 @@
 									(Said '/ave<rose<lonny<160')
 									(Said '/rose<lonny<160')
 								)
-								(cond
+								(cond 
 									(
 										(and
-											(or
-												(Said '/area<death')
-												(Said '/death')
-											)
-											(!= global100 10)
+											(or (Said '/area<death') (Said '/death'))
+											(!= gamePhase 10)
 										)
-										(Print 33 57) ; "Murder? What murder?"
+										(Print 33 57)
 									)
-									((!= local1 27)
-										(= local1 27)
+									((!= thePrevRoomNum 27)
+										(= thePrevRoomNum 27)
 										(= local4 62)
 										(= local5 60)
-										(localproc_0)
+										(localproc_000e)
 									)
 									(local0
-										(Print 33 55) ; "You're already going there."
+										(Print 33 55)
 									)
 									(else
-										(Print 33 56) ; "You're already there."
+										(Print 33 56)
 									)
 								)
 							)
@@ -892,24 +757,23 @@
 									(Said '/tree<fig')
 									(Said '/mall,center<shopping')
 								)
-								(cond
-									((!= local1 67)
-										(= local1 67)
+								(cond 
+									((!= thePrevRoomNum 67)
+										(= thePrevRoomNum 67)
 										(= local4 180)
 										(= local5 120)
-										(localproc_0)
+										(localproc_000e)
 									)
 									(local0
-										(Print 33 55) ; "You're already going there."
+										(Print 33 55)
 									)
 									(else
-										(Print 33 56) ; "You're already there."
+										(Print 33 56)
 									)
 								)
 							)
 							((Said '/ave<fig<5556')
-								(Print 33 58) ; "You have hotter leads to follow."
-								(User canInput: 1)
+								(Print 33 58) (User canInput: 1)
 							)
 							(
 								(or
@@ -918,19 +782,18 @@
 									(Said '/chamber<blue')
 									(Said '/delphoria[<hotel,to]')
 								)
-								(Print 33 59) ; "Lytton has seen many businesses fail in the last year... and that was one of them."
+								(Print 33 59)
 							)
 							((Said '/steelton,houston,coarsegold')
-								(User canInput: 1)
-								(Print 33 60) ; "That's a great place, but it's too far to drive there right now."
+								(User canInput: 1) (Print 33 60)
 							)
 							((Said '/[*]')
 								(User canInput: 1)
-								(Print 33 61) ; "You don't need to drive there."
+								(Print 33 61)
 							)
 							(else
 								(event claimed: 1)
-								(Print 33 62) ; "A good detective always knows where he's going."
+								(Print 33 62)
 							)
 						)
 					)
@@ -940,7 +803,7 @@
 							(Said 'get<out')
 							(Said 'open/door')
 						)
-						(proc33_1)
+						(ExitPersonalCar)
 					)
 				)
 			)
@@ -950,7 +813,7 @@
 
 (instance gloveBoxScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -983,7 +846,7 @@
 					ignoreActors:
 					stopUpd:
 				)
-				(if (IsItemAt 37 33) ; your_LPD_business_card
+				(if (InRoom 37 33)
 					(businessCard
 						view: 269
 						posn: 192 132
@@ -994,23 +857,19 @@
 						stopUpd:
 					)
 				)
-				(if (not local2)
-					(aTimer setReal: self 2)
-				)
+				(if (not local2) (aTimer setReal: self 2))
 			)
-			(1
-				(gloveBoxDoor setCel: 1)
-			)
+			(1 (gloveBoxDoor setCel: 1))
 			(2
 				(gloveBoxDoor setCel: 0)
 				(aTimer setReal: self 2)
 			)
 			(3
-				(if (!= (gCast indexOf: businessCard) -1)
+				(if (!= (cast indexOf: businessCard) -1)
 					(businessCard dispose:)
 				)
 				(registration dispose:)
-				(if (!= (gCast indexOf: smallFlashLight) -1)
+				(if (!= (cast indexOf: smallFlashLight) -1)
 					(smallFlashLight dispose:)
 				)
 				(gloveBox dispose:)
@@ -1019,4 +878,3 @@
 		)
 	)
 )
-

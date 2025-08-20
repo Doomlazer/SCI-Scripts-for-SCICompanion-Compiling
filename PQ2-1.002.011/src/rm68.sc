@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 68)
 (include sci.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Motion)
 (use Game)
 (use User)
@@ -13,73 +12,71 @@
 (public
 	rm68 0
 )
-
 (synonyms
 	(box compartment)
 )
 
 (local
-	local0
-	local1
-	local2
-	local3
-	local4
-	local5
-	local6
-	local7
-	local8
+	siren
+	gloveBox
+	gloveBoxDoor
+	registration
+	holster
+	bullets
+	fingerprintState
+	dustedGloveBox
+	gloveBoxIsOpen
 )
-
-(instance rm68 of Rm
+(instance rm68 of Room
 	(properties
 		picture 93
-		style 3
+		style $0003
 	)
-
-	(method (dispose)
-		(HandsOn)
-		(super dispose:)
-	)
-
+	
 	(method (init)
-		(= global212 3)
-		(= global211 1)
+		(= gunFireState 3)
+		(= gunNotNeeded 1)
 		(HandsOff)
 		(User canInput: 1 canControl: 1)
 		(self setLocales: 153)
 		(Load rsVIEW 257)
 		(Load rsVIEW 75)
-		(= local6 0)
-		(= local7 0)
-		(= local8 0)
+		(= fingerprintState 0)
+		(= dustedGloveBox 0)
+		(= gloveBoxIsOpen 0)
 		(super init:)
 		(self setScript: rm68Script)
-		((gInventory at: 34) moveTo: gCurRoomNum) ; car_registration
+		((inventory at: 34) moveTo: curRoomNum)
+	)
+	
+	(method (dispose)
+		(HandsOn)
+		(super dispose:)
 	)
 )
 
 (instance rm68Script of Script
 	(properties)
-
+	
 	(method (doit)
 		(super doit:)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				((= local0 (Prop new:))
+				((= siren (Prop new:))
 					view: 75
 					loop: 7
 					cel: 0
 					posn: 148 38
 					setPri: 0
-					setCycle: Fwd
+					setCycle: Forward
 					init:
 				)
 			)
 			(1
-				((= local1 (View new:))
+				((= gloveBox (View new:))
 					view: 257
 					loop: 0
 					cel: 0
@@ -89,7 +86,7 @@
 					ignoreActors:
 					stopUpd:
 				)
-				((= local2 (Prop new:))
+				((= gloveBoxDoor (Prop new:))
 					view: 257
 					setLoop: 1
 					setCel: 0
@@ -99,7 +96,7 @@
 					stopUpd:
 					ignoreActors:
 				)
-				((= local3 (View new:))
+				((= registration (View new:))
 					view: 257
 					loop: 0
 					cel: 2
@@ -109,8 +106,8 @@
 					ignoreActors:
 					stopUpd:
 				)
-				(if (== (gEgo has: 21) 0) ; empty_holster
-					((= local4 (View new:))
+				(if (== (ego has: 21) 0)
+					((= holster (View new:))
 						view: 257
 						loop: 0
 						cel: 1
@@ -121,8 +118,8 @@
 						ignoreActors:
 					)
 				)
-				(if (== (gEgo has: 20) 0) ; bullets
-					((= local5 (View new:))
+				(if (== (ego has: 20) 0)
+					((= bullets (View new:))
 						view: 257
 						loop: 0
 						cel: 3
@@ -136,96 +133,77 @@
 				(self cue:)
 			)
 			(2
-				(local2 startUpd: setCycle: End)
-				(= local8 1)
+				(gloveBoxDoor startUpd: setCycle: EndLoop)
+				(= gloveBoxIsOpen 1)
 			)
 			(3
-				(local2 setCycle: Beg self)
-				(= local8 0)
+				(gloveBoxDoor setCycle: BegLoop self)
+				(= gloveBoxIsOpen 0)
 			)
 			(4
-				(local1 dispose:)
-				(local2 dispose:)
-				(local3 dispose:)
-				(if (== (gEgo has: 20) 0) ; bullets
-					(local5 dispose:)
-				)
-				(if (== (gEgo has: 21) 0) ; empty_holster
-					(local4 dispose:)
-				)
+				(gloveBox dispose:)
+				(gloveBoxDoor dispose:)
+				(registration dispose:)
+				(if (== (ego has: 20) 0) (bullets dispose:))
+				(if (== (ego has: 21) 0) (holster dispose:))
 			)
-			(5
-				(gCurRoom newRoom: 67)
-			)
+			(5 (curRoom newRoom: 67))
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(if (event claimed:)
-			(return)
-		)
-		(if (!= (event type:) evSAID)
-			(return)
-		)
-		(cond
+		(if (event claimed?) (return))
+		(if (!= (event type?) evSAID) (return))
+		(cond 
 			((Said 'look/box')
-				(if (== local8 1)
-					(gInventory
+				(if (== gloveBoxIsOpen 1)
+					(inventory
 						carrying: {In the glove compartment, you see:}
 						empty:
 							{Other than the car's registration, the glove compartment is empty.}
 						showSelf: 68
 					)
 				else
-					(Print 68 0) ; "The glove box isn't open."
+					(Print 68 0)
 				)
 			)
-			((Said 'get,read,look/registration,newspaper,card[<registration]')
-				(if (== local8 1)
-					(local3 setPri: 1)
-					(Print 68 1 #draw) ; "You look at the registration ... After confirming the name, "Luis Pate", you return it to the glove box."
-					(local3 setPri: 11)
+			(
+				(Said
+					'get,read,look/registration,newspaper,card[<registration]'
+				)
+				(if (== gloveBoxIsOpen 1)
+					(registration setPri: 1)
+					(Print 68 1 #draw)
+					(registration setPri: 11)
 				else
-					(Print 68 2) ; "You don't see it."
+					(Print 68 2)
 				)
 			)
 			((Said 'get,look/ammo,ammo,bullet')
-				(cond
-					((gEgo has: 20) ; bullets
-						((gInventory at: 20) showSelf:) ; bullets
+				(cond 
+					((ego has: 20) ((inventory at: 20) showSelf:))
+					((not gloveBoxIsOpen) (Print 68 3))
+					((InRoom 20)
+						(bullets dispose:)
+						(Print 68 4 #draw)
+						(SolvePuzzle 1)
+						(ego get: 20)
 					)
-					((not local8)
-						(Print 68 3) ; "You don't see them."
-					)
-					((IsItemAt 20) ; bullets
-						(local5 dispose:)
-						(Print 68 4 #draw) ; "Looking the ammunition over, you think... "Hmmm, three rounds of .38 caliber. Better hang on to this for evidence.""
-						(SetScore 1)
-						(gEgo get: 20) ; bullets
-					)
-					(else
-						(Print 68 5) ; "There are no bullets here."
-					)
+					(else (Print 68 5))
 				)
 			)
 			((Said 'get,look/gunbelt')
-				(cond
-					((gEgo has: 21) ; empty_holster
-						((gInventory at: 21) showSelf:) ; empty_holster
+				(cond 
+					((ego has: 21) ((inventory at: 21) showSelf:))
+					((not gloveBoxIsOpen) (Print 68 2))
+					((InRoom 21)
+						(holster dispose:)
+						(Print 68 6 #draw)
+						(SolvePuzzle 1)
+						(ego get: 21)
+						(Bset 50)
 					)
-					((not local8)
-						(Print 68 2) ; "You don't see it."
-					)
-					((IsItemAt 21) ; empty_holster
-						(local4 dispose:)
-						(Print 68 6 #draw) ; "You look at the empty holster and ponder the whereabouts of the gun. You retain it for evidence."
-						(SetScore 1)
-						(gEgo get: 21) ; empty_holster
-						(SetFlag 50)
-					)
-					(else
-						(Print 68 7) ; "There is no holster here."
-					)
+					(else (Print 68 7))
 				)
 			)
 			(
@@ -238,53 +216,50 @@
 						(Said '/ashtray,auto,console,visor,dash,floor')
 					)
 				)
-				(Print 68 8) ; "You search diligently, finding nothing."
+				(Print 68 8)
 			)
 			((Said 'open/box,box')
-				(if (== local8 0)
-					(= local8 1)
-					(Print 68 9) ; "OK."
-					(SetFlag 41)
+				(if (== gloveBoxIsOpen 0)
+					(= gloveBoxIsOpen 1)
+					(Print 68 9)
+					(Bset 41)
 					(rm68Script changeState: 1)
 				else
-					(Print 68 10) ; "The glove box is already open."
+					(Print 68 10)
 				)
 			)
 			((Said 'close/box,box')
-				(if (== local8 1)
-					(= local8 0)
+				(if (== gloveBoxIsOpen 1)
+					(= gloveBoxIsOpen 0)
 					(rm68Script changeState: 3)
 				else
-					(Print 68 0) ; "The glove box isn't open."
+					(Print 68 0)
 				)
-			)
-			((or (Said 'exit,exit[/auto]') (Said 'close/door'))
-				(rm68Script changeState: 5)
 			)
 			(
+			(or (Said 'exit,exit[/auto]') (Said 'close/door')) (rm68Script changeState: 5))
+			(
 				(or
-					(Said 'drop,use,apply/powder/box,box')
+					(Said 'deposit,use,apply/powder/box,box')
 					(Said 'dust,powder/box,box')
 				)
-				(cond
-					((not (gEgo has: 10)) ; field_kit
-						(Print 68 11) ; "You'll need your field kit."
-					)
-					(local7
-						(Print 68 12) ; "You already did."
-						(= local6 2)
-						(= local7 1)
+				(cond 
+					((not (ego has: 10)) (Print 68 11))
+					(dustedGloveBox
+						(Print 68 12)
+						(= fingerprintState 2)
+						(= dustedGloveBox 1)
 					)
 					(else
 						(global122 setPri: 0)
 						(global120 setPri: 0)
-						(if (IsFlag 41)
-							(Print 68 13 #draw) ; "Carefully, you apply the dust and... Mumbling to yourself... "This print is too smudged to take.""
-							(= local6 1)
+						(if (Btst 41)
+							(Print 68 13 #draw)
+							(= fingerprintState 1)
 						else
-							(Print 68 14 #draw) ; "Carefully, you apply the dust and ... Mumbling to yourself ... "Here's one worth taking!""
-							(= local7 1)
-							(= local6 2)
+							(Print 68 14 #draw)
+							(= dustedGloveBox 1)
+							(= fingerprintState 2)
 						)
 						(global122 setPri: 15)
 						(global120 setPri: 14)
@@ -295,59 +270,43 @@
 				(or
 					(Said 'dust,powder/pane,door,wheel,bench,mirror,handle')
 					(Said
-						'apply,use,drop/powder/pane,door,wheel,bench,mirror,handle'
+						'apply,use,deposit/powder/pane,door,wheel,bench,mirror,handle'
 					)
 				)
-				(if (not (gEgo has: 10)) ; field_kit
-					(Print 68 11) ; "You'll need your field kit."
+				(if (not (ego has: 10))
+					(Print 68 11)
 				else
 					(global122 setPri: 0)
 					(global120 setPri: 0)
-					(Print 68 15 #draw) ; "Carefully, you apply the fingerprint powder ... you examine the powder and think to yourself... "Not worth processing.""
+					(Print 68 15 #draw)
 					(global122 setPri: 15)
 					(global120 setPri: 14)
-					(= local6 1)
+					(= fingerprintState 1)
 				)
 			)
-			((Said 'drop,apply,use,hoist/print,tape')
-				(cond
-					((not (gEgo has: 10)) ; field_kit
-						(Print 68 11) ; "You'll need your field kit."
-					)
-					((not local6)
-						(Print 68 16) ; "Don't you know the correct way to get fingerprints?"
-					)
-					((== local6 1)
-						(Print 68 17) ; "It isn't worth taking."
-					)
-					((gEgo has: 22) ; fingerprint
-						(Print 68 18) ; "You've already gotten enough fingerprints."
-					)
+			((Said 'deposit,apply,use,hoist/print,tape')
+				(cond 
+					((not (ego has: 10)) (Print 68 11))
+					((not fingerprintState) (Print 68 16))
+					((== fingerprintState 1) (Print 68 17))
+					((ego has: 22) (Print 68 18))
 					(else
 						(global123 setPri: 0)
-						(Print 68 19 #draw) ; "Using the tape, you carefully "lift" the print."
-						(SetScore 3)
+						(Print 68 19 #draw)
+						(SolvePuzzle 3)
 						(global123 setPri: 15)
-						(gEgo get: 22) ; fingerprint
-						(= local6 0)
+						(ego get: 22)
+						(= fingerprintState 0)
 					)
 				)
 			)
-			((Said '(drop,place)/*/box,box')
-				(cond
-					((and (Said '/bullet,ammo/*') (gEgo has: 20)) ; bullets
-						(Print 68 20) ; "You will need the bullets for evidence."
-					)
-					((and (Said '/gunbelt/*') (gEgo has: 21)) ; empty_holster
-						(Print 68 21) ; "You will need the holster for evidence."
-					)
-					(else
-						(event claimed: 1)
-						(Print 68 22) ; "You have no reason to do that."
-					)
+			((Said '(deposit,place)/*/box,box')
+				(cond 
+					((and (Said '/bullet,ammo/*') (ego has: 20)) (Print 68 20))
+					((and (Said '/gunbelt/*') (ego has: 21)) (Print 68 21))
+					(else (event claimed: 1) (Print 68 22))
 				)
 			)
 		)
 	)
 )
-

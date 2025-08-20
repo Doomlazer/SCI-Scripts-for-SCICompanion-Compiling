@@ -1,10 +1,11 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 14)
-(include sci.sh)
+(include system.sh)
+(include keys.sh)
+(include game.sh)
 (use Main)
-(use Interface)
-(use Avoid)
+(use Intrface)
+(use Avoider)
 (use Motion)
 (use Game)
 (use Actor)
@@ -19,83 +20,75 @@
 	local1
 	local2
 	local3
-	[local4 4]
+	[local4 4] ;sonny's car rect
 	local8
-	local9
+	nextRoom
 	local10
 	[local11 2]
 	local13
 )
-
-(procedure (localproc_0)
+(procedure (LocPrint)
 	(Print &rest #at -1 15)
 )
 
-(procedure (localproc_1)
-	(cond
-		((and (!= global169 0) (gEgo inRect: 240 180 287 192))
-			(if (>= global169 2)
-				(localproc_0 14 63) ; "You open the car door and look inside."
-				(= gPerspective 0)
-				(gCurRoom newRoom: 104)
-			else
-				(Print 14 73) ; "Opening another car's door without probable cause would be breaking and entering."
+(procedure (localproc_19fc)
+	(cond 
+		(
+			(and (!= global169 0) (ego inRect: 240 180 287 192))
+				(if (>= global169 2)
+					(LocPrint 14 63)
+					(= perspective 0)
+					(curRoom newRoom: 104)
+				else
+					(Print 14 73)
+				)
 			)
+		(
+		(and
+			(!= global169 0)
+			(ego inRect: 223 156 291 190)
 		)
-		((and (!= global169 0) (gEgo inRect: 223 156 291 190))
 			(if (>= global169 2)
-				(localproc_0 14 64) ; "The driver's door appears to be jammed shut. The passenger door might work."
+				(LocPrint 14 64)
 			else
-				(Print 14 73) ; "Opening another car's door without probable cause would be breaking and entering."
+				(Print 14 73)
 			)
 		)
 		(else
-			(switch global131
+			(switch currentCar
 				(13
-					(cond
+					(cond 
 						(
 							(not
-								(gEgo
-									inRect:
-										[local4 0]
-										[local4 1]
-										[local4 2]
-										[local4 3]
-								)
+								(ego inRect: [local4 0] [local4 1] [local4 2] [local4 3])
 							)
-							(localproc_0 14 74) ; "You're not close enough to your car door."
+							(LocPrint 14 74)
 						)
-						(global133
-							(localproc_0 14 75) ; "Your car door is locked"
+						(workCarLocked
+							(LocPrint 14 75)
 						)
-						(global135
-							(localproc_0 14 76) ; "Close the trunk first."
+						(workCarTrunkOpened
+							(LocPrint 14 76)
 						)
-						((gEgo has: 10) ; field_kit
-							(localproc_0 14 77) ; "You should put your field kit in the trunk first."
+						((ego has: 10)
+							(LocPrint 14 77)
 						)
 						(else
-							(= global131 13)
+							(= currentCar carWork)
 							(carScript changeState: 4)
 						)
 					)
 				)
 				(33
-					(cond
+					(cond 
 						(
 							(not
-								(gEgo
-									inRect:
-										[local4 0]
-										[local4 1]
-										[local4 2]
-										[local4 3]
-								)
+								(ego inRect: [local4 0] [local4 1] [local4 2] [local4 3])
 							)
-							(localproc_0 14 74) ; "You're not close enough to your car door."
+							(LocPrint 14 74)
 						)
-						((== global136 1)
-							(localproc_0 14 75) ; "Your car door is locked"
+						((== personalCarLocked 1)
+							(LocPrint 14 75)
 						)
 						(else
 							(carScript changeState: 4)
@@ -107,7 +100,7 @@
 	)
 )
 
-(instance ourCarBlock of Blk
+(instance ourCarBlock of Block
 	(properties
 		top 133
 		left 162
@@ -116,15 +109,15 @@
 	)
 )
 
-(instance nose of Act
+(instance nose of Actor
 	(properties)
 )
 
-(instance tail of Act
+(instance tail of Actor
 	(properties)
 )
 
-(instance plane of Act
+(instance plane of Actor
 	(properties)
 )
 
@@ -160,19 +153,19 @@
 	(properties)
 )
 
-(instance smallGuy1 of Act
+(instance smallGuy1 of Actor
 	(properties)
 )
 
-(instance smallGuy2 of Act
+(instance smallGuy2 of Actor
 	(properties)
 )
 
-(instance smallGuy3 of Act
+(instance smallGuy3 of Actor
 	(properties)
 )
 
-(instance ourCar of Act
+(instance ourCar of Actor
 	(properties)
 )
 
@@ -184,47 +177,41 @@
 	(properties)
 )
 
-(instance rm14 of Rm
+(instance rm14 of Room
 	(properties
 		picture 14
-		style 1
+		style VSHUTTER
 	)
-
-	(method (dispose)
-		(ourCarBlock dispose:)
-		(carScript dispose:)
-		(super dispose:)
-	)
-
-	(method (init)
+	
+(method (init)
 		(super init:)
-		(= gPerspective 70)
-		(Load rsVIEW 0)
-		(Load rsVIEW 20)
-		(Load rsVIEW 74)
-		(Load rsVIEW 75)
-		(Load rsVIEW 54)
-		(Load rsVIEW 51)
-		(= global211 1)
-		(= global212 3)
+		(= perspective 70)
+		(Load VIEW 0)
+		(Load VIEW 20)
+		(Load VIEW 74)
+		(Load VIEW 75)
+		(Load VIEW 54)
+		(Load VIEW 51)
+		(= gunNotNeeded 1)
+		(= gunFireState 3)
 		(self setLocales: 153)
-		(= local0 (or (== gPrevRoomNum 33) (== gPrevRoomNum 13)))
-		(if (== gPrevRoomNum 33)
-			(ClearFlag 40)
+		(= local0 (or (== prevRoomNum 33) (== prevRoomNum 13)))
+		(if (== prevRoomNum 33)
+			(Bclr 40)
 		)
 		(= local10
 			(if
 				(and
 					(> global169 0)
-					(!= gPrevRoomNum 13)
-					(!= gPrevRoomNum 104)
-					(== global131 13)
+					(!= prevRoomNum 13)
+					(!= prevRoomNum 104)
+					(== currentCar 13)
 				)
-				(IsFlag 118)
+				(Btst 118)
 			)
 		)
 		(= local13 global169)
-		(if (or (>= global100 8) local10)
+		(if (or (>= gamePhase 8) local10)
 			(= global169 0)
 		)
 		(if local0
@@ -244,10 +231,10 @@
 			)
 		)
 		(if local0
-			(= global135 0)
+			(= workCarTrunkOpened 0)
 		else
-			(gEgo observeBlocks: ourCarBlock)
-			(if (and global135 (== global131 13))
+			(ego observeBlocks: ourCarBlock)
+			(if (and workCarTrunkOpened (== currentCar 13))
 				(unTrunk view: 51 loop: 5 cel: 2 setPri: 10 posn: 178 144 init:)
 			)
 		)
@@ -256,20 +243,20 @@
 			setLoop: 7
 			posn: 174 43
 			cycleSpeed: 3
-			setCycle: Fwd
+			setCycle: Forward
 			setPri: 6
 			init:
 			setScript: backScript
 		)
-		(if (and (or (== global100 6) (== global100 7)) (!= gPrevRoomNum 15))
-			(ClearFlag 40)
+		(if (and (or (== gamePhase 6) (== gamePhase 7)) (!= prevRoomNum 15))
+			(Bclr 40)
 			(= global111 1)
 		else
 			(= global111 0)
 		)
 		(= [local4 1] 128)
 		(= [local4 3] 136)
-		(switch global131
+		(switch currentCar
 			(33
 				(ourCarBlock left: 180)
 				(= [local4 0] 176)
@@ -283,7 +270,7 @@
 		(= local8 340)
 		(= local2 198)
 		(= local3 216)
-		(= local9 15)
+		(= nextRoom 15)
 		((View new:)
 			view: 75
 			loop: 1
@@ -348,8 +335,8 @@
 			addToPic:
 		)
 		(= local1
-			(if (== global130 gCurRoomNum)
-				(or (== gPrevRoomNum 33) (== gPrevRoomNum 13))
+			(if (== roomCarParked curRoomNum)
+				(or (== prevRoomNum 33) (== prevRoomNum 13))
 			)
 		)
 		(if local0
@@ -359,10 +346,10 @@
 			view: 54
 			setStep: 2
 			setLoop: 1
-			setCel: (if (== global131 13) 1 else 5)
+			setCel: (if (== currentCar 13) 1 else 5)
 			setCycle: 0
 			posn:
-				(if (and (or (== gPrevRoomNum 13) (== gPrevRoomNum 33)) (not local1))
+				(if (and (or (== prevRoomNum 13) (== prevRoomNum 33)) (not local1))
 					local2
 				else
 					local3
@@ -374,141 +361,174 @@
 		)
 		(self setScript: rm14Script)
 	)
+	
+	(method (dispose)
+		(ourCarBlock dispose:)
+		(carScript dispose:)
+		(super dispose:)
+	)
 )
 
 (instance rm14Script of Script
 	(properties)
-
+	
 	(method (doit)
-		(cond
-			((<= (gEgo y:) 116)
-				(if (and (== global131 13) (> (global112 x:) 8))
+		(cond 
+			((<= (ego y?) 116)
+				(if
+					(and
+						(== currentCar carWork)
+						(> (keith x?) 8)
+					)
 					(switch global169
 						(1
-							(localproc_0 14 0) ; "If you're going to check the airport," Keith says to you, "I'll stay here and see what I can find."
+							(LocPrint 14 0)
 						)
 						(2
-							(if (not (IsFlag 119))
-								(localproc_0 14 1) ; ""I'll let dispatch know we've located the car, and have them send a tow truck," suggests Keith."
-								(SetFlag 119)
+							(if (not (Btst fFoundWomanStolenCar))
+								(LocPrint 14 1)
+								(Bset fFoundWomanStolenCar)
 							)
 						)
 					)
 				)
-				(cond
-					((< (gEgo x:) 58)
-						(= global108 -10)
+				(cond 
+					((< (ego x?) 58)
+						(= gGEgoX -10)
 					)
-					((> (gEgo x:) 161)
-						(= global108 327)
+					((> (ego x?) 161)
+						(= gGEgoX 327)
 					)
 					(else
-						(= global108 (gEgo x:))
+						(= gGEgoX (ego x?))
 					)
 				)
-				(= gPerspective 0)
-				(gCurRoom newRoom: local9)
+				(= perspective 0)
+				(curRoom newRoom: nextRoom)
 			)
-			((and (== global132 local0 1) (not (gCast contains: ourCar)))
+			(
+				(and
+					(== global132 local0)
+					(== local0 1)
+					(not (cast contains: ourCar))
+				)
 				(= global132 0)
 				(carScript changeState: 0)
 			)
-			((== global132 (not local0) 1)
-				(= global132 0)
-				(localproc_1)
-			)
-			((and (or (< (gEgo x:) -12) (> (gEgo x:) 332)) (not local0))
-				(if (and (gCast contains: global112) (< (global112 x:) 10))
-					(localproc_0 14 2) ; "You seem to have lost track of Keith, somehow."
-				else
-					(localproc_0 14 3) ; "You don't want to get lost in a sea of cars."
+			(
+				(and
+					(== global132 (not local0))
+					(== (not local0) 1)
 				)
-				(gEgo setMotion: MoveTo 125 (gEgo y:))
+				(= global132 0)
+				(localproc_19fc)
 			)
-			((and (> (gEgo y:) 240) (not local0))
+			(
+				(and
+					(or (< (ego x?) -12) (> (ego x?) 332))
+					(not local0)
+				)
+				(if
+				(and
+					(cast contains: keith)
+					(< (keith x?) 10)
+				)
+					(LocPrint 14 2)
+				else
+					(LocPrint 14 3)
+				)
+				(ego setMotion: MoveTo 125 (ego y?))
+			)
+			(
+				(and
+					(> (ego y?) 240)
+					(not local0)
+				)
 				(switch (Random 0 3)
 					(0
-						(localproc_0 14 4) ; "You can't seem to find any clues in this area."
+						(LocPrint 14 4)
 					)
 					(1
-						(localproc_0 14 5) ; "Finding yourself lost in a sea of cars, you decide to make your way back...if you can!?"
+						(LocPrint 14 5)
 					)
 					(2
-						(localproc_0 14 6) ; "We're about to file a missing person's report on you!"
+						(LocPrint 14 6)
 					)
 					(3
-						(localproc_0 14 7) ; "Are you having fun? Send a post card - we miss you."
+						(LocPrint 14 7)
 					)
 				)
-				(gEgo setMotion: MoveTo (gEgo x:) 150)
+				(ego setMotion: MoveTo (ego x?) 150)
 			)
 		)
 		(super doit:)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(gEgo view: (if global204 6 else 0) init: setMotion: 0)
-				(switch gPrevRoomNum
+				(ego view: (if gunDrawn 6 else 0) init: setMotion: 0)
+				(switch prevRoomNum
 					(104
-						(gEgo posn: 260 188 loop: 3)
+						(ego posn: 260 188 loop: 3)
 						(= global169 2)
 					)
 					(15
-						(gEgo posn: (+ (/ global108 3) 57) 124)
+						(ego posn: (+ (/ gGEgoX 3) 57) 124)
 					)
 					(13
-						(gEgo posn: local8 239)
+						(ego posn: local8 239)
 					)
 					(33
-						(gEgo posn: local8 239)
+						(ego posn: local8 239)
 					)
 				)
-				(if (== global131 13)
-					((= global112 (Act new:))
+				(if (== currentCar carWork)
+					((= keith (Actor new:))
 						view: 20
-						posn: (- 38 (gEgo x:)) (gEgo y:)
+						posn: (- 38 (ego x?)) (ego y?)
 						setCycle: Walk
 						observeBlocks: ourCarBlock
 						init:
 					)
-					(switch gPrevRoomNum
+					(switch prevRoomNum
 						(104
-							(global112
+							(keith
 								posn: 224 190
-								setMotion: Follow gEgo 34
-								setAvoider: (Avoid new:)
+								setMotion: Follow ego 34
+								setAvoider: (Avoider new:)
 							)
 						)
-						(local9
-							(cond
-								((IsFlag 40)
-									(global112
-										posn:
-											(- (gEgo x:) 32)
-											(- (gEgo y:) 8)
+						(nextRoom
+							(cond 
+								((Btst fKeithFollows)
+									(keith
+										posn: (- (ego x?) 32) (- (ego y?) 8)
 										loop: 2
-										setMotion: Follow gEgo 500
-										setAvoider: (Avoid new:)
+										setMotion: Follow ego 500
+										setAvoider: (Avoider new:)
 									)
 								)
-								((and (not (IsFlag 118)) (== global169 1))
-									(global112 posn: -14 128)
+								(
+									(and
+										(not (Btst fStolenCarTowed))
+										(== global169 1)
+									)
+									(keith posn: -14 128)
 								)
 								(else
-									(global112
+									(keith
 										posn: 153 142
 										loop: 3
 										startUpd:
-										setMotion: Follow gEgo 500
+										setMotion: Follow ego 500
 									)
 								)
 							)
 						)
 					)
 				)
-				(= global130 gCurRoomNum)
+				(= roomCarParked curRoomNum)
 				(ourCar setMotion: MoveTo local3 140 self)
 			)
 			(1
@@ -516,43 +536,43 @@
 				(= cycles 1)
 			)
 			(2
-				(if (== global131 13)
-					(switch gPrevRoomNum
+				(if (== currentCar carWork)
+					(switch prevRoomNum
 						(104
-							(localproc_0 14 8 83) ; "Enthusiastically, Keith says "Yep, Sonny! We'll get that *#!*? Bains now!""
+							(LocPrint 14 8 83)
 						)
-						(local9
-							(if (IsFlag 40)
-								(localproc_0 14 9 83) ; "Keith suggests, "Sonny, we'd better get going!""
+						(nextRoom
+							(if (Btst fKeithFollows)
+								(LocPrint 14 9 83)
 							else
 								(switch local13
 									(0
-										(localproc_0 14 10 83) ; "Keith says, "Well, let's do something, Sonny.""
+										(LocPrint 14 10 83)
 									)
 									(1
 										(if local10
-											(localproc_0 14 11 83) ; "Keith snorts; "While you were wasting time in the airport, I located that car stolen from the shopping center.""
-											(localproc_0 14 12) ; "Continuing, Keith says..."The tow truck has already come and towed it away.""
+											(LocPrint 14 11 83)
+											(LocPrint 14 12)
 										else
-											(localproc_0 14 13) ; "Keith must still be wandering around the parking lot looking for Bains' car."
+											(LocPrint 14 13)
 										)
 									)
 									(2
-										(if (not (IsFlag 118))
-											(localproc_0 14 14) ; "Go on ahead," Keith says. "I'll take care of business here."
+										(if (not (Btst fStolenCarTowed))
+											(LocPrint 14 14)
 										else
-											(localproc_0 14 15) ; "While you were gone, I had dispatch send a tow truck. It's already taken the stolen car away."
+											(LocPrint 14 15)
 										)
 									)
 									(3
-										(if (IsFlag 118)
-											(localproc_0 14 16 83) ; ""While you were gone, they came and towed the stolen car away," Keith informs you."
+										(if (Btst fStolenCarTowed)
+											(LocPrint 14 16 83)
 										else
-											(localproc_0 14 14) ; "Go on ahead," Keith says. "I'll take care of business here."
+											(LocPrint 14 14)
 										)
 									)
-									(else
-										(localproc_0 14 17 83) ; "Well it's about time you got back," Keith grunts. "Let's roll!"
+									(else 
+										(LocPrint 14 17 83)
 									)
 								)
 							)
@@ -562,13 +582,13 @@
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(switch (event type:)
-			(evSAID
-				(cond
+		(switch (event type?)
+			(saidEvent
+				(cond 
 					((Said 'close/door')
-						(localproc_0 14 18) ; "All the doors here are closed."
+						(LocPrint 14 18)
 					)
 					(
 						(or
@@ -576,312 +596,293 @@
 							(Said 'open/auto,door')
 							(Said 'get,look<in,in[/auto]')
 						)
-						(localproc_1)
+						(localproc_19fc)
 					)
-					((or (Said 'look>') (Said 'check[<out]>'))
-						(cond
+					(
+						(or
+							(Said 'look>')
+							(Said 'check[<out]>')
+						)
+						(cond 
 							((Said '/trunk')
 								(if
 									(and
-										(gEgo inRect: 146 132 172 142)
-										(gCast contains: unTrunk)
+										(ego inRect: 146 132 172 142)
+										(cast contains: unTrunk)
 									)
-									(gInventory
-										carrying: {The car's trunk contains }
+									(inventory
+										carrying: {The car's trunk contains_}
 										empty: {The car's trunk is empty.}
 										showSelf: 13
 									)
 								else
-									(localproc_0 14 19) ; "You're not close enough to an open trunk."
+									(LocPrint 14 19)
 								)
 							)
 							((Said '/building,airport,terminal')
-								(localproc_0 14 20) ; "You are just outside the new Lytton Airport. The hustle and bustle makes LAX look small-time."
+								(LocPrint 14 20)
 							)
 							((Said '/entrance')
-								(localproc_0 14 21) ; "A short distance away you see the entrance to the airport."
+								(LocPrint 14 21)
 							)
 							((Said '/lot')
-								(localproc_0 14 22) ; "You see a variety of automobiles parked in the lot."
+								(LocPrint 14 22)
 							)
 							((Said '[<at,around][/!*,chamber]')
-								(localproc_0 14 23) ; "Looking around, you become alerted to the fact that you're standing in the parking lot of "Lytton Municipal Airport.""
+								(LocPrint 14 23)
 							)
 							((Said '/tower')
-								(localproc_0 14 24) ; "In the tower, the air traffic controllers are busy directing airline traffic."
+								(LocPrint 14 24)
 							)
 							((Said '/sock,wind')
-								(localproc_0 14 25) ; "The wind sock blows in the direction of the wind."
+								(LocPrint 14 25)
 							)
 							((Said '/airplane[<air]')
-								(localproc_0 14 26) ; "You're definitely in the right place if you like to look at airplanes."
+								(LocPrint 14 26)
 							)
-							((or (Said '/air') (Said '<up'))
-								(localproc_0 14 27) ; "You see blue sky with patchy clouds. Several planes circle, waiting to land."
+							(
+								(or
+									(Said '/air')
+									(Said '<up')
+								)
+								(LocPrint 14 27)
 							)
 							((Said '/cloud')
-								(localproc_0 14 28) ; "They're up there. all right!"
+								(LocPrint 14 28)
 							)
-							((Said '/man,woman,men,women,crowd')
-								(localproc_0 14 29) ; "They're across the street, in front of the terminal."
+							((Said '/dude,broad,men,women,crowd')
+								(LocPrint 14 29)
 							)
 							((Said '/vin,badge')
-								(localproc_0 14 30) ; "Vehicle identification numbers are usually found inside the vehicle."
+								(LocPrint 14 30)
 							)
 							((Said '<below/auto')
-								(localproc_0 14 31) ; "You hate to get your clean pants greasy."
+								(LocPrint 14 31)
 							)
-							((or (Said '/dirt') (Said '<down,ave,bridge'))
-								(localproc_0 14 32) ; "Nothing but pavement."
+							(
+								(or
+									(Said '/dirt')
+									(Said '<down,ave,bridge')
+								)
+								(LocPrint 14 32)
 							)
 							((Said '/auto')
 								(if (!= global169 0)
-									(cond
-										((not (IsFlag 77))
-											(cond
-												(
-													(gEgo
-														inRect: 130 163 315 200
-													)
-													(localproc_0 14 33) ; "The black car appears to match the description of the stolen car."
+									(cond 
+										((not (Btst fReadJailerVIN))
+											(cond 
+												((ego inRect: 130 163 315 200)
+													(LocPrint 14 33)
 													(= global169 2)
 												)
 												((== global169 2)
-													(localproc_0 14 34) ; "Just another car."
+													(LocPrint 14 34)
 												)
 												(else
-													(localproc_0 14 35) ; "So far, you don't see a car that matches the description of the stolen car."
+													(LocPrint 14 35)
 												)
 											)
 										)
-										((gEgo inRect: 130 163 315 200)
-											(localproc_0 14 36) ; "You have identified the black car as the stolen car."
+										((ego inRect: 130 163 315 200)
+											(LocPrint 14 36)
 										)
 										(else
-											(localproc_0 14 34) ; "Just another car."
+											(LocPrint 14 34)
 										)
 									)
 								else
-									(localproc_0 14 37) ; "They're nice automobiles, all right."
+									(LocPrint 14 37)
 								)
 							)
 							((Said '/license')
 								(if (!= global169 0)
-									(cond
-										((gEgo inRect: 162 163 208 189)
-											(localproc_0 14 38) ; "The black car's rear plate is missing."
+									(cond 
+										((ego inRect: 162 163 208 189)
+											(LocPrint 14 38)
 										)
-										((gEgo inRect: 295 159 322 190)
-											(localproc_0 14 39) ; "As you look at black car's license plate number, "C035609", you think to yourself..."Man, this one rings a bell.""
+										((ego inRect: 295 159 322 190)
+											(LocPrint 14 39)
 											(= global169 2)
-											(SetScore 1 77)
+											(SolvePuzzle 1 fReadJailerVIN)
 											(if
 												(and
-													(== global131 13)
-													(gCast
-														contains: global112
-													)
-													(< (global112 x:) 50)
+													(== currentCar carWork)
+													(cast contains: keith)
+													(< (keith x?) 50)
 												)
-												(global112
+												(keith
 													posn: 5 164
-													setMotion: Follow gEgo 36
-													setAvoider: (Avoid new:)
+													setMotion: Follow ego 36
+													setAvoider: (Avoider new:)
 												)
-												(localproc_0 14 40 83) ; "Hey!" Keith shouts. "That's the car! Bains has to be around here somewhere."
+												(LocPrint 14 40 83)
 											)
 										)
-										(else
-											(localproc_0 14 41) ; "From where you're standing, you see nothing out of the ordinary about the plates on the cars in the lot."
-										)
+										(else (LocPrint 14 41))
 									)
 								else
-									(localproc_0 14 42) ; "They're all from different states. None of the plate numbers or vehicles appear to offer a clue."
+									(LocPrint 14 42)
 								)
 							)
 						)
 					)
 					((Said 'drive')
 						(if local0
-							(localproc_0 14 43) ; "Go on! Get out and look around first."
+							(LocPrint 14 43)
 						else
-							(localproc_0 14 44) ; "Get in your car first."
+							(LocPrint 14 44)
 						)
 					)
-					((Said 'drop,place/briefcase')
-						(if (gEgo inRect: 146 132 172 142)
-							(if global135
-								(if (gEgo has: 10) ; field_kit
-									(localproc_0 14 45) ; "You place your field kit inside the trunk."
-									(PutItem 10 13) ; field_kit
-									(if (IsObject gFKit)
-										(gFKit dispose:)
-									)
-									(= global240 0)
+					((Said 'deposit,place/briefcase')
+						(if (ego inRect: 146 132 172 142)
+							(if workCarTrunkOpened
+								(if (ego has: iFieldKit)
+									(LocPrint 14 45)
+									(PutInRoom iFieldKit 13)
+									(if (IsObject theFieldKit) (theFieldKit dispose:))
+									(= fieldKitOpen 0)
 								else
-									(localproc_0 14 46) ; "You don't have the field kit."
+									(LocPrint 14 46)
 								)
 							else
-								(localproc_0 14 47) ; "Open the trunk first."
+								(LocPrint 14 47)
 							)
 						else
-							(localproc_0 14 48) ; "You're not close enough to your car's trunk."
+							(LocPrint 14 48)
 						)
 					)
 					((Said 'remove,get/briefcase')
-						(if (gEgo inRect: 146 132 172 142)
-							(if global135
-								(if (== ((gInventory at: 10) owner:) 13) ; field_kit
-									(localproc_0 14 49) ; "You take your field kit from the trunk."
-									(gEgo get: 10) ; field_kit
+						(if (ego inRect: 146 132 172 142)
+							(if workCarTrunkOpened
+								(if (== ((inventory at: iFieldKit) owner?) 13)
+									(LocPrint 14 49)
+									(ego get: iFieldKit)
 								else
-									(localproc_0 14 50) ; "The field kit is not in the trunk."
+									(LocPrint 14 50)
 								)
 							else
-								(localproc_0 14 47) ; "Open the trunk first."
+								(LocPrint 14 47)
 							)
 						else
-							(localproc_0 14 48) ; "You're not close enough to your car's trunk."
+							(LocPrint 14 48)
 						)
 					)
-					((or (Said 'unlock/door,auto') (Said 'unlock/door<auto'))
-						(if
-							(gEgo
-								inRect:
-									[local4 0]
-									[local4 1]
-									[local4 2]
-									[local4 3]
-							)
-							(cond
-								((and (== global131 13) (gEgo has: 3)) ; unmarked_car_keys
-									(if global133
-										(= global133 0)
-										(localproc_0 14 51) ; "OK. It's unlocked."
+					(
+					(or (Said 'unlock/door,auto') (Said 'unlock/door<auto'))
+						(if (ego inRect: [local4 0] [local4 1] [local4 2] [local4 3])
+							(cond 
+								((and (== currentCar carWork) (ego has: 3))
+									(if workCarLocked
+										(= workCarLocked 0)
+										(LocPrint 14 51)
 									else
-										(localproc_0 14 52) ; "The door is already unlocked."
+										(LocPrint 14 52)
 									)
 								)
-								((== global131 13)
-									(localproc_0 14 53) ; "You need a key to unlock this door."
-								)
+								((== currentCar carWork) (LocPrint 14 53))
 							)
-							(cond
-								((and (== global131 33) (gEgo has: 2)) ; key_ring
-									(if global136
-										(= global136 0)
-										(localproc_0 14 51) ; "OK. It's unlocked."
+							(cond 
+								((and (== currentCar carPersonal) (ego has: 2))
+									(if personalCarLocked
+										(= personalCarLocked 0)
+										(LocPrint 14 51)
 									else
-										(localproc_0 14 52) ; "The door is already unlocked."
+										(LocPrint 14 52)
 									)
 								)
-								((== global131 33)
-									(localproc_0 14 53) ; "You need a key to unlock this door."
-								)
+								((== currentCar carPersonal) (LocPrint 14 53))
 							)
 						else
-							(localproc_0 14 54) ; "You're not close enough."
+							(LocPrint 14 54)
 						)
 					)
-					((or (Said 'lock/door,auto') (Said 'lock/door<auto'))
+					(
+					(or (Said 'lock/door,auto') (Said 'lock/door<auto'))
 						(if
-							(gEgo
-								inRect:
-									[local4 0]
-									[local4 1]
-									[local4 2]
-									[local4 3]
-							)
-							(if (== global131 13)
-								(cond
-									((not global133)
-										(= global133 1)
-										(localproc_0 14 55) ; "OK. It's locked."
+						(ego inRect: [local4 0] [local4 1] [local4 2] [local4 3])
+							(if (== currentCar carWork)
+								(cond 
+									((not workCarLocked)
+										(= workCarLocked 1)
+										(LocPrint 14 55)
 									)
-									((gEgo inRect: 223 156 291 190)
-										(localproc_0 14 56) ; "You don't have the key."
+									((ego inRect: 223 156 291 190)
+										(LocPrint 14 56)
 									)
 									(else
-										(localproc_0 14 57) ; "The door is already locked."
+										(LocPrint 14 57)
 									)
 								)
 							)
-							(if (== global131 33)
-								(if (not global136)
-									(= global136 1)
-									(localproc_0 14 55) ; "OK. It's locked."
+							(if (== currentCar 33)
+								(if (not personalCarLocked)
+									(= personalCarLocked 1)
+									(LocPrint 14 55)
 								else
-									(localproc_0 14 57) ; "The door is already locked."
+									(LocPrint 14 57)
 								)
 							)
 						else
-							(localproc_0 14 54) ; "You're not close enough."
+							(LocPrint 14 54)
 						)
 					)
 					((Said 'open,unlock/trunk')
-						(if (== global131 13)
-							(if (gEgo inRect: 146 132 172 142)
-								(if (gEgo has: 3) ; unmarked_car_keys
-									(if global135
-										(Print 14 58) ; "It's already open."
+						(if (== currentCar 13)
+							(if (ego inRect: 146 132 172 142)
+								(if (ego has: iUnmarkedCarKeys)
+									(if workCarTrunkOpened
+										(Print 14 58)
 									else
 										(carScript changeState: 10)
 									)
 								else
-									(localproc_0 14 59) ; "You need a key to open this trunk."
+									(LocPrint 14 59)
 								)
 							else
-								(localproc_0 14 60) ; "You'd better not open anybody else's trunk."
+								(LocPrint 14 60)
 							)
 						else
-							(localproc_0 14 61) ; "Your car's "hatch-back" hasn't worked since its warranty expired."
+							(LocPrint 14 61)
 						)
 					)
 					((Said 'close,lock/trunk')
-						(if (== global131 13)
-							(if (gEgo inRect: 146 132 172 142)
-								(if global135
+						(if (== currentCar 13)
+							(if (ego inRect: 146 132 172 142)
+								(if workCarTrunkOpened
 									(carScript changeState: 12)
 								else
-									(Print 14 62) ; "It's already closed."
+									(Print 14 62)
 								)
 							else
-								(proc0_7) ; "You're not close enough."
+								(NotClose)
 							)
 						else
-							(localproc_0 14 61) ; "Your car's "hatch-back" hasn't worked since its warranty expired."
+							(LocPrint 14 61)
 						)
 					)
-					((or (Said 'frisk/auto') (Said 'check[<out]/auto'))
-						(cond
+					(
+					(or (Said 'frisk/auto') (Said 'check[<out]/auto'))
+						(cond 
 							(
 								(and
 									(!= global169 0)
-									(gEgo inRect: 240 180 287 192)
+									(ego inRect: 240 180 287 192)
 								)
-								(localproc_0 14 63 25 4) ; "You open the car door and look inside."
-								(= gPerspective 0)
-								(gCurRoom newRoom: 104)
+								(LocPrint 14 63 25 4)
+								(= perspective 0)
+								(curRoom newRoom: 104)
 							)
 							(
-								(and
-									(!= global169 0)
-									(gEgo inRect: 223 156 291 190)
-								)
-								(localproc_0 14 64) ; "The driver's door appears to be jammed shut. The passenger door might work."
+							(and
+								(!= global169 0)
+								(ego inRect: 223 156 291 190))
+								(LocPrint 14 64)
 							)
-							(
-								(gEgo
-									inRect:
-										[local4 0]
-										[local4 1]
-										[local4 2]
-										[local4 3]
-								)
-								(localproc_0 14 65) ; "You begin to search frantically until you realize that you're searching your own vehicle!"
+							((ego inRect: [local4 0] [local4 1] [local4 2] [local4 3])
+								(LocPrint 14 65)
 							)
 							(else
-								(localproc_0 14 66) ; "Without a warrant or probable cause, a vehicle search would be considered breaking and entering."
+								(LocPrint 14 66)
 							)
 						)
 					)
@@ -893,11 +894,11 @@
 
 (instance carScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(gEgo
+				(ego
 					setStep: 1 2
 					posn: 206 142
 					setPri: 9
@@ -907,8 +908,8 @@
 					illegalBits: 0
 					setMotion: MoveTo 203 132 self
 				)
-				(if (== global131 13)
-					(global112 posn: 216 149 loop: 0 cel: 5 startUpd:)
+				(if (== currentCar 13)
+					(keith posn: 216 149 loop: 0 cel: 5 startUpd:)
 					(carDoor
 						view: 51
 						loop: 3
@@ -916,61 +917,55 @@
 						posn: 230 135
 						setPri: 10
 						init:
-						setCycle: End
+						setCycle: EndLoop
 					)
 				)
 			)
 			(1
 				(= local0 0)
-				(if (== global131 13)
-					(= global133 0)
+				(if (== currentCar 13)
+					(= workCarLocked 0)
 				else
-					(= global136 0)
+					(= personalCarLocked 0)
 				)
-				(gEgo
+				(ego
 					setStep: 3 2
 					setCycle: Walk
 					setLoop: -1
 					setPri: -1
 					ignoreActors: 0
-					illegalBits: $8000
+					illegalBits: -32768
 					observeBlocks: ourCarBlock
 				)
 				(self cue:)
 			)
 			(2
 				(HandsOn)
-				(if (== global131 13)
+				(if (== currentCar 13)
 					(carDoor dispose:)
 					(if (== global169 1)
-						(global112 setMotion: MoveTo -14 149)
-						(localproc_0 14 67 25 7) ; "Keith says..."Let's check out the parking lot, Sonny.""
-						(localproc_0 14 68 83 25 5) ; "I'll look over here."
+						(keith setMotion: MoveTo -14 149)
+						(LocPrint 14 67 25 7)
+						(LocPrint 14 68 83 25 5)
 					else
-						(global112 setMotion: MoveTo 160 146 self)
+						(keith setMotion: MoveTo 160 146 self)
 					)
 				)
 			)
 			(3
-				(global112 cel: 0)
-				(cond
-					((and local1 (== global169 3))
-						(localproc_0 14 69) ; "Why don't you go check out the terminal building? I'll wait here for the tow truck."
-					)
-					((== global100 13)
-						(localproc_0 14 70) ; "Keith whines, "I forgot to pack my toothbrush!""
-					)
-					((not local1)
-						(localproc_0 14 71) ; "Keith asks, "What are we doing here, anyway?""
-					)
+				(keith cel: 0)
+				(cond 
+					((and local1 (== global169 3)) (LocPrint 14 69))
+					((== gamePhase 13) (LocPrint 14 70))
+					((not local1) (LocPrint 14 71))
 				)
 			)
 			(4
 				(HandsOff)
-				(if (== global131 13)
-					(localproc_0 14 72) ; "Keith yells: "Hey, wait for me, Sonny!""
-					(if (< (global112 y:) 134)
-						(global112
+				(if (== currentCar 13)
+					(LocPrint 14 72)
+					(if (< (keith y?) 134)
+						(keith
 							setAvoider: 0
 							ignoreActors:
 							illegalBits: 0
@@ -984,20 +979,12 @@
 				)
 			)
 			(5
-				(global112
-					setMotion:
-						MoveTo
-						(if (< (global112 x:) 145)
-							145
-						else
-							(global112 x:)
-						)
-						145
-						self
+				(keith
+					setMotion: MoveTo (if (< (keith x?) 145) 145 else (keith x?)) 145 self
 				)
 			)
 			(6
-				(global112 setMotion: MoveTo 216 146 self)
+				(keith setMotion: MoveTo 216 146 self)
 			)
 			(7
 				(carDoor
@@ -1007,11 +994,11 @@
 					posn: 230 135
 					setPri: 10
 					init:
-					setCycle: End self
+					setCycle: EndLoop self
 				)
 			)
 			(8
-				(gEgo
+				(ego
 					ignoreActors: 1
 					illegalBits: 0
 					ignoreBlocks: ourCarBlock
@@ -1023,11 +1010,11 @@
 				)
 			)
 			(9
-				(= gPerspective 0)
-				(gCurRoom newRoom: global131)
+				(= perspective 0)
+				(curRoom newRoom: currentCar)
 			)
 			(10
-				(= global135 1)
+				(= workCarTrunkOpened 1)
 				(unTrunk
 					view: 51
 					loop: 5
@@ -1035,33 +1022,31 @@
 					posn: 178 144
 					setPri: 10
 					init:
-					setCycle: End self
+					setCycle: EndLoop self
 				)
 			)
 			(11
 				(unTrunk stopUpd:)
 			)
 			(12
-				(= global135 0)
+				(= workCarTrunkOpened 0)
 				(unTrunk
 					view: 51
 					loop: 5
 					cel: 2
 					posn: 178 144
 					startUpd:
-					setCycle: CT 0 -1 self
+					setCycle: CycleTo 0 -1 self
 				)
 			)
-			(13
-				(unTrunk dispose:)
-			)
+			(13 (unTrunk dispose:))
 		)
 	)
 )
 
 (instance backScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -1074,7 +1059,13 @@
 					init:
 					addToPic:
 				)
-				(door view: 75 loop: 3 posn: 99 96 init: addToPic:)
+				(door
+					view: 75
+					loop: 3
+					posn: 99 96
+					init:
+					addToPic:
+				)
 				(SIGN
 					view: 74
 					loop: 0
@@ -1145,7 +1136,7 @@
 					init:
 					stopUpd:
 				)
-				(if (< global110 30)
+				(if (< howFast 30)
 					(smallGuy1 stopUpd:)
 					(smallGuy2 stopUpd:)
 					(smallGuy3 stopUpd:)
@@ -1168,7 +1159,10 @@
 			)
 			(1
 				(plane stopUpd:)
-				(smallGuy1 setLoop: 2 setMotion: MoveTo 180 99)
+				(smallGuy1
+					setLoop: 2
+					setMotion: MoveTo 180 99
+				)
 				(smallGuy2
 					view: 74
 					posn: 324 99
@@ -1226,11 +1220,23 @@
 			(5
 				(tail addToPic:)
 				(nose addToPic:)
-				(smallGuy3 startUpd: setMotion: MoveTo 168 96 init:)
-				(smallGuy1 startUpd: setLoop: 2 setMotion: MoveTo 175 99 init:)
-				(smallGuy2 startUpd: setLoop: 4 setMotion: MoveTo 182 98)
+				(smallGuy3
+					startUpd:
+					setMotion: MoveTo 168 96
+					init:
+				)
+				(smallGuy1
+					startUpd:
+					setLoop: 2
+					setMotion: MoveTo 175 99
+					init:
+				)
+				(smallGuy2
+					startUpd:
+					setLoop: 4
+					setMotion: MoveTo 182 98
+				)
 			)
 		)
 	)
 )
-

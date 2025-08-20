@@ -1,10 +1,9 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 225)
-(include sci.sh)
+(include game.sh)
 (use Main)
-(use Interface)
-(use Avoid)
+(use Intrface)
+(use Avoider)
 (use Motion)
 (use Game)
 (use Actor)
@@ -16,235 +15,237 @@
 
 (local
 	local0
-	local1
+	carDoor
 	local2
 	local3
 	local4
 	local5
-	local6
+	egoX
 	local7
 	local8
 	local9
 	local10
 	local11
 	local12
-	local13
-	[local14 4]
-	[local18 4]
-	[local22 2]
-	[local24 2]
+	trunk
+	[carDoorRect 4]
+	[trunkRect 4]
+	[carDoorPosn 2]
+	[trunkPosn 2]
 )
-
-(procedure (localproc_0)
-	(switch global131
-		(13
-			(cond
-				(
-					(not
-						(gEgo
-							inRect:
-								[local14 0]
-								[local14 1]
-								[local14 2]
-								[local14 3]
+(procedure (EnterCar)
+	(return
+		(switch currentCar
+			(carWork
+				(cond 
+					(
+						(not
+							(ego
+								inRect: [carDoorRect 0] [carDoorRect 1] [carDoorRect 2] [carDoorRect 3]
+							)
 						)
+						(Print 225 0)
 					)
-					(Print 225 0) ; "You're not close enough to your car's door."
-				)
-				((== global133 1)
-					(Print 225 1) ; "Your car door is locked"
-					(return 0)
-				)
-				(global135
-					(Print 225 2) ; "Close the trunk first."
-					(return 0)
-				)
-				((gEgo has: 10) ; field_kit
-					(Print 225 3) ; "You should put your field kit in the trunk first."
-					(return 0)
-				)
-				(else
-					(carScript changeState: 4)
-					(return 1)
+					((== workCarLocked TRUE)
+						(Print 225 1)
+						(return FALSE)
+					)
+					(workCarTrunkOpened
+						(Print 225 2)
+						(return FALSE)
+					)
+					((ego has: iFieldKit)
+						(Print 225 3)
+						(return FALSE)
+					)
+					(else
+						(carScript changeState: 4)
+						(return TRUE)
+					)
 				)
 			)
-		)
-		(33
-			(cond
-				(
-					(not
-						(gEgo
-							inRect:
-								[local14 0]
-								[local14 1]
-								[local14 2]
-								[local14 3]
+			(carPersonal
+				(cond 
+					(
+						(not
+							(ego
+								inRect: [carDoorRect 0] [carDoorRect 1] [carDoorRect 2] [carDoorRect 3]
+							)
 						)
+						(Print 225 0)
 					)
-					(Print 225 0) ; "You're not close enough to your car's door."
-				)
-				((== global136 1)
-					(Print 225 1) ; "Your car door is locked"
-				)
-				(else
-					(carScript changeState: 4)
+					((== personalCarLocked TRUE)
+						(Print 225 1)
+					)
+					(else
+						(carScript changeState: 4)
+					)
 				)
 			)
 		)
 	)
 )
 
-(instance rm225 of Rm
+(instance rm225 of Room
 	(properties
 		picture 25
-		style 0
+		style HSHUTTER
 	)
-
-	(method (dispose)
-		(carScript dispose:)
-		(super dispose:)
-	)
-
+	
 	(method (init)
 		(super init:)
 		(HandsOff)
-		(= local2 (or (== gPrevRoomNum 33) (== gPrevRoomNum 13)))
-		(= [local24 0] 142)
-		(= [local24 1] 193)
+		(= local2
+			(if (== prevRoomNum carPersonal)
+			else
+				(== prevRoomNum carWork)
+			)
+		)
+		(= [trunkPosn 0] 142)
+		(= [trunkPosn 1] 193)
 		(if local2
 			(HandsOff)
-			(= global135 0)
+			(= workCarTrunkOpened FALSE)
 		else
 			(HandsOn)
-			(if global135
-				((= local13 (Prop new:))
+			(if workCarTrunkOpened
+				((= trunk (Prop new:))
 					view: 51
 					loop: 5
 					cel: 2
-					posn: [local24 0] [local24 1]
+					posn: [trunkPosn 0] [trunkPosn 1]
 					setPri: 15
 					init:
 				)
 			)
 		)
-		(Load rsVIEW 0)
-		(Load rsVIEW 20)
-		(Load rsVIEW 54)
-		(Load rsVIEW 51)
-		(Load rsVIEW 251)
-		(Load rsVIEW 50)
-		(Load rsVIEW 999)
-		(Load rsVIEW 123)
-		(Load rsVIEW 112)
-		(if (== global131 13)
+		(Load VIEW 0)
+		(Load VIEW 20)
+		(Load VIEW 54)
+		(Load VIEW 51)
+		(Load VIEW 251)
+		(Load VIEW 50)
+		(Load VIEW 999)
+		(Load VIEW 123)
+		(Load VIEW 112)
+		(if (== currentCar 13)
 			(= local11 180)
 			(= local12 189)
-			(= [local14 0] 160)
-			(= [local14 1] 140)
-			(= [local14 2] 180)
-			(= [local14 3] 193)
-			(= [local22 0] 198)
-			(= [local22 1] 184)
-			(= [local18 0] 106)
-			(= [local18 1] 174)
-			(= [local18 2] 140)
-			(= [local18 3] 189)
-			(= local6 161)
+			(= [carDoorRect 0] 160)
+			(= [carDoorRect 1] 140)
+			(= [carDoorRect 2] 180)
+			(= [carDoorRect 3] 193)
+			(= [carDoorPosn 0] 198)
+			(= [carDoorPosn 1] 184)
+			(= [trunkRect 0] 106)
+			(= [trunkRect 1] 174)
+			(= [trunkRect 2] 140)
+			(= [trunkRect 3] 189)
+			(= egoX 161)
 		else
 			(= local11 192)
 			(= local12 189)
-			(= [local14 0] 160)
-			(= [local14 1] 165)
-			(= [local14 2] 185)
-			(= [local14 3] 179)
-			(= [local22 0] (- local11 1))
-			(= [local22 1] (- local12 2))
-			(= local6 175)
+			(= [carDoorRect 0] 160)
+			(= [carDoorRect 1] 165)
+			(= [carDoorRect 2] 185)
+			(= [carDoorRect 3] 179)
+			(= [carDoorPosn 0] (- local11 1))
+			(= [carDoorPosn 1] (- local12 2))
+			(= egoX 175)
 		)
 		(= local9 0)
 		(= local4 (- local11 30))
 		(= local5 local11)
 		(= local7 26)
 		(= local10 0)
-		(= local3 (and (== global130 gCurRoomNum) (!= gPrevRoomNum local7)))
+		(= local3
+			(if (== roomCarParked curRoomNum)
+				(!= prevRoomNum local7)
+			else
+				0
+			)
+		)
 		(self setScript: rm225Script)
+	)
+	
+	(method (dispose)
+		(carScript dispose:)
+		(super dispose:)
 	)
 )
 
 (instance rm225Script of Script
-	(properties)
-
 	(method (doit)
-		(cond
-			((== global132 local2 1)
-				(if (not (gCast contains: local0))
+		(cond 
+			((and (== global132 local2) (== local2 1))
+				(if (not (cast contains: local0))
 					(= global132 0)
 					(carScript changeState: 0)
 				)
 			)
-			((== global132 (not local2) 1)
+			((and (== global132 (not local2)) (== (not local2) 1))
 				(= global132 0)
-				(localproc_0)
+				(EnterCar)
 			)
 		)
 		(if
 			(or
-				(gEgo inRect: 152 77 176 109)
-				(gEgo inRect: 159 109 184 140)
+				(ego inRect: 152 77 176 109)
+				(ego inRect: 159 109 184 140)
 			)
-			(gEgo setPri: 10 illegalBits: $2000)
-			(if (== global131 13)
-				(global112 stopUpd:)
+			(ego setPri: 10 illegalBits: cLMAGENTA)
+			(if (== currentCar carWork)
+				(keith stopUpd:)
 			)
 		else
-			(if (< (gEgo y:) 83)
-				(gEgo setPri: 7)
-				(if (== global131 13)
-					(global112 stopUpd:)
+			(if (< (ego y?) 83)
+				(ego setPri: 7)
+				(if (== currentCar carWork)
+					(keith stopUpd:)
 				)
 			else
-				(gEgo setPri: -1)
-				(if (== global131 13)
-					(global112 startUpd:)
+				(ego setPri: -1)
+				(if (== currentCar carWork)
+					(keith startUpd:)
 				)
 			)
-			(gEgo xStep: 3 yStep: 2 illegalBits: $8000)
+			(ego xStep: 3 yStep: 2 illegalBits: cWHITE)
 		)
 		(if
 			(and
-				(<= (gEgo y:) 130)
-				(or (< (gEgo x:) 0) (> (gEgo x:) 320))
+				(<= (ego y?) 130)
+				(or (< (ego x?) 0) (> (ego x?) 320))
 			)
-			(gEgo y: 132)
+			(ego y: 132)
 		)
 		(if
 			(and
 				(== local2 0)
 				(or
-					(<= (gEgo x:) -30)
-					(>= (gEgo x:) 380)
-					(>= (gEgo y:) 230)
+					(<= (ego x?) -30)
+					(>= (ego x?) 380)
+					(>= (ego y?) 230)
 				)
 			)
 			(rm225Script changeState: 2)
 		)
 		(super doit:)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				((= local0 (Act new:))
+				((= local0 (Actor new:))
 					view: 54
 					setLoop: 1
-					setCel: (if (== global131 13) 1 else 5)
+					setCel: (if (== currentCar 13) 1 else 5)
 					setStep: 3 3
 					setCycle: 0
 					setMotion: 0
 					posn:
 						(if
 							(and
-								(or (== gPrevRoomNum 13) (== gPrevRoomNum 33))
+								(or (== prevRoomNum 13) (== prevRoomNum 33))
 								(not local3)
 							)
 							local4
@@ -303,7 +304,7 @@
 					ignoreActors:
 					addToPic:
 				)
-				(if (IsFlag 14)
+				(if (Btst 14)
 					((View new:)
 						view: 251
 						setLoop: 9
@@ -375,33 +376,33 @@
 					ignoreActors:
 					addToPic:
 				)
-				(gEgo
+				(ego
 					view: 0
 					posn:
-						(if (== gPrevRoomNum local7) 240 else 340)
-						(if (== gPrevRoomNum local7) 190 else 300)
+						(if (== prevRoomNum local7) 240 else 340)
+						(if (== prevRoomNum local7) 190 else 300)
 					init:
 					setMotion: 0
 				)
-				(if (== global131 13)
-					((= global112 (Act new:))
+				(if (== currentCar 13)
+					((= keith (Actor new:))
 						view: 20
 						posn: 190 195
 						setCycle: Walk
-						setAvoider: (Avoid new:)
+						setAvoider: (Avoider new:)
 						illegalBits: $8000
 					)
 				)
 				(cond
-					((!= global130 gCurRoomNum)
-						(= global130 gCurRoomNum)
+					((!= roomCarParked curRoomNum)
+						(= roomCarParked curRoomNum)
 						(= global132 1)
 					)
 					((== local2 1)
 						(= global132 1)
 					)
 				)
-				(if (!= gPrevRoomNum local7)
+				(if (!= prevRoomNum local7)
 					(local0 setMotion: MoveTo local5 local12 self)
 				else
 					(self cue:)
@@ -413,14 +414,14 @@
 			((and 2 (not local2))
 				(Print 225 4) ; "You will need your car in order to leave the area."
 				(cond
-					((<= (gEgo x:) 0)
-						(gEgo setMotion: MoveTo 10 (gEgo y:))
+					((<= (ego x:) 0)
+						(ego setMotion: MoveTo 10 (ego y:))
 					)
-					((>= (gEgo x:) 320)
-						(gEgo setMotion: MoveTo 300 (gEgo y:))
+					((>= (ego x:) 320)
+						(ego setMotion: MoveTo 300 (ego y:))
 					)
-					((>= (gEgo y:) 230)
-						(gEgo setMotion: MoveTo (gEgo x:) 200)
+					((>= (ego y:) 230)
+						(ego setMotion: MoveTo (ego x:) 200)
 					)
 				)
 			)
@@ -439,201 +440,192 @@
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(switch (event type:)
-			(evSAID
-				(if (== (gEgo onControl: 1) 4096)
-					(cond
-						((or (Said '/hello') (Said 'talk[/man,manager]'))
+		(switch (event type?)
+			(saidEvent
+				(if (== (ego onControl: origin) cLRED)
+					(cond 
+						((or (Said '/hello') (Said 'chat[/dude,manager]'))
 							(rm225Script changeState: 3)
 						)
-						((Said 'show[/badge,badge]')
-							(if (gEgo has: 7) ; wallet
-								(Print 225 8 #icon 999 0 0) ; "Yes Officer," he says... "what can I do for you ?"
-								(= global175 1)
+						((Said 'display[/badge,badge]')
+							(if (ego has: 7)
+								(Print 225 8 #icon 999 0 0)
+								(= showedBadgeToMotelManager TRUE)
 							else
-								(Print 225 9) ; "You don't have your wallet."
+								(Print 225 9)
 							)
 						)
 						((Said 'rent/chamber')
 							(switch (Random 0 2)
 								(0
-									(Print 225 10) ; "GET SERIOUS, MAC!" says the manager... "After the mess you made, you guys ain't renting nothing!"
+									(Print 225 10)
 								)
 								(1
-									(Print 225 11) ; "Slightly upset, the manager says..."I only have four words for you jerks!...#$%* the b%& o&%!!!""
+									(Print 225 11)
 								)
 								(2
-									(Print 225 12) ; "The manager quickly says... "Why, so you can blow up another one?""
+									(Print 225 12)
 								)
 							)
 						)
-						((Said 'show[/painting,mugshot]')
-							(cond
-								((gEgo has: 12) ; new_mug_shot
-									(Print 225 13 #icon 112) ; "Well" the manager says, "the photograph is vaguely familiar...I believe his name was William Cole."
-									(if (== global131 13)
-										(Print 225 14) ; "Ah ha!" says Keith, "Bains is using the name Cole."
+						((Said 'display[/painting,mugshot]')
+							(cond 
+								((ego has: iNewMugShot)
+									(Print 225 13
+										#icon 112
+									)
+									(if (== currentCar carWork)
+										(Print 225 14)
 									)
 								)
-								((gEgo has: 23) ; old_mug_shot
-									(Print 225 15 #icon 123) ; "Well" the manager says, "I don't remember seeing him."
+								((ego has: iOldMugShot)
+									(Print 225 15
+										#icon 123
+									)
 								)
 								(else
-									(Print 225 16) ; "You don't have it."
+									(Print 225 16)
 								)
 							)
 						)
 						((Said '[ask]/list')
-							(Print 225 17) ; "The manager says, "Who are you looking for now?""
+							(Print 225 17)
 						)
 						((Said '[ask]/bains')
-							(Print 225 18) ; "Scanning his guest book, he shakes his head and says... "No, sorry. I don't have anyone listed by that name.""
+							(Print 225 18)
 						)
 						((Said '[ask]/bill,cole,cole')
-							(Print 225 19) ; "Scanning his guest book, he shakes his head and says... "Yes, here we are: William Cole, room #108.""
+							(Print 225 19)
 						)
 						((Said '[ask,get]/key')
-							(Print 225 20) ; "You must rent a room to get a key to the room, sir."
+							(Print 225 20)
 						)
-						((Said 'arrest/man')
-							(Print 225 21) ; "You could, but what has he done?"
+						((Said 'arrest/dude')
+							(Print 225 21)
 						)
 					)
 				)
-				(cond
+				(cond 
 					((Said 'look>')
-						(cond
-							((Said '[<at,around][/!*,building,chamber]')
-								(Print 225 22) ; "Snuggler's Inn."
+						(cond 
+							((Said '[<at,around][/noword,building,chamber]')
+								(Print 225 22)
 							)
 							((Said '/pane')
-								(cond
-									((== (gEgo onControl: 1) 16384)
-										(Print 225 23) ; "Someone's going to call the cops if you keep looking into the windows like that."
+								(cond 
+									((== (ego onControl: origin) cYELLOW)
+										(Print 225 23)
 									)
-									((== (gEgo onControl: 1) 4096)
-										(Print 225 24) ; "You see a man inside."
+									((== (ego onControl: origin) cLRED)
+										(Print 225 24)
 									)
 									(else
-										(Print 225 25) ; "You are not close enough to the window."
+										(Print 225 25)
 									)
 								)
 							)
 							((Said '/door')
-								(cond
+								(cond 
 									(
 										(or
-											(== (gEgo onControl: 1) 1024)
-											(== (gEgo onControl: 1) 512)
-											(== (gEgo onControl: 1) 2048)
+											(== (ego onControl: origin) cLGREEN)
+											(== (ego onControl: origin) cLBLUE)
+											(== (ego onControl: origin) cLCYAN)
 										)
-										(Print 225 26) ; "There's nothing special about this door."
+										(Print 225 26)
 									)
-									((== (gEgo onControl: 1) 256)
-										(Print 225 27) ; "This is room #108."
+									((== (ego onControl: origin) cGREY)
+										(Print 225 27)
 									)
 									(
-										(gEgo
-											inRect:
-												[local14 0]
-												[local14 1]
-												[local14 2]
-												[local14 3]
+										(ego
+											inRect: [carDoorRect 0] [carDoorRect 1] [carDoorRect 2] [carDoorRect 3]
 										)
-										(Print 225 26) ; "There's nothing special about this door."
+										(Print 225 26)
 									)
 									(else
-										(Print 225 28) ; "You aren't close enough to the door."
+										(Print 225 28)
 									)
 								)
 							)
 							((Said '/briefcase')
-								(if (gEgo has: 10) ; field_kit
-									(Print 225 29) ; "You don't need to look at it now. What are you doing with it, anyway!"
+								(if (ego has: iFieldKit)
+									(Print 225 29)
 								else
-									(Print 225 16) ; "You don't have it."
+									(Print 225 16)
 								)
 							)
 							((Said '/trunk')
-								(if (== global131 13)
+								(if (== currentCar carWork)
 									(if
 										(and
-											(gEgo
-												inRect:
-													[local18 0]
-													[local18 1]
-													[local18 2]
-													[local18 3]
+											(ego
+												inRect: [trunkRect 0] [trunkRect 1] [trunkRect 2] [trunkRect 3]
 											)
-											(gCast contains: local13)
+											(cast contains: trunk)
 										)
-										(gInventory
-											carrying:
-												{The car's trunk contains:}
+										(inventory
+											carrying: {The car's trunk contains:}
 											empty: {The car's trunk is empty.}
 											showSelf: 13
 										)
 									else
-										(Print 225 30) ; "You're not close enough to an open trunk."
+										(Print 225 30)
 									)
 								else
-									(Print 225 31) ; "Your car's "hatch-back" hasn't worked since its warranty expired."
+									(Print 225 31)
 								)
 							)
 						)
 					)
-					((or (Said 'break/door') (Said 'hit/door'))
+					((or (Said 'break/door') (Said 'beat/door'))
 						(if
 							(or
-								(== (gEgo onControl: 1) 1024)
-								(== (gEgo onControl: 1) 512)
-								(== (gEgo onControl: 1) 2048)
+								(== (ego onControl: origin) cLGREEN)
+								(== (ego onControl: origin) cLBLUE)
+								(== (ego onControl: origin) cLCYAN)
 							)
-							(Print 225 32) ; "Being a macho type, you kick in the door, making a fool out of yourself."
+							(Print 225 32)
 						else
-							(Print 225 28) ; "You aren't close enough to the door."
+							(Print 225 28)
 						)
 					)
-					((or (Said '/hello') (Said 'talk[/man,cop]'))
-						(if (gEgo inRect: 180 148 288 171)
-							(Print 225 33) ; "Sonny says... " How are you doing ? ""
-							(if (== global131 13)
-								(Print 225 34) ; "The officer says... "Hi, guys. Sorry, you can't go inside now.""
+					((or (Said '/hello') (Said 'chat[/dude,cop]'))
+						(if (ego inRect: 180 148 288 171)
+							(Print 225 33)
+							(if (== currentCar carWork)
+								(Print 225 34)
 							else
-								(Print 225 35) ; "The officer says... "Hi, Sonny. Sorry, you can't go inside now.""
+								(Print 225 35)
 							)
 						else
-							(Print 225 36) ; "You aren't close enough to talk."
+							(Print 225 36)
 						)
 					)
 					((or (Said 'use/key') (Said 'open/door'))
-						(cond
+						(cond 
 							(
 								(or
-									(== (gEgo onControl: 1) 1024)
-									(== (gEgo onControl: 1) 2048)
-									(== (gEgo onControl: 1) 256)
-									(== (gEgo onControl: 1) 512)
+									(== (ego onControl: origin) cLGREEN)
+									(== (ego onControl: origin) cLCYAN)
+									(== (ego onControl: origin) cGREY)
+									(== (ego onControl: origin) cLBLUE)
 								)
-								(Print 225 37) ; "You can't do that. You don't have a key to this room"
+								(Print 225 37)
 							)
 							(
-								(gEgo
-									inRect:
-										[local14 0]
-										[local14 1]
-										[local14 2]
-										[local14 3]
+								(ego
+									inRect: [carDoorRect 0] [carDoorRect 1] [carDoorRect 2] [carDoorRect 3]
 								)
-								(localproc_0)
+								(EnterCar)
 							)
-							((gEgo inRect: 180 187 200 197)
-								(Print 225 38) ; "You don't need to open this door."
+							((ego inRect: 180 187 200 197)
+								(Print 225 38)
 							)
 							(else
-								(Print 225 28) ; "You aren't close enough to the door."
+								(Print 225 28)
 							)
 						)
 					)
@@ -642,11 +634,11 @@
 							(rm225Script changeState: 6)
 							(= local10 0)
 						else
-							(Print 225 39) ; "What do you mean "get out"? You aren't in a motel room."
+							(Print 225 39)
 						)
 					)
 					((Said 'enter/auto')
-						(localproc_0)
+						(EnterCar)
 					)
 					((Said 'exit/auto')
 						(= global132 1)
@@ -654,209 +646,185 @@
 					((Said 'unlock/door')
 						(if
 							(or
-								(gEgo
-									inRect:
-										[local14 0]
-										[local14 1]
-										[local14 2]
-										[local14 3]
+								(ego
+									inRect: [carDoorRect 0] [carDoorRect 1] [carDoorRect 2] [carDoorRect 3]
 								)
-								(gEgo inRect: 180 187 200 197)
+								(ego inRect: 180 187 200 197)
 							)
-							(cond
-								((and (== global131 13) (gEgo has: 3)) ; unmarked_car_keys
-									(if (== global133 1)
-										(= global133 0)
-										(Print 225 40) ; "OK. It's unlocked."
+							(cond 
+								((and (== currentCar carWork) (ego has: iUnmarkedCarKeys))
+									(if (== workCarLocked TRUE)
+										(= workCarLocked FALSE)
+										(Print 225 40)
 									else
-										(Print 225 41) ; "The door is already unlocked."
+										(Print 225 41)
 									)
 								)
-								((== global131 13)
-									(Print 225 42) ; "You need a key to unlock this door."
+								((== currentCar carWork)
+									(Print 225 42)
 								)
 							)
-							(cond
-								((and (== global131 33) (gEgo has: 2)) ; key_ring
-									(if (== global136 1)
-										(= global136 0)
-										(Print 225 40) ; "OK. It's unlocked."
+							(cond 
+								((and (== currentCar carPersonal) (ego has: iKeyRing))
+									(if (== personalCarLocked TRUE)
+										(= personalCarLocked FALSE)
+										(Print 225 40)
 									else
-										(Print 225 41) ; "The door is already unlocked."
+										(Print 225 41)
 									)
 								)
-								((== global131 33)
-									(Print 225 42) ; "You need a key to unlock this door."
+								((== currentCar carPersonal)
+									(Print 225 42)
 								)
 							)
 						else
-							(Print 225 43) ; "You're not close enough."
+							(Print 225 43)
 						)
 					)
 					((Said 'lock/door')
 						(if
 							(or
-								(gEgo
-									inRect:
-										[local14 0]
-										[local14 1]
-										[local14 2]
-										[local14 3]
+								(ego
+									inRect: [carDoorRect 0] [carDoorRect 1] [carDoorRect 2] [carDoorRect 3]
 								)
-								(gEgo inRect: 180 187 200 197)
+								(ego inRect: 180 187 200 197)
 							)
-							(if (== global131 13)
-								(if (== global133 0)
-									(= global133 1)
-									(Print 225 44) ; "OK. It's locked."
+							(if (== currentCar carWork)
+								(if (== workCarLocked FALSE)
+									(= workCarLocked TRUE)
+									(Print 225 44)
 								else
-									(Print 225 45) ; "The door is already locked."
+									(Print 225 45)
 								)
 							)
-							(if (== global131 33)
-								(if (== global136 0)
-									(= global136 1)
-									(Print 225 44) ; "OK. It's locked."
+							(if (== currentCar carPersonal)
+								(if (== personalCarLocked FALSE)
+									(= personalCarLocked TRUE)
+									(Print 225 44)
 								else
-									(Print 225 45) ; "The door is already locked."
+									(Print 225 45)
 								)
 							)
 						else
-							(Print 225 43) ; "You're not close enough."
+							(Print 225 43)
 						)
 					)
 					((or (Said 'knock') (Said 'knock/door'))
 						(if
 							(or
-								(== (gEgo onControl: 1) 1024)
-								(== (gEgo onControl: 1) 512)
-								(== (gEgo onControl: 1) 2048)
-								(== (gEgo onControl: 1) 256)
+								(== (ego onControl: origin) cLGREEN)
+								(== (ego onControl: origin) cLBLUE)
+								(== (ego onControl: origin) cLCYAN)
+								(== (ego onControl: origin) cGREY)
 							)
-							(Print 225 46) ; "You knock, but no one responds."
+							(Print 225 46)
 						else
-							(Print 225 47) ; "You aren't close enough."
+							(Print 225 47)
 						)
 					)
 					((Said 'open/police')
 						(if
 							(or
-								(== (gEgo onControl: 1) 1024)
-								(== (gEgo onControl: 1) 512)
-								(== (gEgo onControl: 1) 256)
-								(== (gEgo onControl: 1) 2048)
+								(== (ego onControl: origin) cLGREEN)
+								(== (ego onControl: origin) cLBLUE)
+								(== (ego onControl: origin) cGREY)
+								(== (ego onControl: origin) cLCYAN)
 							)
-							(Print 225 48) ; "In a commanding voice you yell, "Open up in the name of the police!""
-							(Print 225 49) ; "You listen carefully but are unable to hear anything."
+							(Print 225 48)
+							(Print 225 49)
 						else
-							(Print 225 28) ; "You aren't close enough to the door."
+							(Print 225 28)
 						)
 					)
-					((Said 'show[/badge,badge]')
-						(if (gEgo inRect: 180 148 288 171)
-							(if (gEgo has: 7) ; wallet
-								(Print 225 50 #icon 999 0 0) ; "Yes, what can I do for you ?"
+					((Said 'display[/badge,badge]')
+						(if (ego inRect: 180 148 288 171)
+							(if (ego has: iWallet)
+								(Print 225 50 #icon 999 0 0)
 							else
-								(Print 225 51) ; "You don't have your identification."
+								(Print 225 51)
 							)
 						else
-							(Print 225 52) ; "You aren't close enough to anybody to show your identification."
+							(Print 225 52)
 						)
 					)
 					((Said 'open,unlock/trunk')
-						(if (== global131 13)
+						(if (== currentCar carWork)
 							(if
-								(gEgo
-									inRect:
-										[local18 0]
-										[local18 1]
-										[local18 2]
-										[local18 3]
+								(ego
+									inRect: [trunkRect 0] [trunkRect 1] [trunkRect 2] [trunkRect 3]
 								)
-								(cond
-									(global135
-										(Print 225 53) ; "It's already open."
+								(cond 
+									(workCarTrunkOpened
+										(Print 225 53)
 									)
-									((gEgo has: 3) ; unmarked_car_keys
+									((ego has: iUnmarkedCarKeys)
 										(carScript changeState: 9)
 									)
 									(else
-										(Print 225 54) ; "You need a key to open this trunk."
+										(Print 225 54)
 									)
 								)
 							else
-								(proc0_7) ; "You're not close enough."
+								(NotClose)
 							)
 						else
-							(Print 225 31) ; "Your car's "hatch-back" hasn't worked since its warranty expired."
+							(Print 225 31)
 						)
 					)
 					((Said 'close,lock/trunk')
-						(if (== global131 13)
+						(if (== currentCar carWork)
 							(if
-								(gEgo
-									inRect:
-										[local18 0]
-										[local18 1]
-										[local18 2]
-										[local18 3]
+								(ego
+									inRect: [trunkRect 0] [trunkRect 1] [trunkRect 2] [trunkRect 3]
 								)
-								(if global135
+								(if workCarTrunkOpened
 									(carScript changeState: 11)
 								else
-									(Print 225 55) ; "It's already closed."
+									(Print 225 55)
 								)
 							else
-								(proc0_7) ; "You're not close enough."
+								(NotClose)
 							)
 						else
-							(Print 225 31) ; "Your car's "hatch-back" hasn't worked since its warranty expired."
+							(Print 225 31)
 						)
 					)
-					((Said 'drop,place/briefcase')
+					((Said 'deposit,place/briefcase')
 						(if
-							(gEgo
-								inRect:
-									[local18 0]
-									[local18 1]
-									[local18 2]
-									[local18 3]
+							(ego
+								inRect: [trunkRect 0] [trunkRect 1] [trunkRect 2] [trunkRect 3]
 							)
-							(if global135
-								(if (gEgo has: 10) ; field_kit
-									(Print 225 56) ; "You place your field kit inside the trunk."
-									(PutItem 10 13) ; field_kit
+							(if workCarTrunkOpened
+								(if (ego has: iFieldKit)
+									(Print 225 56)
+									(PutInRoom iFieldKit carWork)
 								else
-									(Print 225 57) ; "You don't have the field kit."
+									(Print 225 57)
 								)
 							else
-								(Print 225 58) ; "Open the trunk first."
+								(Print 225 58)
 							)
 						else
-							(Print 225 59) ; "You're not close enough to your car's trunk."
+							(Print 225 59)
 						)
 					)
 					((Said 'remove,get/briefcase')
 						(if
-							(gEgo
-								inRect:
-									[local18 0]
-									[local18 1]
-									[local18 2]
-									[local18 3]
+							(ego
+								inRect: [trunkRect 0] [trunkRect 1] [trunkRect 2] [trunkRect 3]
 							)
-							(if global135
-								(if (IsItemAt 10 13) ; field_kit
-									(Print 225 60) ; "You take your field kit from the trunk."
-									(gEgo get: 10) ; field_kit
+							(if workCarTrunkOpened
+								(if (InRoom iFieldKit carWork)
+									(Print 225 60)
+									(ego get: iFieldKit)
 								else
-									(Print 225 61) ; "The field kit is not in the trunk."
+									(Print 225 61)
 								)
 							else
-								(Print 225 58) ; "Open the trunk first."
+								(Print 225 58)
 							)
 						else
-							(Print 225 59) ; "You're not close enough to your car's trunk."
+							(Print 225 59)
 						)
 					)
 				)
@@ -866,48 +834,46 @@
 )
 
 (instance carScript of Script
-	(properties)
-
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(gEgo
-					posn: local6 178
+				(ego
+					posn: egoX 178
 					loop: 0
 					cel: 0
 					setCycle: Walk
 					setPri: 13
 					startUpd:
 				)
-				(if (== global131 13)
-					((= local1 (Prop new:))
+				(if (== currentCar carWork)
+					((= carDoor (Prop new:))
 						view: 51
 						loop: 3
 						cel: 0
-						posn: [local22 0] [local22 1]
+						posn: [carDoorPosn 0] [carDoorPosn 1]
 						setPri: 15
 						init:
-						setCycle: End
+						setCycle: EndLoop
 					)
 				)
 				(self cue:)
 			)
 			(1
 				(= local2 0)
-				(if (== global131 13)
-					(= global133 0)
+				(if (== currentCar carWork)
+					(= workCarLocked FALSE)
 				else
-					(= global136 0)
+					(= personalCarLocked FALSE)
 				)
-				(if (== global131 13)
-					(local1 dispose:)
-					(global112
+				(if (== currentCar carWork)
+					(carDoor dispose:)
+					(keith
 						posn: 200 196
 						setStep: 1 2
 						setLoop: 0
 						setCel: 0
 						setPri: 15
-						ignoreActors: 1
+						ignoreActors: TRUE
 						illegalBits: 0
 						init:
 					)
@@ -916,46 +882,46 @@
 				(HandsOn)
 			)
 			(2
-				(if (== global131 13)
-					(global112
+				(if (== currentCar carWork)
+					(keith
 						setStep: 3 2
 						setCycle: Walk
 						setLoop: -1
 						setPri: -1
-						ignoreActors: 0
-						illegalBits: $8000
+						ignoreActors: FALSE
+						illegalBits: cWHITE
 						setMotion: MoveTo 180 197 self
 					)
 				)
 			)
 			(3
-				(global112 setMotion: Follow gEgo 500)
-				(Print 225 62 #draw) ; "What're we doing here, Sonny?"
+				(keith setMotion: Follow ego 500)
+				(Print 225 62 #draw)
 			)
 			(4
 				(HandsOff)
-				(if (== global131 13)
-					(Print 225 63) ; "Keith yells: "Geez, Sonny! Hold on a second, will ya?""
-					(cond
-						((> (global112 y:) 189)
-							(global112
+				(if (== currentCar carWork)
+					(Print 225 63)
+					(cond 
+						((> (keith y?) 189)
+							(keith
 								ignoreActors:
-								illegalBits: $8000
-								setMotion: MoveTo 185 (global112 y:) self
+								illegalBits: cWHITE
+								setMotion: MoveTo 185 (keith y?) self
 							)
 						)
-						((< (global112 x:) 110)
-							(global112
+						((< (keith x?) 110)
+							(keith
 								ignoreActors:
-								illegalBits: $8000
-								setMotion: MoveTo 110 (global112 y:) self
+								illegalBits: cWHITE
+								setMotion: MoveTo 110 (keith y?) self
 							)
 						)
 						(else
-							(global112
+							(keith
 								ignoreActors:
-								illegalBits: $8000
-								setMotion: MoveTo 105 (global112 y:) self
+								illegalBits: cWHITE
+								setMotion: MoveTo 105 (keith y?) self
 							)
 						)
 					)
@@ -964,42 +930,40 @@
 				)
 			)
 			(5
-				(cond
-					((== (global112 x:) 110)
-						(global112
+				(cond 
+					((== (keith x?) 110)
+						(keith
 							ignoreActors:
-							illegalBits: $8000
+							illegalBits: cWHITE
 							setMotion: MoveTo 110 195 self
 						)
 					)
-					((== (global112 x:) 105)
-						(global112
+					((== (keith x?) 105)
+						(keith
 							ignoreActors:
-							illegalBits: $8000
+							illegalBits: cWHITE
 							setMotion: MoveTo 105 195 self
 						)
 					)
-					(else
-						(self cue:)
-					)
+					(else (self cue:))
 				)
 			)
 			(6
-				(global112 setMotion: MoveTo 190 195 self)
+				(keith setMotion: MoveTo 190 195 self)
 			)
 			(7
-				(gEgo setPri: 12)
-				(if (== global131 13)
-					((= local1 (Prop new:))
+				(ego setPri: 12)
+				(if (== currentCar carWork)
+					((= carDoor (Prop new:))
 						view: 51
-						loop: (if (== global131 13) 3 else 0)
+						loop: (if (== currentCar 13) 3 else 0)
 						cel: 0
-						posn: [local22 0] [local22 1]
+						posn: [carDoorPosn 0] [carDoorPosn 1]
 						setPri: 15
 						init:
-						setCycle: End
+						setCycle: EndLoop
 					)
-					(global112
+					(keith
 						ignoreActors: 1
 						illegalBits: 0
 						setLoop: 0
@@ -1011,49 +975,46 @@
 				(self cue:)
 			)
 			(8
-				(= gNewRoomNum global131)
+				(= newRoomNum currentCar)
 			)
 			(9
-				((= local13 (Prop new:))
+				((= trunk (Prop new:))
 					view: 51
 					loop: 5
 					cel: 0
-					posn: [local24 0] [local24 1]
+					posn: [trunkPosn 0] [trunkPosn 1]
 					setPri: 15
 					init:
-					setCycle: End self
+					setCycle: EndLoop self
 				)
 			)
 			(10
-				(= global135 1)
-				(local13 stopUpd:)
+				(= workCarTrunkOpened TRUE)
+				(trunk stopUpd:)
 			)
 			(11
-				(local13 startUpd: setCycle: Beg self)
+				(trunk startUpd: setCycle: BegLoop self)
 			)
 			(12
-				(= global135 0)
-				(local13 dispose:)
+				(= workCarTrunkOpened FALSE)
+				(trunk dispose:)
 			)
 		)
 	)
 )
 
-;;;(instance stopScript of Script ; UNUSED
-;;;	(properties)
-;;;
+;;;(instance stopScript of Script
 ;;;	(method (changeState newState)
 ;;;		(switch (= state newState)
 ;;;			(0
-;;;				(gEgo stopUpd:)
-;;;				(if (== global131 13)
-;;;					(global112 stopUpd:)
+;;;				(ego stopUpd:)
+;;;				(if (== currentCar carWork)
+;;;					(keith stopUpd:)
 ;;;				)
 ;;;			)
 ;;;			(1
-;;;				(local0 ignoreActors: 0 stopUpd: addToPic:)
+;;;				(local0 ignoreActors: FALSE stopUpd: addToPic:)
 ;;;			)
 ;;;		)
 ;;;	)
 ;;;)
-

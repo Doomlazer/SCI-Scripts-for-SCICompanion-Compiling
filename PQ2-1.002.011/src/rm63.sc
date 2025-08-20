@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 63)
 (include sci.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Extra)
 (use Motion)
 (use Game)
@@ -16,10 +15,10 @@
 )
 
 (local
-	[local0 100]
-	local100
+	[str 100]
+	egoX
 	local101
-	local102
+	moorePosn
 	local103
 	local104
 	local105
@@ -29,16 +28,15 @@
 	local109
 	local110
 )
-
-(procedure (localproc_0)
+(procedure (localproc_03fc)
 	(Print &rest #at -1 40)
 )
 
-(instance bubble of Act
+(instance bubble of Actor
 	(properties)
 )
 
-(instance mooreBubble of Act
+(instance mooreBubble of Actor
 	(properties)
 )
 
@@ -46,7 +44,7 @@
 	(properties)
 )
 
-(instance carp of Act
+(instance carp of Actor
 	(properties)
 )
 
@@ -78,21 +76,12 @@
 	(properties)
 )
 
-(instance rm63 of Rm
+(instance rm63 of Room
 	(properties
 		picture 63
-		style 8
+		style $0008
 	)
-
-	(method (dispose)
-		(mooreScript dispose:)
-		(carpScript dispose:)
-		(airScript dispose:)
-		(bubScript dispose:)
-		(DisposeScript 988)
-		(super dispose:)
-	)
-
+	
 	(method (init)
 		(User canInput: 1)
 		(User canControl: 1)
@@ -221,10 +210,17 @@
 			addToPic:
 			ignoreActors:
 		)
-		(if (IsItemAt 18) ; lost_badge
-			(badge view: 91 loop: 3 cel: 7 posn: 197 153 init: ignoreActors:)
+		(if (InRoom 18)
+			(badge
+				view: 91
+				loop: 3
+				cel: 7
+				posn: 197 153
+				init:
+				ignoreActors:
+			)
 		)
-		(if (not (< global110 30))
+		(if (not (< howFast 30))
 			(carp
 				view: 165
 				setCycle: 0
@@ -236,13 +232,13 @@
 				setScript: carpScript
 			)
 		)
-		(= local108 (if (IsFlag 7) 6 else 2))
-		(= local102 (Random 1 7))
+		(= local108 (if (Btst 7) 6 else 2))
+		(= moorePosn (Random 1 7))
 		(moore
 			view: 12
 			loop: 5
 			posn:
-				(switch local102
+				(switch moorePosn
 					(1 158)
 					(2 150)
 					(3 286)
@@ -251,7 +247,7 @@
 					(6 95)
 					(7 198)
 				)
-				(switch local102
+				(switch moorePosn
 					(1 93)
 					(2 186)
 					(3 95)
@@ -266,8 +262,8 @@
 		(frogLegs
 			view: 12
 			loop: 6
-			posn: (moore x:) (moore y:)
-			setCycle: Fwd
+			posn: (moore x?) (moore y?)
+			setCycle: Forward
 			cycleSpeed: 2
 			init:
 		)
@@ -287,7 +283,7 @@
 			view: 12
 			setLoop: 4
 			xStep: 4
-			setCycle: Fwd
+			setCycle: Forward
 			setPri: 12
 			ignoreActors:
 			illegalBits: 0
@@ -295,36 +291,39 @@
 			stopUpd:
 			setScript: mooreScript
 		)
-		(gEgo init:)
+		(ego init:)
 		(super init:)
 		(self setScript: rm63Script)
+	)
+	
+	(method (dispose)
+		(mooreScript dispose:)
+		(carpScript dispose:)
+		(airScript dispose:)
+		(bubScript dispose:)
+		(DisposeScript 988)
+		(super dispose:)
 	)
 )
 
 (instance rm63Script of Script
 	(properties)
-
+	
 	(method (doit)
-		(if (and (== (self state:) 2) (not local109))
-			(gEgo x: (+ (gEgo x:) 1))
-			(if (> local103 1)
-				(-- local103)
-			)
+		(if (and (== (self state?) 2) (not local109))
+			(ego x: (+ (ego x?) 1))
+			(if (> local103 1) (-- local103))
 			(if (== local103 1)
 				(= local103 0)
 				(bubScript changeState: 1)
 			)
 		)
-		(if (> local104 1)
-			(-- local104)
-		)
+		(if (> local104 1) (-- local104))
 		(if (== local104 1)
 			(= local104 0)
 			(mooreScript changeState: 1)
 		)
-		(if (> local105 1)
-			(-- local105)
-		)
+		(if (> local105 1) (-- local105))
 		(if (== local105 1)
 			(= local105 0)
 			(if (== local110 1)
@@ -333,16 +332,21 @@
 				(carpScript changeState: 1)
 			)
 		)
-		(if (and (> global191 0) (>= local107 0))
-			(-= global191 2)
+		(if (and (> scubaTankOxygen 0) (>= local107 0))
+			(= scubaTankOxygen (- scubaTankOxygen 2))
 			(= local107 local108)
 		)
-		(if (> local107 0)
-			(-- local107)
-		)
-		(cond
-			((and (or (<= 0 global191 6) (> global191 2300)) (not local109))
-				(if (IsFlag 7)
+		(if (> local107 0) (-- local107))
+		(cond 
+			(
+				(and
+					(or
+						(and (<= 0 scubaTankOxygen) (<= scubaTankOxygen 6))
+						(> scubaTankOxygen 2300)
+					)
+					(not local109)
+				)
+				(if (Btst 7)
 					(EgoDead
 						{As you fight for air, blackness overcomes you. Next time, be more aware of your air tank's reserve.}
 					)
@@ -352,51 +356,56 @@
 					)
 				)
 			)
-			((and (<= 8 global191 15) (not local109))
+			(
+				(and
+					(<= 8 scubaTankOxygen)
+					(<= scubaTankOxygen 15)
+					(not local109)
+				)
 				(airScript changeState: 2)
-				(= global191 7)
-				(localproc_0 63 0) ; "Your mind is starting to go hazy as you realize that your air supply is gone."
+				(= scubaTankOxygen 7)
+				(localproc_03fc 63 0)
 			)
-			((and (<= 40 global191 50) (not local109))
+			(
+				(and
+					(<= 40 scubaTankOxygen)
+					(<= scubaTankOxygen 50)
+					(not local109)
+				)
 				(airScript changeState: 2)
-				(= global191 39)
-				(localproc_0 63 1) ; "You are having trouble getting enough air."
+				(= scubaTankOxygen 39)
+				(localproc_03fc 63 1)
 			)
 		)
-		(if (> local106 1)
-			(-- local106)
-		)
+		(if (> local106 1) (-- local106))
 		(if (== local106 1)
 			(= local106 0)
 			(airScript changeState: 2)
 		)
-		(cond
-			((== (gEgo edgeHit:) EDGE_LEFT)
-				(gCurRoom
-					newRoom:
-						(if local109
-							(gContinuousMusic stop:)
-							(DisposeScript 988)
-							62
-						else
-							64
-						)
+		(cond 
+			((== (ego edgeHit?) 4)
+				(curRoom
+					newRoom: (if local109
+						(cSound stop:)
+						(DisposeScript 988)
+						62
+					else
+						64
+					)
 				)
 			)
-			((== (gEgo edgeHit:) EDGE_RIGHT)
-				(gCurRoom newRoom: 65)
-			)
+			((== (ego edgeHit?) 2) (curRoom newRoom: 65))
 		)
 		(super doit:)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(if (== gPrevRoomNum 60)
+				(if (== prevRoomNum 60)
 					(= local109 1)
 					(HandsOff)
-					(gEgo
+					(ego
 						view: 489
 						setStep: 2 2
 						setLoop: 0
@@ -406,103 +415,97 @@
 						ignoreActors: 1
 						setMotion: MoveTo 110 130 self
 					)
-					(= global189 16)
+					(= diverState 16)
 				else
-					(gEgo
+					(ego
 						posn:
-							(switch gPrevRoomNum
-								(64 30)
-								(65 290)
-							)
-							(gEgo y:)
-						setMotion:
-							MoveTo
-							(if (== gPrevRoomNum 65) -10 else 350)
-							(gEgo y:)
+						(switch prevRoomNum
+							(64 30)
+							(65 290)
+						) (ego y?)
+						setMotion: MoveTo (if (== prevRoomNum 65) -10 else 350) (ego y?)
 					)
 					(self changeState: 2)
 				)
 			)
 			(1
-				(gEgo
+				(ego
 					setLoop: 1
 					setPri: 15
 					setMotion: MoveTo 400 134
 					cycleSpeed: 2
-					setCycle: End self
+					setCycle: EndLoop self
 				)
 			)
 			(2
 				(= local109 0)
-				(gEgo
+				(ego
 					cycleSpeed: 0
 					view: 12
 					setCycle: Walk
 					setStep: 3 2
 					setLoop: -1
 					setPri: -1
-					illegalBits: $8000
+					illegalBits: -32768
 					ignoreActors: 0
 				)
-				(if (== gPrevRoomNum 60)
-					(if (not (IsFlag 6))
-						(localproc_0 63 2) ; "Without the weight belt, you struggle to stay down."
+				(if (== prevRoomNum 60)
+					(if (not (Btst 6))
+						(localproc_03fc 63 2)
 						(= local109 1)
-						(gEgo
+						(ego
 							setStep: 2 2
 							illegalBits: 0
 							ignoreActors:
 							setMotion: MoveTo 225 132 self
 						)
 					else
-						(gEgo setMotion: MoveTo 400 134)
+						(ego setMotion: MoveTo 400 134)
 						(HandsOn)
 					)
 				)
 			)
 			(3
-				(localproc_0 63 3) ; "Exhausted from the effort, you decide to surface."
+				(localproc_03fc 63 3)
 				(self cue:)
 			)
 			(4
 				(User canControl: 0 canInput: 0)
 				(= local109 1)
-				(gEgo
+				(ego
 					view: 489
 					setLoop: 2
 					cycleSpeed: 2
 					illegalBits: 0
 					ignoreActors:
-					setCycle: End self
+					setCycle: EndLoop self
 				)
 			)
 			(5
-				(gEgo
+				(ego
 					setLoop: 4
 					setStep: 5 3
 					setPri: 15
 					cycleSpeed: 0
-					setCycle: Fwd
-					setMotion: MoveTo (- (gEgo x:) 90) 55 self
+					setCycle: Forward
+					setMotion: MoveTo (- (ego x?) 90) 55 self
 				)
 			)
 			(6
 				(DisposeScript 988)
-				(gContinuousMusic stop:)
-				(gCurRoom newRoom: 62)
+				(cSound stop:)
+				(curRoom newRoom: 62)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event &tmp temp0)
-		(if (event claimed:)
-			(return)
-		)
-		(switch (event type:)
+		(if (event claimed?) (return))
+		(switch (event type?)
 			(evKEYBOARD
 				(if
 					(or
-						(== (= temp0 (event message:)) KEY_F6)
+						(== (= temp0 (event message?)) KEY_F6)
 						(== temp0 KEY_F8)
 						(== temp0 KEY_F10)
 					)
@@ -512,18 +515,14 @@
 				)
 			)
 			(evSAID
-				(cond
-					((Said 'talk')
-						(Print 63 4) ; "You can't talk NOW!"
-					)
-					((Said '/briefcase')
-						(Print 63 5) ; "You don't have your field kit."
-					)
+				(cond 
+					((Said 'chat') (Print 63 4))
+					((Said '/briefcase') (Print 63 5))
 					(
 						(Said
 							'remove,(get<off)/belt,bcv,tank,fin,mask,suit,equipment'
 						)
-						(Print 63 6) ; "Taking off your scuba equipment is not a good idea."
+						(Print 63 6)
 					)
 					(
 						(Said
@@ -531,11 +530,10 @@
 						)
 						(airScript changeState: 0)
 					)
-					((or (Said '<up') (Said '/rise,lid') (Said 'rise'))
-						(rm63Script changeState: 4)
-					)
+					(
+					(or (Said '<up') (Said '/rise,lid') (Said 'rise')) (rm63Script changeState: 4))
 					((Said 'look>')
-						(cond
+						(cond 
 							(
 								(Said
 									'/air,pressure,(supply[<air]),(tank[<air]),(gauge[<air,pressure])'
@@ -543,377 +541,224 @@
 								(airScript changeState: 0)
 							)
 							(
-								(Said
-									'[<at,around][/!*,clearwater,water,garbage,crud]'
-								)
-								(localproc_0 63 7) ; "Along with the junk, you see an old car on the bottom. There are huge boulders on the far side."
-							)
-							((Said '<up')
-								(localproc_0 63 8) ; "You see sunlight rippling through from the surface."
-							)
+							(Said '[<at,around][/!*,clearwater,water,garbage,crud]') (localproc_03fc 63 7))
+							((Said '<up') (localproc_03fc 63 8))
 							(
 								(or
 									(Said '/bottom,muck,bed[<clearwater]')
 									(Said '<down,ahead')
 									(Said '/object,dirt')
 								)
-								(cond
-									((gEgo inRect: 0 147 110 191)
-										(localproc_0 63 9) ; "You find an old discarded wallet. Endless volumes of water have rendered it worthless."
-									)
-									((gEgo inRect: 239 129 319 191)
-										(localproc_0 63 10) ; "Its just a waterlogged piece of paper."
-									)
-									((gEgo inRect: 0 95 118 112)
-										(localproc_0 63 11) ; "The old car has been sitting here rusting away for a long time now."
-									)
+								(cond 
+									((ego inRect: 0 147 110 191) (localproc_03fc 63 9))
+									((ego inRect: 239 129 319 191) (localproc_03fc 63 10))
+									((ego inRect: 0 95 118 112) (localproc_03fc 63 11))
 									(
 										(and
-											(IsItemAt 18) ; lost_badge
+											(InRoom 18)
 											(or
-												(and
-													(gEgo
-														inRect: 146 141 186 158
-													)
-													(== (gEgo loop:) 0)
-												)
-												(and
-													(gEgo
-														inRect: 213 143 245 158
-													)
-													(== (gEgo loop:) 1)
-												)
-												(and
-													(gEgo
-														inRect: 184 137 205 149
-													)
-													(== (gEgo loop:) 2)
-												)
-												(and
-													(gEgo
-														inRect: 184 155 206 169
-													)
-													(== (gEgo loop:) 3)
-												)
+												(and (ego inRect: 146 141 186 158) (== (ego loop?) 0))
+												(and (ego inRect: 213 143 245 158) (== (ego loop?) 1))
+												(and (ego inRect: 184 137 205 149) (== (ego loop?) 2))
+												(and (ego inRect: 184 155 206 169) (== (ego loop?) 3))
 											)
 										)
-										(localproc_0 63 12) ; "You see a flicker of gold from the corner of your eye."
-										(localproc_0 63 13) ; "You are amazed at what you think this object could be."
+										(localproc_03fc 63 12)
+										(localproc_03fc 63 13)
 									)
-									((gEgo inRect: 108 139 189 189)
-										(localproc_0 63 14) ; "Nothing but a rusted-out old beer can. You can tell it's an oldie by the fact that someone had to use a 'church key' on it. No 'pop-tops' in those days."
-									)
-									((gEgo inRect: 200 100 319 129)
-										(localproc_0 63 15) ; "It's metal, but you can't make out what it is."
-									)
-									((gEgo inRect: 105 109 159 139)
-										(localproc_0 63 16) ; "It's a pair of algae-covered underwater goggles, lost by a swimmer in the murky past."
-									)
-									((gEgo inRect: 0 112 108 139)
-										(localproc_0 63 17) ; "There's a bald truck tire nestled deep in the mud next to a 55-gallon oil drum."
-									)
-									(else
-										(localproc_0 63 18) ; "There is a lot of mud and trash on the river bottom. You will have to search it for clues or evidence."
-									)
+									((ego inRect: 108 139 189 189) (localproc_03fc 63 14))
+									((ego inRect: 200 100 319 129) (localproc_03fc 63 15))
+									((ego inRect: 105 109 159 139) (localproc_03fc 63 16))
+									((ego inRect: 0 112 108 139) (localproc_03fc 63 17))
+									(else (localproc_03fc 63 18))
 								)
 							)
 							((Said '/auto')
-								(if (< (gEgo x:) 160)
-									(localproc_0 63 11) ; "The old car has been sitting here rusting away for a long time now."
+								(if (< (ego x?) 160)
+									(localproc_03fc 63 11)
 								else
-									(localproc_0 63 19) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
+									(localproc_03fc 63 19)
 								)
 							)
 							((Said '/number,license')
-								(if (gEgo inRect: 0 95 118 112)
-									(localproc_0 63 20) ; "The numbers have rusted and deteriorated to the point that you can't make them out."
+								(if (ego inRect: 0 95 118 112)
+									(localproc_03fc 63 20)
 								else
-									(localproc_0 63 19) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
+									(localproc_03fc 63 19)
 								)
 							)
 							((Said '/newspaper')
-								(if (gEgo inRect: 239 129 319 191)
-									(localproc_0 63 10) ; "Its just a waterlogged piece of paper."
+								(if (ego inRect: 239 129 319 191)
+									(localproc_03fc 63 10)
 								else
-									(localproc_0 63 19) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
+									(localproc_03fc 63 19)
 								)
 							)
 							((Said '/billfold')
-								(if (gEgo inRect: 0 147 110 191)
-									(localproc_0 63 9) ; "You find an old discarded wallet. Endless volumes of water have rendered it worthless."
+								(if (ego inRect: 0 147 110 191)
+									(localproc_03fc 63 9)
 								else
-									(localproc_0 63 19) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
+									(localproc_03fc 63 19)
 								)
 							)
 							((Said '/can[<beer,coca]')
-								(if (gEgo inRect: 108 139 189 189)
-									(localproc_0 63 14) ; "Nothing but a rusted-out old beer can. You can tell it's an oldie by the fact that someone had to use a 'church key' on it. No 'pop-tops' in those days."
+								(if (ego inRect: 108 139 189 189)
+									(localproc_03fc 63 14)
 								else
-									(localproc_0 63 19) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
+									(localproc_03fc 63 19)
 								)
 							)
 							((Said '/metal,scrap')
-								(if (gEgo inRect: 200 100 319 129)
-									(localproc_0 63 21) ; "It's just a twisted scrap of metal, useless to you."
+								(if (ego inRect: 200 100 319 129)
+									(localproc_03fc 63 21)
 								else
-									(localproc_0 63 19) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
+									(localproc_03fc 63 19)
 								)
 							)
 							((Said '/gold,metal,flicker,badge')
-								(cond
-									((gEgo has: 18) ; lost_badge
-										(event claimed: 0)
-									)
+								(cond 
+									((ego has: 18) (event claimed: 0))
 									(
 										(or
-											(and
-												(gEgo
-													inRect: 146 141 186 158
-												)
-												(== (gEgo loop:) 0)
-											)
-											(and
-												(gEgo
-													inRect: 213 143 245 158
-												)
-												(== (gEgo loop:) 1)
-											)
-											(and
-												(gEgo
-													inRect: 184 137 205 149
-												)
-												(== (gEgo loop:) 2)
-											)
-											(and
-												(gEgo
-													inRect: 184 155 206 169
-												)
-												(== (gEgo loop:) 3)
-											)
+											(and (ego inRect: 146 141 186 158) (== (ego loop?) 0))
+											(and (ego inRect: 213 143 245 158) (== (ego loop?) 1))
+											(and (ego inRect: 184 137 205 149) (== (ego loop?) 2))
+											(and (ego inRect: 184 155 206 169) (== (ego loop?) 3))
 										)
-										(localproc_0 63 12) ; "You see a flicker of gold from the corner of your eye."
-										(localproc_0 63 13) ; "You are amazed at what you think this object could be."
+										(localproc_03fc 63 12)
+										(localproc_03fc 63 13)
 									)
-									(else
-										(localproc_0 63 19) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
-									)
+									(else (localproc_03fc 63 19))
 								)
 							)
 							((Said '/glasses,glass')
-								(if (gEgo inRect: 105 109 159 139)
-									(localproc_0 63 16) ; "It's a pair of algae-covered underwater goggles, lost by a swimmer in the murky past."
+								(if (ego inRect: 105 109 159 139)
+									(localproc_03fc 63 16)
 								else
-									(localproc_0 63 19) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
+									(localproc_03fc 63 19)
 								)
 							)
 							((Said '/tire,drum[<oil]')
-								(if (gEgo inRect: 0 112 108 139)
-									(localproc_0 63 17) ; "There's a bald truck tire nestled deep in the mud next to a 55-gallon oil drum."
+								(if (ego inRect: 0 112 108 139)
+									(localproc_03fc 63 17)
 								else
-									(localproc_0 63 19) ; "You can't see it clearly from where you are. As a matter of fact, you have to be pretty close to see most objects underwater."
+									(localproc_03fc 63 19)
 								)
 							)
-							((Said '/cave')
-								(localproc_0 63 22) ; "Although it looks like there's a cave, there really isn't."
-							)
-							((Said '/rock,boulder')
-								(localproc_0 63 23) ; "You see nothing unusual. In fact, these rocks are downright boring."
-							)
-							((Said '/plant,bush,grass')
-								(localproc_0 63 24) ; "A common variety of river bottom plant."
-							)
+							((Said '/cave') (localproc_03fc 63 22))
+							((Said '/rock,boulder') (localproc_03fc 63 23))
+							((Said '/plant,bush,grass') (localproc_03fc 63 24))
 							(
 								(or
 									(Said '/fish,carp,sucker')
 									(Said '/school[<fish,carp,sucker]')
 								)
-								(localproc_0 63 25) ; "You look at a small school of "scaly-skinned" sucker fish, otherwise known as "carp". They are incompatible with the gullet, due to the numerous amount of bones."
+								(localproc_03fc 63 25)
 							)
-							((Said '/crawfish')
-								(localproc_0 63 26) ; "Man, can they scuttle!"
-							)
-							((Said '/diver')
-								(localproc_0 63 27) ; "He's exploring the flora, fauna, and garbage....looking for evidence."
-							)
+							((Said '/crawfish') (localproc_03fc 63 26))
+							((Said '/diver') (localproc_03fc 63 27))
 						)
 					)
-					((Said 'check,frisk/auto')
-						(localproc_0 63 28) ; "You see mud, rust, and a couple of crawfish."
-					)
-					((Said '[get]/shit')
-						(localproc_0 63 29) ; "As your wet suit fills, you think to yourself... "Why did I do that?""
-					)
-					((Said '[get]/leak')
-						(localproc_0 63 30) ; "A warm feeling comes over you."
-					)
-					((or (Said 'remove,recover,tow/auto') (Said 'call/tow'))
-						(localproc_0 63 31) ; "Forget it! Nothing about this car will help you. The fish need it more than anyone else."
-					)
-					((Said 'move/rock')
-						(localproc_0 63 32) ; "There is no need to move this rock."
-					)
+					((Said 'check,frisk/auto') (localproc_03fc 63 28))
+					((Said '[get]/crap') (localproc_03fc 63 29))
+					((Said '[get]/leak') (localproc_03fc 63 30))
+					(
+					(or (Said 'remove,recover,tow/auto') (Said 'call/tow')) (localproc_03fc 63 31))
+					((Said 'move/rock') (localproc_03fc 63 32))
 					((Said 'get,move,pull,hoist,remove>')
-						(cond
-							((Said '/crawfish')
-								(localproc_0 63 33) ; "They're a little too fast for you."
-							)
-							((Said '/muck,garbage')
-								(localproc_0 63 34) ; "It would just cloud the water."
-							)
-							((Said '/grass,plant')
-								(localproc_0 63 35) ; "Why tear up the natural habitat of the "scaly-skinned" sucker fish?"
-							)
-							((Said '/fish,carp,sucker')
-								(localproc_0 63 36) ; "They taste terrible, and besides...they're NOT evidence!"
-							)
-							((Said '/auto')
-								(localproc_0 63 31) ; "Forget it! Nothing about this car will help you. The fish need it more than anyone else."
-							)
+						(cond 
+							((Said '/crawfish') (localproc_03fc 63 33))
+							((Said '/muck,garbage') (localproc_03fc 63 34))
+							((Said '/grass,plant') (localproc_03fc 63 35))
+							((Said '/fish,carp,sucker') (localproc_03fc 63 36))
+							((Said '/auto') (localproc_03fc 63 31))
 							((Said '/newspaper')
-								(if (gEgo inRect: 239 129 319 191)
-									(localproc_0 63 37) ; "It wouldn't help you."
+								(if (ego inRect: 239 129 319 191)
+									(localproc_03fc 63 37)
 								else
-									(proc0_7) ; "You're not close enough."
+									(NotClose)
 								)
 							)
 							((Said '/billfold')
-								(if (gEgo inRect: 0 147 110 191)
-									(localproc_0 63 38) ; "You don't need it; you already have a much nicer wallet."
+								(if (ego inRect: 0 147 110 191)
+									(localproc_03fc 63 38)
 								else
-									(proc0_7) ; "You're not close enough."
+									(NotClose)
 								)
 							)
 							((Said '/can[<beer,coca]')
-								(if (gEgo inRect: 108 139 189 189)
-									(localproc_0 63 39) ; "You don't need it, and besides...it's too slimy and old."
+								(if (ego inRect: 108 139 189 189)
+									(localproc_03fc 63 39)
 								else
-									(proc0_7) ; "You're not close enough."
+									(NotClose)
 								)
 							)
 							((Said '/glasses')
-								(if (gEgo inRect: 105 109 159 139)
-									(localproc_0 63 39) ; "You don't need it, and besides...it's too slimy and old."
+								(if (ego inRect: 105 109 159 139)
+									(localproc_03fc 63 39)
 								else
-									(proc0_7) ; "You're not close enough."
+									(NotClose)
 								)
 							)
 							((Said '/tire,drum[<oil]')
-								(if (gEgo inRect: 0 112 108 139)
-									(localproc_0 63 39) ; "You don't need it, and besides...it's too slimy and old."
+								(if (ego inRect: 0 112 108 139)
+									(localproc_03fc 63 39)
 								else
-									(proc0_7) ; "You're not close enough."
+									(NotClose)
 								)
 							)
 							((Said '/badge,gold,flicker')
-								(cond
-									((not (IsItemAt 18)) ; lost_badge
-										(proc0_8) ; "You already took it."
-									)
+								(cond 
+									((not (InRoom 18)) (AlreadyTook))
 									(
 										(or
-											(and
-												(gEgo
-													inRect: 146 141 186 158
-												)
-												(== (gEgo loop:) 0)
-											)
-											(and
-												(gEgo
-													inRect: 213 143 245 158
-												)
-												(== (gEgo loop:) 1)
-											)
-											(and
-												(gEgo
-													inRect: 184 137 205 149
-												)
-												(== (gEgo loop:) 2)
-											)
-											(and
-												(gEgo
-													inRect: 184 155 206 169
-												)
-												(== (gEgo loop:) 3)
-											)
+											(and (ego inRect: 146 141 186 158) (== (ego loop?) 0))
+											(and (ego inRect: 213 143 245 158) (== (ego loop?) 1))
+											(and (ego inRect: 184 137 205 149) (== (ego loop?) 2))
+											(and (ego inRect: 184 155 206 169) (== (ego loop?) 3))
 										)
 										(badge posn: 0 0)
-										(gEgo get: 18) ; lost_badge
-										(SetScore 2)
-										(localproc_0 63 40 83) ; "You brush the mud off of an object that appears to be a badge."
-										(localproc_0 63 41 83) ; "You look at the badge and think to yourself, "This is like finding a needle in a haystack.""
+										(ego get: 18)
+										(SolvePuzzle 2)
+										(localproc_03fc 63 40 83)
+										(localproc_03fc 63 41 83)
 									)
-									(else
-										(proc0_7) ; "You're not close enough."
-									)
+									(else (NotClose))
 								)
 							)
 							((Said '/scrap')
-								(if (gEgo inRect: 200 100 319 129)
-									(localproc_0 63 39) ; "You don't need it, and besides...it's too slimy and old."
+								(if (ego inRect: 200 100 319 129)
+									(localproc_03fc 63 39)
 								else
-									(proc0_7) ; "You're not close enough."
+									(NotClose)
 								)
 							)
 							((Said '/object,metal')
-								(cond
+								(cond 
 									(
 										(or
-											(and
-												(gEgo
-													inRect: 146 141 186 158
-												)
-												(== (gEgo loop:) 0)
-											)
-											(and
-												(gEgo
-													inRect: 213 143 245 158
-												)
-												(== (gEgo loop:) 1)
-											)
-											(and
-												(gEgo
-													inRect: 184 137 205 149
-												)
-												(== (gEgo loop:) 2)
-											)
-											(and
-												(gEgo
-													inRect: 184 155 206 169
-												)
-												(== (gEgo loop:) 3)
-											)
+											(and (ego inRect: 146 141 186 158) (== (ego loop?) 0))
+											(and (ego inRect: 213 143 245 158) (== (ego loop?) 1))
+											(and (ego inRect: 184 137 205 149) (== (ego loop?) 2))
+											(and (ego inRect: 184 155 206 169) (== (ego loop?) 3))
 										)
-										(if (IsItemAt 18) ; lost_badge
+										(if (InRoom 18)
 											(badge posn: 0 0)
-											(gEgo get: 18) ; lost_badge
-											(SetScore 2)
-											(localproc_0 63 40 83) ; "You brush the mud off of an object that appears to be a badge."
-											(localproc_0 63 41 83) ; "You look at the badge and think to yourself, "This is like finding a needle in a haystack.""
+											(ego get: 18)
+											(SolvePuzzle 2)
+											(localproc_03fc 63 40 83)
+											(localproc_03fc 63 41 83)
 										else
-											(proc0_8) ; "You already took it."
+											(AlreadyTook)
 										)
 									)
-									((gEgo inRect: 239 129 319 191)
-										(localproc_0 63 37) ; "It wouldn't help you."
-									)
-									((gEgo inRect: 0 147 110 191)
-										(localproc_0 63 38) ; "You don't need it; you already have a much nicer wallet."
-									)
-									((gEgo inRect: 108 139 189 189)
-										(localproc_0 63 39) ; "You don't need it, and besides...it's too slimy and old."
-									)
-									((gEgo inRect: 200 100 319 129)
-										(localproc_0 63 39) ; "You don't need it, and besides...it's too slimy and old."
-									)
-									((gEgo inRect: 105 109 159 139)
-										(localproc_0 63 39) ; "You don't need it, and besides...it's too slimy and old."
-									)
-									((gEgo inRect: 0 112 108 139)
-										(localproc_0 63 39) ; "You don't need it, and besides...it's too slimy and old."
-									)
-									(else
-										(localproc_0 63 42 83) ; "You know it's there somewhere, but you can't seem to lay your hands on it."
-									)
+									((ego inRect: 239 129 319 191) (localproc_03fc 63 37))
+									((ego inRect: 0 147 110 191) (localproc_03fc 63 38))
+									((ego inRect: 108 139 189 189) (localproc_03fc 63 39))
+									((ego inRect: 200 100 319 129) (localproc_03fc 63 39))
+									((ego inRect: 105 109 159 139) (localproc_03fc 63 39))
+									((ego inRect: 0 112 108 139) (localproc_03fc 63 39))
+									(else (localproc_03fc 63 42 83))
 								)
 							)
 						)
@@ -926,7 +771,7 @@
 
 (instance carpScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -955,21 +800,21 @@
 
 (instance mooreScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(= local104 (Random 4 8))
-				(if (== gPrevRoomNum 60)
-					(gContinuousMusic number: 17 loop: -1 play:)
+				(if (== prevRoomNum 60)
+					(cSound number: 17 loop: -1 play:)
 				)
 			)
 			(1
-				(= local101 (- (frogLegs x:) 20))
+				(= local101 (- (frogLegs x?) 20))
 				(mooreBubble
-					posn: local101 (moore y:)
+					posn: local101 (moore y?)
 					startUpd:
-					setPri: (frogLegs priority:)
+					setPri: (frogLegs priority?)
 					setMotion: MoveTo (+ local101 50) 15 self
 				)
 			)
@@ -983,7 +828,7 @@
 
 (instance airScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -992,12 +837,12 @@
 				(self cue:)
 			)
 			(1
-				(Format @local0 63 43 global191) ; "%u"
-				(Display @local0 dsCOORD 244 30 dsCOLOR 14 dsBACKGROUND 1)
+				(Format @str 63 43 scubaTankOxygen)
+				(Display @str dsCOORD 244 30 dsCOLOR 14 dsBACKGROUND 1)
 			)
 			(2
 				(DrawCel 161 0 1 227 16 1)
-				(Display @local0 dsCOORD 244 30 dsCOLOR 1 dsBACKGROUND 1)
+				(Display @str dsCOORD 244 30 dsCOLOR 1 dsBACKGROUND 1)
 			)
 		)
 	)
@@ -1005,32 +850,22 @@
 
 (instance bubScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
-			(0
-				(= local103 (Random 18 26))
-			)
+			(0 (= local103 (Random 18 26)))
 			(1
-				(switch (gEgo loop:)
-					(0
-						(= local100 (+ (gEgo x:) 21))
-					)
-					(1
-						(= local100 (- (gEgo x:) 21))
-					)
-					(2
-						(= local100 (gEgo x:))
-					)
-					(3
-						(= local100 (gEgo x:))
-					)
+				(switch (ego loop?)
+					(0 (= egoX (+ (ego x?) 21)))
+					(1 (= egoX (- (ego x?) 21)))
+					(2 (= egoX (ego x?)))
+					(3 (= egoX (ego x?)))
 				)
 				(bubble
-					posn: local100 (gEgo y:)
+					posn: egoX (ego y?)
 					startUpd:
-					setPri: (gEgo priority:)
-					setMotion: MoveTo (+ local100 50) 15 self
+					setPri: (ego priority?)
+					setMotion: MoveTo (+ egoX 50) 15 self
 				)
 			)
 			(2
@@ -1040,4 +875,3 @@
 		)
 	)
 )
-

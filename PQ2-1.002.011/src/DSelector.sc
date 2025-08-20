@@ -1,172 +1,214 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
-(script# 975)
-(include sci.sh)
-(use Interface)
+(script# DSELECTOR)
+(include game.sh)
+(use Intrface)
 
-(class DSelector of Item
+
+(class DSelector kindof DItem
+	;;; Selectors are a list of text items which can be scrolled.  The user
+	;;; selects one of the items either by clicking directly on the item
+	;;; or by scrolling a high-lighted bar to the selection.
+
 	(properties
-		type 6
+		type dSelector
+		state 0
 		font 0
-		x 20
-		y 6
-		text 0
-		cursor 0
-		lsTop 0
-		mark 0
+		x 20				; width of text item (in characters)
+		y 6				; number of items displayed in selector
+		text 	0			; the text items to be selected from
+		cursor 0			; the currently selected item
+		lsTop	0			; first line of text shown
+		mark	0			; the LINE of selector that is selected
 	)
 
-	(method (indexOf param1 &tmp temp0 temp1)
-		(= temp0 text)
-		(for ((= temp1 0)) (< temp1 300) ((++ temp1))
-			(if (== 0 (StrLen temp0))
+;;;	(methods
+;;;		indexOf			; return index of this string
+;;;		at					; return ptr to this index
+;;;		advance			; move selector bar up
+;;;		retreat			; move selector bar up
+;;;	)
+
+
+	(method (indexOf what &tmp ptr i)
+		;; Return index of this string OR -1.
+
+		(= ptr text)
+		(for ((= i 0)) (< i 300) ((++ i))
+
+			; check for end of data
+			(if (== 0 (StrLen ptr))
 				(return -1)
 			)
-			(if (not (StrCmp param1 temp0))
-				(return temp1)
+			(if (not (StrCmp what ptr))
+				(return i)
 			)
-			(+= temp0 x)
+			(+= ptr x)
 		)
 	)
 
-	(method (at param1)
-		(return (+ text (* x param1)))
+
+	(method (at what)
+		;; Return pointer to this index OR 0.
+
+		(return (+ text (* x what)))
 	)
 
-	(method (setSize &tmp [temp0 4])
-		(TextSize @[temp0 0] {M} font)
-		(= nsBottom (+ nsTop 20 (* [temp0 2] y)))
-		(= nsRight (+ nsLeft (/ (* [temp0 3] x 3) 4)))
+
+	(method (setSize &tmp [r 4])
+		(TextSize @[r 0] {M} font)
+		(= nsBottom (+ nsTop 20 (* [r 2] y)))
+		(= nsRight (+ nsLeft (/ (* [r 3] x 3) 4)))
 		(= lsTop (= cursor text))
 		(= mark 0)
 	)
 
-	(method (retreat param1 &tmp temp0)
-		(= temp0 0)
-		(while param1
+
+	(method (retreat lines &tmp redraw)
+		;; Retreat requested (or to top) lines.
+
+		(= redraw FALSE)
+		(while lines
+			; are we at top?
 			(if (!= cursor text)
-				(= temp0 1)
+				(= redraw TRUE)
 				(-= cursor x)
+
+				; do we scroll up?
 				(if mark
 					(-- mark)
 				else
-					(-= lsTop x)
+					(-= lsTop x)			
 				)
+				(-- lines)
 			else
 				(break)
 			)
-			(-- param1)
 		)
-		(if temp0
+		(if redraw
 			(self draw:)
 		)
 	)
 
-	(method (advance param1 &tmp temp0)
-		(= temp0 0)
-		(while param1
+
+	(method (advance lines &tmp redraw)
+		;; Advance requested (or to end) lines.
+
+		(= redraw FALSE)
+		(while lines
+			; is there another line?
 			(if (StrAt cursor x)
-				(= temp0 1)
+				(= redraw TRUE)
 				(+= cursor x)
+	
+				; do we scroll?
 				(if (< (+ mark 1) y)
 					(++ mark)
 				else
 					(+= lsTop x)
 				)
+
+				(-- lines)
 			else
 				(break)
 			)
-			(-- param1)
+
 		)
-		(if temp0
+		(if redraw
 			(self draw:)
 		)
 	)
 
-	(method (handleEvent event &tmp temp0 [temp1 3] temp4 [temp5 4])
-		(if (event claimed:)
-			(return 0)
-		)
-		(if (== $0040 (event type:)) ; direction
-			(event type: evKEYBOARD)
-			(switch (event message:)
-				(JOY_DOWN
-					(event message: KEY_DOWN)
+
+	(method (handleEvent event &tmp ret evtType evt newEvt i [r 4])
+		;; Selectors are not really active so they always return 0,
+		;; but they may claim the event.
+
+		(if (event claimed?) (return 0))
+
+		; remap some directions into arrows
+		(if (== direction (event type?))
+			(event type:keyDown)
+			(switch (event message?)
+				(dirS
+					(event message:DOWNARROW)
 				)
-				(JOY_UP
-					(event message: KEY_UP)
+				(dirN
+					(event message:UPARROW)
 				)
 				(else
-					(event type: $0040) ; direction
+					(event type:direction)
 				)
 			)
-		)
-		(= temp0 0)
-		(switch (event type:)
-			(evKEYBOARD
-				(event claimed: 1)
-				(switch (event message:)
-					(KEY_HOME
+		)				
+
+		(= ret 0)
+		(switch (event type?)
+			(keyDown
+				(event claimed:TRUE)
+				(switch (event message?)
+					(HOMEKEY
 						(self retreat: 50)
 					)
-					(KEY_END
+					(ENDKEY
 						(self advance: 50)
 					)
-					($5100 ; PAGEDOWN
+					(PAGEDOWN
 						(self advance: (- y 1))
 					)
-					($4900 ; PAGEUP
+					(PAGEUP
 						(self retreat: (- y 1))
 					)
-					(KEY_DOWN
+					(DOWNARROW
 						(self advance: 1)
 					)
-					(KEY_UP
+					(UPARROW
 						(self retreat: 1)
 					)
 					(else
-						(event claimed: 0)
+						(event claimed:FALSE)
 					)
 				)
 			)
-			(evMOUSEBUTTON
+			(mouseDown
 				(if (self check: event)
-					(event claimed: 1)
+					(event claimed:TRUE)
+
+					; determine sub part
 					(cond
-						((< (event y:) (+ nsTop 10))
+						; top bar
+						((< (event y?) (+ nsTop 10))
 							(repeat
 								(self retreat: 1)
 								(breakif (not (StillDown)))
 							)
 						)
-						((> (event y:) (- nsBottom 10))
+
+						; bottom bar
+						((> (event y?) (- nsBottom 10))
 							(repeat
 								(self advance: 1)
 								(breakif (not (StillDown)))
 							)
 						)
+
+						; it is in the center
 						(else
-							(TextSize @[temp5 0] {M} font)
-							(if
-								(>
-									(= temp4
-										(/
-											(- (event y:) (+ nsTop 10))
-											[temp5 2]
-										)
-									)
-									mark
-								)
-								(self advance: (- temp4 mark))
+							; determine line height
+							(TextSize @[r 0] {M} font)
+							(= i (/ (- (event y?) (+ nsTop 10)) [r 2]))
+
+							(if (> i mark)		
+								; need to advance
+								(self advance: (- i mark))
 							else
-								(self retreat: (- mark temp4))
+								; need to retreat
+								(self retreat: (- mark i))
 							)
-						)
+						)									
 					)
 				)
 			)
-		)
-		(if (and (event claimed:) (& state $0002)) self else 0)
+		)			
+		(return  (if (and (event claimed?) (& state dExit)) self  else 0))
 	)
 )
-

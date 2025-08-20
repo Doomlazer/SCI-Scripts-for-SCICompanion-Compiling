@@ -1,28 +1,29 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
-(script# 154)
-(include sci.sh)
+(script# regJet)
+(include game.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Game)
 (use Actor)
 
 (public
 	jet 0
-	proc154_1 1
-	proc154_2 2
+	AirplanePrint 1
+	GoToBathroom 2
 )
-
 (synonyms
 	(attendant attendant)
 )
 
-(procedure (proc154_1)
-	(Print &rest #at 10 10 #font gSmallFont)
+(procedure (AirplanePrint)
+	(Print &rest
+		#at 10 10
+		#font smallFont
+	)
 )
 
-(procedure (proc154_2)
-	(gAddToPics
+(procedure (GoToBathroom)
+	(addToPics
 		add:
 			toilet
 			seat1
@@ -55,274 +56,263 @@
 			mirror
 			LCutWall
 	)
-	(gAddToPics doit:)
+	(addToPics doit:)
 )
 
 (instance jet of Locale
-	(properties)
-
-	(method (handleEvent event &tmp temp0)
+	(method (handleEvent event &tmp evt)
 		(super handleEvent: event)
-		(if (event claimed:)
-			(return)
-		)
-		(switch (event type:)
-			(evKEYBOARD
-				(cond
-					((== (= temp0 (event message:)) KEY_F6)
-						(event claimed: 1)
-						(cond
-							((not (gEgo has: 0)) ; hand_gun
-								(proc0_13) ; "You don't have your gun."
+		(if (event claimed?) (return))
+		(switch (event type?)
+			(keyDown
+				(cond 
+					((== (= evt (event message?)) `#6)
+						(event claimed: TRUE)
+						(cond 
+							((not (ego has: iHandGun))
+								(DontHaveGun)
 							)
 							(
 								(or
-									(not (gEgo has: 1)) ; extra_ammo_clips
-									(== [global215 1] [global215 2] 0)
+									(not (ego has: iAmmoClips))
+									(and
+										(== [numAmmoClips 1] [numAmmoClips 2])
+										(== [numAmmoClips 2] 0)
+									)
 								)
-								(Print 154 0) ; "You don't have any extra ammo clips."
+								(Print 154 0)
 							)
-							([global215 global207]
-								(Print 154 1) ; "Checking your gun, you see that the clip is not yet empty, and you do not reload."
+							([numAmmoClips bulletsInGun]
+								(Print 154 1)
 							)
-							((and global106 (not global201)) 0)
+							((and isHandsOff (not sittingInPlane)) 0)
 							(else
-								(Print 154 2 #time 4) ; "Loaded."
-								(if (== global207 1)
-									(= global207 2)
+								(Print 154 2 #time 4)
+								(if (== bulletsInGun 1)
+									(= bulletsInGun 2)
 								else
-									(= global207 1)
+									(= bulletsInGun 1)
 								)
 							)
 						)
 					)
-					((== temp0 KEY_F8)
-						(event claimed: 1)
-						(cond
-							((not (gEgo has: 0)) ; hand_gun
-								(proc0_13) ; "You don't have your gun."
+					((== evt `#8)
+						(event claimed: TRUE)
+						(cond 
+							((not (ego has: iHandGun))
+								(DontHaveGun)
 							)
-							((== gCurRoomNum 41)
-								(event claimed: 0)
+							((== curRoomNum 41)
+								(event claimed: FALSE)
 							)
 							(else
-								(Print 154 3) ; "You don't need to use your gun now."
+								(Print 154 3)
 							)
 						)
 					)
 				)
 			)
-			(evSAID
-				(cond
+			(saidEvent
+				(cond 
 					((Said '/compartment')
-						(proc154_1 154 4)
+						(AirplanePrint 154 4)
 					)
 					((Said '/door>')
-						(cond
-							((Said 'open,hit')
-								(cond
-									((& (gEgo onControl:) $2000)
-										(Print 154 5) ; "The rest room is occupied."
+						(cond 
+							((Said 'open,beat')
+								(cond 
+									((& (ego onControl:) cLMAGENTA)
+										(Print 154 5)
 									)
-									((& (gEgo onControl:) $1000)
-										(Print 154 6) ; "The cockpit door is locked. Access is for crew members only."
+									((& (ego onControl:) cLRED)
+										(Print 154 6)
 									)
 									(else
-										(proc0_7) ; "You're not close enough."
+										(NotClose)
 									)
 								)
 							)
-							((Said 'knock,hit')
-								(cond
-									((& (gEgo onControl:) $2000)
-										(Print 154 7) ; "It's empty. Just go in."
+							((Said 'knock,beat')
+								(cond 
+									((& (ego onControl:) cLMAGENTA)
+										(Print 154 7)
 									)
-									((& (gEgo onControl:) $1000)
-										(Print 154 8) ; "You knock, but no one answers."
+									((& (ego onControl:) cLRED)
+										(Print 154 8)
 									)
 									(else
-										(proc0_7) ; "You're not close enough."
+										(NotClose)
 									)
 								)
 							)
 							((Said 'unlock')
-								(Print 154 9) ; "You can't."
+								(Print 154 9)
 							)
 							(else
-								(event claimed: 1)
-								(Print 154 10) ; "Leave the door alone."
+								(event claimed: TRUE)
+								(Print 154 10)
 							)
 						)
 					)
-					((Said 'talk/passenger,man,woman')
-						(if (not global201)
+					((Said 'chat/passenger,dude,broad')
+						(if (not sittingInPlane)
 							(switch (Random 81 85)
-								(81
-									(proc154_1 154 11)
-								)
-								(82
-									(proc154_1 154 12)
-								)
-								(83
-									(proc154_1 154 13)
-								)
-								(84
-									(proc154_1 154 14)
-								)
-								(85
-									(proc154_1 154 15)
-								)
+								(81 (AirplanePrint 154 11))
+								(82 (AirplanePrint 154 12))
+								(83 (AirplanePrint 154 13))
+								(84 (AirplanePrint 154 14))
+								(85 (AirplanePrint 154 15))
 							)
 						else
-							(Print 154 16) ; "You cannot talk to anyone from where you are sitting."
+							(Print 154 16)
 						)
 					)
 					((Said 'pinch[/attendant]')
-						(cond
-							((not (gCast contains: global198))
-								(Print 154 17) ; "She's not here."
+						(cond 
+							((not (cast contains: stewardess))
+								(Print 154 17)
 							)
-							((> (gEgo distanceTo: global198) 25)
-								(proc0_7) ; "You're not close enough."
+							((> (ego distanceTo: stewardess) 25)
+								(NotClose)
 							)
 							(else
-								(proc154_1 154 18)
+								(AirplanePrint 154 18)
 							)
 						)
 					)
-					((Said 'talk,call/attendant')
-						(cond
-							((not (gCast contains: global198))
-								(Print 154 17) ; "She's not here."
+					((Said 'chat,call/attendant')
+						(cond 
+							((not (cast contains: stewardess))
+								(Print 154 17)
 							)
-							((> (gEgo distanceTo: global198) 25)
-								(proc0_7) ; "You're not close enough."
+							((> (ego distanceTo: stewardess) 25)
+								(NotClose)
 							)
 							(else
-								(proc154_1 154 19)
+								(AirplanePrint 154 19)
 							)
 						)
 					)
 					((Said 'use,go/crapper,bathroom,(chamber<(bath,rest))')
-						(Print 154 20) ; "The bathroom is in the back of the plane."
+						(Print 154 20)
 					)
-					((Said 'show/badge')
-						(cond
-							((not (gCast contains: global198))
-								(Print 154 17) ; "She's not here."
+					((Said 'display/badge')
+						(cond 
+							((not (cast contains: stewardess))
+								(Print 154 17)
 							)
-							((> (gEgo distanceTo: global198) 25)
-								(proc0_7) ; "You're not close enough."
+							((> (ego distanceTo: stewardess) 25)
+								(NotClose)
 							)
 							(else
-								(proc154_1 154 21)
+								(AirplanePrint 154 21)
 							)
 						)
 					)
 					((Said '[kiss,fuck][/naked,boob,sex]')
-						(cond
-							((not (gCast contains: global198))
-								(Print 154 17) ; "She's not here."
+						(cond 
+							((not (cast contains: stewardess))
+								(Print 154 17)
 							)
-							((> (gEgo distanceTo: global198) 25)
-								(proc0_7) ; "You're not close enough."
+							((> (ego distanceTo: stewardess) 25)
+								(NotClose)
 							)
 							(else
-								(proc154_1 154 22)
-								(proc154_1 154 23)
+								(AirplanePrint 154 22)
+								(AirplanePrint 154 23)
 							)
 						)
 					)
-					((Said 'fasten,drop,wear,buckle/belt,belt')
-						(cond
-							((not global201)
-								(Print 154 24) ; "You are not sitting down."
+					((Said 'fasten,deposit,wear,buckle/belt,belt')
+						(cond 
+							((not sittingInPlane)
+								(Print 154 24)
 							)
-							(global202
-								(Print 154 25) ; "Your seat belt is already buckled."
+							(wearingSeatbelt
+								(Print 154 25)
 							)
 							(else
-								(Print 154 26) ; "Ok."
-								(= global202 1)
+								(Print 154 26)
+								(= wearingSeatbelt TRUE)
 							)
 						)
 					)
-					((Said 'unfasten,unbuckle,remove,(get<off)/belt,belt')
-						(cond
-							((not global201)
-								(Print 154 24) ; "You are not sitting down."
+					(
+					(Said 'unfasten,unbuckle,remove,(get<off)/belt,belt')
+						(cond 
+							((not sittingInPlane)
+								(Print 154 24)
 							)
-							((not global202)
-								(Print 154 27) ; "Your seat belt is already unbuckled."
+							((not wearingSeatbelt)
+								(Print 154 27)
 							)
-							(global202
-								(Print 154 26) ; "Ok."
-								(= global202 0)
+							(wearingSeatbelt
+								(Print 154 26)
+								(= wearingSeatbelt FALSE)
 							)
 						)
 					)
 					((Said 'sat')
-						(if global201
-							(Print 154 28) ; "You already are."
+						(if sittingInPlane
+							(Print 154 28)
 						else
-							(Print 154 29) ; "You are not near enough to your seat."
+							(Print 154 29)
 						)
 					)
 					((Said 'stand,(get<up)')
-						(cond
-							(global202
-								(Print 154 30) ; "It's a little hard to do that while your seat belt is fastened."
+						(cond 
+							(wearingSeatbelt
+								(Print 154 30)
 							)
-							((not global201)
-								(Print 154 31) ; "You are already standing."
+							((not sittingInPlane)
+								(Print 154 31)
 							)
 							(else
-								(Print 154 32) ; "You don't need to right now."
+								(Print 154 32)
 							)
 						)
 					)
 					((Said 'buy,order')
-						(Print 154 33) ; "The stewardess is not serving drinks now."
+						(Print 154 33)
 					)
 					((Said '/captain')
-						(proc154_1 154 34)
-					)
+						(AirplanePrint 154 34))
 					((Said 'meditate,nap')
-						(Print 154 35) ; "You try to relax and sleep, but there's something about airplanes that you find unsettling."
+						(Print 154 35)
 					)
 					((Said 'look>')
-						(cond
+						(cond 
 							((Said '/attendant')
-								(if (not (gCast contains: global198))
-									(Print 154 17) ; "She's not here."
+								(if (not (cast contains: stewardess))
+									(Print 154 17)
 								else
-									(proc154_1 154 36)
+									(AirplanePrint 154 36)
 								)
 							)
 							((Said '/passenger')
-								(proc154_1 154 37)
+								(AirplanePrint 154 37)
 							)
-							((Said '/man,woman')
-								(proc154_1 154 38)
+							((Said '/dude,broad')
+								(AirplanePrint 154 38)
 							)
 							((Said '/pane')
-								(proc154_1 154 39)
+								(AirplanePrint 154 39)
 							)
 							((Said '/bench')
-								(proc154_1 154 40)
+								(AirplanePrint 154 40)
 							)
 							((Said '/bathroom')
-								(proc154_1 154 20)
+								(AirplanePrint 154 20)
 							)
-							((Said '[<at,around][/(!*,chamber,airplane)]')
-								(if (gEgo inRect: 63 152 75 161)
-									(proc154_1 154 41)
+							((Said '[<at,around][/(noword,chamber,airplane)]')
+								(if (ego inRect: 63 152 75 161)
+									(AirplanePrint 154 41)
 								else
-									(proc154_1 154 42)
+									(AirplanePrint 154 42)
 								)
 							)
 							(else
-								(event claimed: 0)
+								(event claimed: FALSE)
 							)
 						)
 					)
@@ -332,7 +322,7 @@
 	)
 )
 
-(instance seat1 of PV
+(instance seat1 of PicView
 	(properties
 		y 72
 		x 205
@@ -340,11 +330,11 @@
 		loop 1
 		cel 3
 		priority 1
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat2 of PV
+(instance seat2 of PicView
 	(properties
 		y 82
 		x 186
@@ -352,22 +342,22 @@
 		loop 1
 		cel 5
 		priority 1
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat3 of PV
+(instance seat3 of PicView
 	(properties
 		y 92
 		x 165
 		view 82
 		loop 1
 		priority 1
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat4 of PV
+(instance seat4 of PicView
 	(properties
 		y 102
 		x 146
@@ -375,11 +365,11 @@
 		loop 1
 		cel 6
 		priority 1
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat5 of PV
+(instance seat5 of PicView
 	(properties
 		y 112
 		x 125
@@ -387,22 +377,22 @@
 		loop 1
 		cel 1
 		priority 1
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat6 of PV
+(instance seat6 of PicView
 	(properties
 		y 123
 		x 103
 		view 82
 		loop 1
 		priority 1
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat7 of PV
+(instance seat7 of PicView
 	(properties
 		y 135
 		x 80
@@ -410,11 +400,11 @@
 		loop 1
 		cel 2
 		priority 1
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat8 of PV
+(instance seat8 of PicView
 	(properties
 		y 146
 		x 58
@@ -422,11 +412,11 @@
 		loop 1
 		cel 4
 		priority 1
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat9 of PV
+(instance seat9 of PicView
 	(properties
 		y 90
 		x 253
@@ -434,11 +424,11 @@
 		loop 1
 		cel 5
 		priority 14
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat10 of PV
+(instance seat10 of PicView
 	(properties
 		y 100
 		x 234
@@ -446,11 +436,11 @@
 		loop 1
 		cel 1
 		priority 14
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat11 of PV
+(instance seat11 of PicView
 	(properties
 		y 110
 		x 213
@@ -458,11 +448,11 @@
 		loop 1
 		cel 6
 		priority 14
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat12 of PV
+(instance seat12 of PicView
 	(properties
 		y 120
 		x 193
@@ -470,22 +460,22 @@
 		loop 1
 		cel 4
 		priority 14
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat13 of PV
+(instance seat13 of PicView
 	(properties
 		y 131
 		x 171
 		view 82
 		loop 1
 		priority 14
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat14 of PV
+(instance seat14 of PicView
 	(properties
 		y 141
 		x 151
@@ -493,11 +483,11 @@
 		loop 1
 		cel 2
 		priority 14
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat15 of PV
+(instance seat15 of PicView
 	(properties
 		y 151
 		x 131
@@ -505,11 +495,11 @@
 		loop 1
 		cel 1
 		priority 14
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance seat16 of PV
+(instance seat16 of PicView
 	(properties
 		y 162
 		x 109
@@ -517,11 +507,11 @@
 		loop 1
 		cel 5
 		priority 14
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance window1 of PV
+(instance window1 of PicView
 	(properties
 		y 49
 		x 203
@@ -531,7 +521,7 @@
 	)
 )
 
-(instance window2 of PV
+(instance window2 of PicView
 	(properties
 		y 59
 		x 183
@@ -541,7 +531,7 @@
 	)
 )
 
-(instance window3 of PV
+(instance window3 of PicView
 	(properties
 		y 69
 		x 163
@@ -551,7 +541,7 @@
 	)
 )
 
-(instance window4 of PV
+(instance window4 of PicView
 	(properties
 		y 80
 		x 141
@@ -561,7 +551,7 @@
 	)
 )
 
-(instance window5 of PV
+(instance window5 of PicView
 	(properties
 		y 91
 		x 119
@@ -571,7 +561,7 @@
 	)
 )
 
-(instance window6 of PV
+(instance window6 of PicView
 	(properties
 		y 103
 		x 95
@@ -581,7 +571,7 @@
 	)
 )
 
-(instance window7 of PV
+(instance window7 of PicView
 	(properties
 		y 116
 		x 69
@@ -591,16 +581,16 @@
 	)
 )
 
-(instance bath1 of PV
+(instance bath1 of PicView
 	(properties
 		y 41
 		x 246
 		view 82
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance bath2 of PV
+(instance bath2 of PicView
 	(properties
 		y 167
 		x 65
@@ -608,60 +598,59 @@
 		loop 2
 		cel 1
 		priority 12
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance toilet of PV
+(instance toilet of PicView
 	(properties
 		y 178
 		x 68
 		view 82
 		cel 4
 		priority 14
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance trash of PV
+(instance trash of PicView
 	(properties
 		y 181
 		x 32
 		view 82
 		cel 3
 		priority 14
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance sink of PV
+(instance sink of PicView
 	(properties
 		y 159
 		x 27
 		view 82
 		cel 2
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance mirror of PV
+(instance mirror of PicView
 	(properties
 		y 143
 		x 21
 		view 82
 		cel 1
-		signal 16384
+		signal ignrAct
 	)
 )
 
-(instance LCutWall of PV
+(instance LCutWall of PicView
 	(properties
 		y 54
 		x 242
 		view 82
 		cel 5
 		priority 2
-		signal 16384
+		signal ignrAct
 	)
 )
-

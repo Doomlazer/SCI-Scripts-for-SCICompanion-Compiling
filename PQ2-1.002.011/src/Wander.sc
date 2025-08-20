@@ -1,92 +1,106 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 976)
-(include sci.sh)
+(include game.sh)
 (use Motion)
 
-(class Wander of Motion
-	(properties
-		distance 30
-	)
 
-	(method (init param1 param2)
-		(if (>= argc 1)
-			(= client param1)
-			(if (>= argc 2)
-				(= distance param2)
+(include game.sh)
+(use Motion)
+
+(class Wander kindof Motion
+	;;; Wander about the screen.  This motion never terminates.
+	
+	(properties
+		distance 30		;the max distance to move on any one leg of the wander
+	)
+	
+	(method (init theObj dist)
+		(if (>= argc 1)		(= client theObj)
+			(if (>= argc 2)	(= distance dist)
 			)
 		)
-		(self setTarget:)
+		(self	setTarget:)
 		(super init: client)
+;		(super doit:)
 	)
-
-	(method (setTarget &tmp temp0)
-		(= x (+ (client x:) (- distance (Random 0 (= temp0 (* distance 2))))))
-		(= y (+ (client y:) (- distance (Random 0 temp0))))
+	
+	
+	(method (setTarget &tmp diam)
+		
+		;Pick a random position to move to, constrained by 'distance'.
+		(= x (+ (client x?) (- distance (Random 0 (= diam (* distance 2))))))
+		(= y (+ (client y?) (- distance (Random 0 diam))))
 	)
-
+	
 	(method (onTarget)
-		(return 0)
+		(return FALSE)	;we're never done wandering
 	)
-
+	
 	(method (doit)
+		;Take the next step.
 		(super doit:)
+		
+		;;If the motion is complete or the client is blocked,
+		;;we're finished with this leg.
 		(if (client isStopped:)
 			(self moveDone:)
 		)
 	)
-
+	
 	(method (moveDone)
+		;;; When done with the current leg of wandering, re-init: the motion
+		;;; to continue wandering.
 		(self init:)
 	)
-)
+);Wander
 
-(class Chase of Motion
+(class Chase kindof Motion
+	;;; Try to catch a particular Actor.
+	
 	(properties
-		who 0
-		distance 0
+		who 0					;who to chase
+		distance 0			;how close to 'who' is considered a 'catch'
 	)
-
-	(method (init param1 param2 param3 param4)
-		(if (>= argc 1)
-			(= client param1)
-			(if (>= argc 2)
-				(= who param2)
-				(if (>= argc 3)
-					(= distance param3)
-					(if (>= argc 4)
-						(= caller param4)
+	
+	
+	(method (init actor whom howClose whoCares)
+		(if (>= argc 1)				(= client actor)
+			(if (>= argc 2)			(= who whom)
+				(if (>= argc 3)		(= distance howClose)
+					(if (>= argc 4)	(= caller whoCares)
 					)
 				)
 			)
 		)
-		(super init: client (who x:) (who y:) caller)
+		(super init: client (who x?) (who y?) caller)
+;		(super doit:)
 	)
-
+	
+	
 	(method (onTarget)
-		(return (<= (client distanceTo: who) distance))
+		(<= (client distanceTo: who) distance)
 	)
-
+	
 	(method (setTarget)
 		(cond
-			(argc
+			(argc	
 				(super setTarget: &rest)
 			)
 			((not (self onTarget:))
-				(super setTarget: (who x:) (who y:))
+				(super setTarget: (who x?) (who y?))
+				
 			)
 		)
 	)
-
+	
 	(method (doit)
-		(if (<= (client distanceTo: who) distance)
+		(if (self onTarget?)
 			(self moveDone:)
 		else
 			(super doit:)
 			(if (== b-moveCnt 0)
-				(super init: client (who x:) (who y:) caller)
+				(super init: client (who x?) (who y?) caller)
 			)
 		)
 	)
 )
-

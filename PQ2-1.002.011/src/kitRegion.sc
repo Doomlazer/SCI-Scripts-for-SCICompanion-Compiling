@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
-(script# 153)
-(include sci.sh)
+(script# regFieldKit)
+(include game.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Game)
 (use Actor)
 
@@ -13,16 +12,15 @@
 
 (local
 	local0
-	local1
+	dontHaveFieldKit
 )
-
 (instance fKit of View
 	(properties
 		y 60
 		x 81
 		view 110
 		priority 13
-		signal 16657
+		signal $4111
 	)
 )
 
@@ -32,17 +30,21 @@
 
 (instance kitRegion of Locale
 	(properties)
-
+	
 	(method (init)
 		(super init:)
-		(= gFKit fKit)
+		(= theFieldKit fKit)
 		(= global117
 			(= global118
 				(= global119
 					(= global120
 						(= global121
 							(= global122
-								(= global123 (= global124 (= global125 dView)))
+								(= global123
+									(= global124
+										(= gDView dView)
+									)
+								)
 							)
 						)
 					)
@@ -50,114 +52,120 @@
 			)
 		)
 	)
-
+	
 	(method (dispose)
 		(fKit dispose:)
-		(= global240 0)
+		(= fieldKitOpen FALSE)
 		(super dispose:)
 	)
-
+	
 	(method (handleEvent event)
-		(if (or (event claimed:) (!= (event type:) evSAID))
+		(if (or (event claimed?) (!= (event type?) saidEvent))
 			(return)
 		)
-		(= local1 (not (gEgo has: 10))) ; field_kit
-		(cond
+		(= dontHaveFieldKit (not (ego has: iFieldKit)))
+		(cond 
 			((Said 'look,open,use/briefcase')
-				(if local1
-					(Print 153 0) ; "You do not have the field kit."
+				(if dontHaveFieldKit
+					(Print 153 0)
 				else
-					(if (!= global240 1)
+					(if (!= fieldKitOpen TRUE)
 						(fKit setPri: 13 ignoreActors: stopUpd: init:)
-						(= global240 1)
+						(= fieldKitOpen TRUE)
 					)
-					(Print 153 1 #at 184 1 #draw #mode 1 #width 110) ; "Your Detective's Field Kit is used to carry various things you will need in the course of your investigations:  Plastic Baggie  Small Camera  Casting Plaster  Glass Vial  Eye Dropper  Fingerprint Powder Fingerprint Brush  Fingerprint Tape"
+					(Print 153 1
+						#at 184 1
+						#draw
+						#mode teJustCenter
+						#width 110
+					)
 				)
 			)
 			((Said 'close/briefcase')
-				(cond
-					(local1
-						(Print 153 0) ; "You do not have the field kit."
+				(cond 
+					(dontHaveFieldKit
+						(Print 153 0)
 					)
-					((== global240 0)
-						(Print 153 2) ; "It's already closed."
+					((== fieldKitOpen FALSE)
+						(Print 153 2)
 					)
 					(else
 						(fKit dispose:)
-						(= global240 0)
+						(= fieldKitOpen FALSE)
 					)
 				)
 			)
 			((Said 'look>')
-				(cond
+				(cond 
 					(
 						(and
-							(not (gEgo has: 10)) ; field_kit
-							(Said
-								'/baggie,camera,plaster,(vial<glass),dropper,powder,brush,tape'
-							)
+							(not (ego has: iFieldKit))
+							(Said '/baggie,camera,plaster,(vial<glass),dropper,powder,brush,tape')
 						)
-						(Print 153 3) ; "You don't have the field kit."
+						(Print 153 3)
 					)
 					((Said '/baggie')
-						(Print 153 4) ; "Hair, dirt, and other items can be placed in the plastic evidence bag."
+						(Print 153 4)
 					)
 					((Said '/camera')
-						(Print 153 5) ; "The camera is used to preserve crime scenes on film for later analysis."
+						(Print 153 5)
 					)
 					((Said '/plaster')
-						(Print 153 6) ; "Casting plaster can be used to make casts of foot prints."
+						(Print 153 6)
 					)
-					((Said '/vial/[*]')
-						(event claimed: 0)
+					((Said '/vial/[anyword]')
+						(event claimed: FALSE)
 					)
 					((or (Said '/vial') (Said '/glass<vial'))
-						(Print 153 7) ; "The glass vial is used to hold small samples of blood and other liquids."
+						(Print 153 7)
 					)
 					((Said '/dropper')
-						(Print 153 8) ; "The eye dropper sucks up the liquid which is to be placed in the vial."
+						(Print 153 8)
 					)
 					((Said '/powder')
-						(Print 153 9) ; "Fingerprints leave oily residue. The powder clings to this residue."
+						(Print 153 9)
 					)
 					((Said '/brush')
-						(Print 153 10) ; "The brush is used to dust away excess fingerprint powder."
+						(Print 153 10)
 					)
 					((Said '/tape')
-						(Print 153 11) ; "Once a good fingerprint is found, the tape is used to pick it up and transfer it to a fingerprint card."
+						(Print 153 11)
 					)
 				)
 			)
 			(
 				(or
 					(Said 'use,remove/powder,brush')
-					(Said 'drop,apply,use/powder,dust')
-					(Said 'dust,powder[/*]')
+					(Said 'deposit,apply,use/powder,dust')
+					(Said 'dust,powder[/anyword]')
 					(Said 'get,remove,hoist/fingerprint,print[<finger]')
 				)
-				(if local1
-					(Print 153 12) ; "You don't have your field kit."
+				(if dontHaveFieldKit
+					(Print 153 12)
 				else
-					(Print 153 13 #draw) ; "Carefully, you apply the fingerprint powder and ... "Not worth processing" you think."
+					(Print 153 13 #draw)
 				)
 			)
 			((or (Said 'use,remove/camera') (Said 'get/painting'))
-				(if local1
-					(Print 153 12) ; "You don't have your field kit."
+				(if dontHaveFieldKit
+					(Print 153 12)
 				else
-					(Print 153 14) ; ""Click!" You take a picture, and return the camera to your field kit."
+					(Print 153 14)
 				)
 			)
 			((Said 'use,remove/tape')
-				(Print 153 15) ; "The fingerprint tape is used only after finding a useful print. By picking up the print with the tape, it can be transferred to a card."
+				(Print 153 15)
 			)
-			((or (Said 'use,remove/dropper,vial,baggie') (Said 'get/sample'))
-				(Print 153 16) ; "There's nothing here worth the trouble."
+			(
+				(or
+					(Said 'use,remove/dropper,vial,baggie')
+					(Said 'get/sample')
+				)
+				(Print 153 16)
 			)
 			((Said 'make,use/plaster,cast,footprint,(print<feet)')
-				(Print 153 17) ; "You see nothing worth wasting casting plaster on."
+				(Print 153 17)
 			)
 		)
 	)
 )
-

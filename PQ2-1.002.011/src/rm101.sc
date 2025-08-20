@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 101)
 (include sci.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Motion)
 (use Game)
 (use User)
@@ -15,44 +14,38 @@
 )
 
 (local
-	local0
-	local1
-	local2
-	local3
+	willy
+	radio1
+	radio2
+	officeDoor
 	local4
-	local5
+	goingToThePark
 	local6
 	local7
 	local8
 	local9
 	local10
-	local11
+	gotRadios
 	local12
 	local13
 	local14
 	local15
 )
-
-(procedure (localproc_0)
+(procedure (localproc_000c)
 	(Print &rest #at -1 24)
 )
 
-(instance rm101 of Rm
+(instance rm101 of Room
 	(properties
 		picture 101
-		style 0
+		style $0000
 	)
-
-	(method (dispose)
-		(toTheParkScript dispose:)
-		(super dispose:)
-	)
-
+	
 	(method (init)
 		(HandsOn)
 		(User canInput: 1 canControl: 1)
-		(= global212 3)
-		(= global211 1)
+		(= gunFireState 3)
+		(= gunNotNeeded 1)
 		(Load rsVIEW 272)
 		(Load rsVIEW 20)
 		(Load rsVIEW 45)
@@ -237,7 +230,7 @@
 			ignoreActors:
 			addToPic:
 		)
-		((= local1 (Prop new:))
+		((= radio1 (Prop new:))
 			view: 272
 			posn: 137 124
 			setPri: 15
@@ -246,7 +239,7 @@
 			init:
 			ignoreActors:
 		)
-		((= local2 (Prop new:))
+		((= radio2 (Prop new:))
 			view: 272
 			posn: 131 123
 			setPri: 15
@@ -255,7 +248,7 @@
 			init:
 			ignoreActors:
 		)
-		((= local3 (Prop new:))
+		((= officeDoor (Prop new:))
 			view: 272
 			posn: 148 137
 			setPri: 6
@@ -264,17 +257,17 @@
 			ignoreActors:
 			init:
 		)
-		((= global112 (Act new:))
+		((= keith (Actor new:))
 			view: 20
 			posn: 10 135
 			loop: 0
 			setCycle: Walk
 			setPri: 9
-			setMotion: Follow gEgo 15
+			setMotion: Follow ego 15
 			init:
-			illegalBits: $c000
+			illegalBits: -16384
 		)
-		((= local0 (Act new:))
+		((= willy (Actor new:))
 			view: 45
 			posn: 245 141
 			setCycle: Walk
@@ -282,319 +275,240 @@
 			stopUpd:
 		)
 		(NormalEgo)
-		(gEgo
+		(ego
 			view: 1
 			posn: 20 137
 			loop: 0
 			setPri: 9
 			setLoop: -1
 			init:
-			illegalBits: $c000
+			illegalBits: -16384
 		)
 		(self setScript: rm101Script)
 	)
-
+	
 	(method (doit)
-		(cond
-			((> local15 1)
-				(-- local15)
-			)
-			((== local15 1)
-				(= local15 0)
-				(tryAgain cue:)
-			)
+		(cond 
+			((> local15 1) (-- local15))
+			((== local15 1) (= local15 0) (tryAgain cue:))
 		)
-		(if (and (gEgo inRect: 135 135 153 139) (not local13))
+		(if
+		(and (ego inRect: 135 135 153 139) (not local13))
 			(theDoor changeState: 1)
 		)
-		(if (and (not local13) (gEgo inRect: 110 129 130 139))
+		(if
+		(and (not local13) (ego inRect: 110 129 130 139))
 			(if (not local4)
-				(gEgo illegalBits: 0)
-				(global112 illegalBits: 0)
+				(ego illegalBits: 0)
+				(keith illegalBits: 0)
 				(LtSpeech changeState: 0)
 			else
 				(tryAgain changeState: 1)
 			)
 		)
-		(cond
-			((and (< (gEgo x:) 20) local4 (not local5))
-				(= local5 1)
-				(gEgo illegalBits: $8000)
-				(global112 illegalBits: $8000)
+		(cond 
+			(
+			(and (< (ego x?) 20) local4 (not goingToThePark))
+				(= goingToThePark 1)
+				(ego illegalBits: -32768)
+				(keith illegalBits: -32768)
 				(self setScript: toTheParkScript)
 			)
-			((and (< (gEgo x:) 20) (not local4) (not local14))
-				(= local14 1)
-				(localproc_0 101 0) ; "Keith says "Sonny, where are you going? Aren't we going to talk to the Lieutenant?""
-			)
+			(
+			(and (< (ego x?) 20) (not local4) (not local14)) (= local14 1) (localproc_000c 101 0))
 		)
-		(if (and (> (gEgo x:) 20) local14)
-			(= local14 0)
-		)
+		(if (and (> (ego x?) 20) local14) (= local14 0))
 		(super doit:)
+	)
+	
+	(method (dispose)
+		(toTheParkScript dispose:)
+		(super dispose:)
 	)
 )
 
 (instance rm101Script of Script
 	(properties)
-
-	(method (handleEvent event)
-		(if (event claimed:)
-			(return 1)
-		)
-		(if (== (event type:) evSAID)
-			(cond
-				((Said 'look>')
-					(cond
-						((Said '/wall')
-							(localproc_0 101 1) ; "The walls are sheetrock, painted white. The room is really bright. There is a map of Steelton with pushpins sticking into it."
-						)
-						((Said '/pushpin,pin[<press]')
-							(localproc_0 101 2) ; "You know...little plastic things with pointy tips."
-						)
-						((Said '/map')
-							(localproc_0 101 3) ; "It's manufactured by the Lytton Map Co."
-						)
-						((or (Said '/ceiling') (Said '<up'))
-							(localproc_0 101 4) ; "Lift-out acoustic ceiling tiles... what did you expect?"
-						)
-						((or (Said '/floor,dirt') (Said '<down'))
-							(localproc_0 101 5) ; "The janitorial crew must be pretty good. The floor tile is highly polished."
-						)
-						((Said '/man')
-							(if (< (gEgo x:) 137)
-								(localproc_0 101 6) ; "The man looks like he is trying hastily to get something done."
-							else
-								(localproc_0 101 7) ; "The lieutenant looks like he earned the name "Wild Willy"."
-							)
-						)
-						((Said '/lieutenant,willie,cole,miller')
-							(if (< (gEgo x:) 137)
-								(localproc_0 101 8) ; "He's in his office."
-							else
-								(localproc_0 101 7) ; "The lieutenant looks like he earned the name "Wild Willy"."
-							)
-						)
-						((Said '/woman,woman')
-							(if (< (gEgo x:) 137)
-								(localproc_0 101 9) ; "The woman looks like she is busy reading some forms."
-							else
-								(localproc_0 101 10) ; "There are no women in here, unless Willy's got one hidden somewhere (it's possible!)."
-							)
-						)
-						((Said '/extender')
-							(if (> (gEgo x:) 137)
-								(localproc_0 101 11) ; "They're two way walkie-talkies that could allow you to communicate with your partner, Keith."
-							else
-								(localproc_0 101 12) ; "There are no radios in the front office."
-							)
-						)
-						((Said '/desk')
-							(cond
-								((> (gEgo x:) 137)
-									(localproc_0 101 13) ; "It's relatively uncluttered when compared to Captain Hall's desk."
-								)
-								(
-									(or
-										(gEgo inRect: 60 133 80 139)
-										(== (gEgo loop:) 2)
-									)
-									(localproc_0 101 14) ; "The woman's desk looks almost too neat and tidy."
-								)
-								(
-									(or
-										(gEgo inRect: 30 133 60 139)
-										(== (gEgo loop:) 3)
-									)
-									(localproc_0 101 15) ; "The man's desk is covered with papers. There appear to be doodles all over them."
-								)
-							)
-						)
-						((Said '/table')
-							(if (> (gEgo x:) 137)
-								(localproc_0 101 16) ; "On the table, you see a pair of two-way radios."
-							else
-								(localproc_0 101 17) ; "There are no tables in here....just desks."
-							)
-						)
-						((Said '[<at,around][/!*,chamber,office]')
-							(localproc_0 101 18) ; "The offices here at Steelton PD are very similar to those back home in Lytton."
-						)
-						((Said '/file,cabinet')
-							(if (> (gEgo x:) 137)
-								(localproc_0 101 19) ; "It's the lieutenant's private file cabinet."
-							else
-								(localproc_0 101 20) ; "There are, of course, file cabinets in the outer office. They're uniformly gray and nondescript."
-							)
-						)
-					)
-				)
-				((Said 'talk>')
-					(cond
-						((Said '/woman,woman')
-							(cond
-								(
-									(and
-										(not local4)
-										(== local6 0)
-										(< (gEgo x:) 137)
-									)
-									(localproc_0 101 21) ; "Hi! You must be Mr. Bonds and Mr. Robinson. The Lieutenant is waiting for you. Please go on in."
-									(= local6 1)
-								)
-								(
-									(and
-										(not local4)
-										(== local6 1)
-										(< (gEgo x:) 137)
-									)
-									(localproc_0 101 22) ; "The Lieutenant is waiting for you, sir."
-									(= local6 2)
-								)
-								((and (== local6 2) (< (gEgo x:) 137))
-									(localproc_0 101 23) ; "Have a nice day sir."
-								)
-								((and local4 (< (gEgo x:) 137))
-									(localproc_0 101 24) ; "How are you today, sir? I'm pleased to meet you, but if you don't mind, I have to get back to work."
-								)
-								(else
-									(localproc_0 101 25) ; "Try talking to the Lieutenant."
-								)
-							)
-						)
-						((Said '/lieutenant,willie,cole,miller')
-							(cond
-								((< (gEgo x:) 137)
-									(if (not local4)
-										(localproc_0 101 22) ; "The Lieutenant is waiting for you, sir."
-									else
-										(localproc_0 101 26) ; "Officer Pitman is waiting for you."
-									)
-								)
-								((not local9)
-									(cond
-										((not local8)
-											(localproc_0 101 27) ; "Go on, boys. Catch that ride to the park."
-											(= local8 1)
-										)
-										(local8
-											(localproc_0 101 28) ; "C'mon, guys. I've told you all I know. I've got work to do now."
-											(= local9 1)
-										)
-									)
-								)
-								(else
-									(localproc_0 101 29) ; "Can't you take a hint? GET OUTTA HERE!!!!"
-								)
-							)
-						)
-						((Said '/man')
-							(cond
-								((< (gEgo x:) 137)
-									(if (not local4)
-										(cond
-											((== local6 0)
-												(localproc_0 101 24) ; "How are you today, sir? I'm pleased to meet you, but if you don't mind, I have to get back to work."
-												(= local6 1)
-											)
-											((== local6 1)
-												(localproc_0 101 22) ; "The Lieutenant is waiting for you, sir."
-												(= local6 2)
-											)
-											((== local6 2)
-												(localproc_0 101 23) ; "Have a nice day sir."
-											)
-										)
-									else
-										(localproc_0 101 26) ; "Officer Pitman is waiting for you."
-									)
-								)
-								((not local9)
-									(cond
-										((not local8)
-											(localproc_0 101 27) ; "Go on, boys. Catch that ride to the park."
-											(= local8 1)
-										)
-										(local8
-											(localproc_0 101 30) ; "C'mon, guys. I've told you all I know. I've got work to do, now."
-											(= local9 1)
-										)
-									)
-								)
-								(else
-									(localproc_0 101 29) ; "Can't you take a hint? GET OUTTA HERE!!!!"
-								)
-							)
-						)
-					)
-				)
-				((Said '/no')
-					(localproc_0 101 31) ; "C'mon. Don't be negative!"
-				)
-				((Said 'yes')
-					(localproc_0 101 32) ; "That's the spirit!"
-				)
-				((Said 'open/file,cabinet')
-					(if (> (gEgo x:) 137)
-						(localproc_0 101 33) ; "Nope! Only "Wild Willy" has rights to the file cabinet."
-					else
-						(localproc_0 101 34) ; "You don't need to go snooping around in someone else's files."
-					)
-				)
-				((or (Said 'knock') (Said 'open/door'))
-					(if (not local4)
-						(Print 101 35) ; "You're not close enough."
-					else
-						(Print 101 36) ; "Its already open."
-					)
-				)
-				((or (Said 'use,dial/phone,phone') (Said 'place,make/call'))
-					(localproc_0 101 37) ; "Who ya gonna call...Crimebusters?"
-				)
-				((Said 'get,get/extender,walkie,talkie')
-					(cond
-						(
-							(and
-								(gEgo inRect: 130 135 160 150)
-								(== (gEgo loop:) 2)
-								(not (gEgo has: 30)) ; walkie_talkie
-							)
-							(if (not local11)
-								(SetScore 3)
-								(localproc_0 101 38 83) ; "You pick up the two-way radios, handing one of them to your partner, and the lieutenant says..."
-								(local0 loop: 1)
-								(localproc_0 101 39 83) ; "Oh yes, I set those radios out for you boys. I thought they might come in handy while you're looking around the park."
-								(local0 loop: 0)
-								(local1 dispose:)
-								(local2 dispose:)
-								(gEgo get: 30) ; walkie_talkie
-							else
-								(SetScore 3)
-								(localproc_0 101 40 83) ; "You pick up the two-way radios from the table. They might come in handy while you and Keith are looking around the park."
-								(local1 dispose:)
-								(local2 dispose:)
-								(gEgo get: 30) ; walkie_talkie
-							)
-						)
-						((gEgo has: 30) ; walkie_talkie
-							(localproc_0 101 41) ; "You already have it."
-						)
-						(else
-							(localproc_0 101 35) ; "You're not close enough."
-						)
-					)
-				)
-			)
-		)
-	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(gEgo setMotion: MoveTo 40 137 self)
+				(ego setMotion: MoveTo 40 137 self)
 			)
-			(1
-				(localproc_0 101 42 83) ; "Wow!" Keith says. "That sure was fun, wasn't it, Sonny?"
+			(1 (localproc_000c 101 42 83))
+		)
+	)
+	
+	(method (handleEvent event)
+		(if (event claimed?) (return 1))
+		(return
+			(if (== (event type?) evSAID)
+				(cond 
+					((Said 'look>')
+						(cond 
+							((Said '/wall') (localproc_000c 101 1))
+							((Said '/pushpin,pin[<press]') (localproc_000c 101 2))
+							((Said '/map') (localproc_000c 101 3))
+							((or (Said '/ceiling') (Said '<up')) (localproc_000c 101 4))
+							((or (Said '/floor,dirt') (Said '<down')) (localproc_000c 101 5))
+							((Said '/dude')
+								(if (< (ego x?) 137)
+									(localproc_000c 101 6)
+								else
+									(localproc_000c 101 7)
+								)
+							)
+							((Said '/lieutenant,willie,cole,miller')
+								(if (< (ego x?) 137)
+									(localproc_000c 101 8)
+								else
+									(localproc_000c 101 7)
+								)
+							)
+							((Said '/broad,broad')
+								(if (< (ego x?) 137)
+									(localproc_000c 101 9)
+								else
+									(localproc_000c 101 10)
+								)
+							)
+							((Said '/extender')
+								(if (> (ego x?) 137)
+									(localproc_000c 101 11)
+								else
+									(localproc_000c 101 12)
+								)
+							)
+							((Said '/desk')
+								(cond 
+									((> (ego x?) 137) (localproc_000c 101 13))
+									(
+									(or (ego inRect: 60 133 80 139) (== (ego loop?) 2)) (localproc_000c 101 14))
+									(
+									(or (ego inRect: 30 133 60 139) (== (ego loop?) 3)) (localproc_000c 101 15))
+								)
+							)
+							((Said '/table')
+								(if (> (ego x?) 137)
+									(localproc_000c 101 16)
+								else
+									(localproc_000c 101 17)
+								)
+							)
+							((Said '[<at,around][/!*,chamber,office]') (localproc_000c 101 18))
+							((Said '/file,cabinet')
+								(if (> (ego x?) 137)
+									(localproc_000c 101 19)
+								else
+									(localproc_000c 101 20)
+								)
+							)
+						)
+					)
+					((Said 'chat>')
+						(cond 
+							((Said '/broad,broad')
+								(cond 
+									(
+									(and (not local4) (== local6 0) (< (ego x?) 137)) (localproc_000c 101 21) (= local6 1))
+									(
+									(and (not local4) (== local6 1) (< (ego x?) 137)) (localproc_000c 101 22) (= local6 2))
+									((and (== local6 2) (< (ego x?) 137)) (localproc_000c 101 23))
+									((and local4 (< (ego x?) 137)) (localproc_000c 101 24))
+									(else (localproc_000c 101 25))
+								)
+							)
+							((Said '/lieutenant,willie,cole,miller')
+								(cond 
+									((< (ego x?) 137)
+										(if (not local4)
+											(localproc_000c 101 22)
+										else
+											(localproc_000c 101 26)
+										)
+									)
+									((not local9)
+										(cond 
+											((not local8) (localproc_000c 101 27) (= local8 1))
+											(local8 (localproc_000c 101 28) (= local9 1))
+										)
+									)
+									(else (localproc_000c 101 29))
+								)
+							)
+							((Said '/dude')
+								(cond 
+									((< (ego x?) 137)
+										(if (not local4)
+											(cond 
+												((== local6 0) (localproc_000c 101 24) (= local6 1))
+												((== local6 1) (localproc_000c 101 22) (= local6 2))
+												((== local6 2) (localproc_000c 101 23))
+											)
+										else
+											(localproc_000c 101 26)
+										)
+									)
+									((not local9)
+										(cond 
+											((not local8) (localproc_000c 101 27) (= local8 1))
+											(local8 (localproc_000c 101 30) (= local9 1))
+										)
+									)
+									(else (localproc_000c 101 29))
+								)
+							)
+						)
+					)
+					((Said '/n') (localproc_000c 101 31))
+					((Said 'affirmative') (localproc_000c 101 32))
+					((Said 'open/file,cabinet')
+						(if (> (ego x?) 137)
+							(localproc_000c 101 33)
+						else
+							(localproc_000c 101 34)
+						)
+					)
+					((or (Said 'knock') (Said 'open/door')) (if (not local4) (Print 101 35) else (Print 101 36)))
+					(
+						(or
+							(Said 'use,dial/phone,phone')
+							(Said 'place,make/call')
+						)
+						(localproc_000c 101 37)
+					)
+					((Said 'get,get/extender,walkie,talkie')
+						(cond 
+							(
+								(and
+									(ego inRect: 130 135 160 150)
+									(== (ego loop?) 2)
+									(not (ego has: 30))
+								)
+								(if (not gotRadios)
+									(SolvePuzzle 3)
+									(localproc_000c 101 38 83)
+									(willy loop: 1)
+									(localproc_000c 101 39 83)
+									(willy loop: 0)
+									(radio1 dispose:)
+									(radio2 dispose:)
+									(ego get: 30)
+								else
+									(SolvePuzzle 3)
+									(localproc_000c 101 40 83)
+									(radio1 dispose:)
+									(radio2 dispose:)
+									(ego get: 30)
+								)
+							)
+							((ego has: 30) (localproc_000c 101 41))
+							(else (localproc_000c 101 35))
+						)
+					)
+				)
+			else
+				0
 			)
 		)
 	)
@@ -602,126 +516,130 @@
 
 (instance LtSpeech of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(= local13 1)
-				(local0 loop: 1)
+				(willy loop: 1)
 				(HandsOff)
 				(self cue:)
 			)
 			(1
-				(localproc_0 101 43 83) ; "The Lieutenant says "C'mon in....the door's open.""
-				(local3 setCycle: End self)
+				(localproc_000c 101 43 83)
+				(officeDoor setCycle: EndLoop self)
 			)
 			(2
-				(gEgo setMotion: MoveTo 180 139 self)
-				(global112 setMotion: MoveTo 165 136 ignoreActors:)
+				(ego setMotion: MoveTo 180 139 self)
+				(keith setMotion: MoveTo 165 136 ignoreActors:)
 			)
 			(3
-				(gEgo setLoop: 2 setCel: 1)
-				(global112 setLoop: 2 setCel: 1 ignoreActors:)
+				(ego setLoop: 2 setCel: 1)
+				(keith setLoop: 2 setCel: 1 ignoreActors:)
 				(self cue:)
 			)
 			(4
-				(local0 setMotion: MoveTo 245 146 self)
+				(willy setMotion: MoveTo 245 146 self)
 			)
 			(5
-				(local0 setMotion: MoveTo 170 146 self)
+				(willy setMotion: MoveTo 170 146 self)
 			)
 			(6
-				(local0 setLoop: 3 setCel: 0)
-				(localproc_0 101 44 83) ; "Wild Willy walks over, shakes your hand and says..."
-				(localproc_0 101 45 83) ; "Detectives Bonds and Robinson: Welcome to Steelton!"
-				(localproc_0 101 46 83) ; "Well! you dudes are chasing one fine, upstanding citizen." Continuing, he says..."It seems this punk Bains has already started his handiwork here, too."
-				(localproc_0 101 47 83) ; ""You know the 'phone tap' subject Don Colby?" He asks. Without waiting for a reply, he goes on to say...."
-				(localproc_0 101 48 83) ; "I hate to tell you boys this, but after putting a tap on Colby's phone, I sent an unmarked unit over to check on him, and..."
-				(localproc_0 101 49 83) ; "My man found him deader than a doornail with a .32 cal hole in his head."
-				(localproc_0 101 50 83) ; "We did manage to connect", Willy tells you, "on one threatening call from Bains. I don't think it will help but..."
-				(localproc_0 101 51 83) ; ""The call was traced to a pay phone in our local 'Burt Park.'"
-				(localproc_0 101 52 83) ; "I sent a man over there to have a look around," he says, "but nothing was found."
-				(localproc_0 101 53 83) ; "You boys will probably want to go over there and look around." Willy grunts.."But I think you'll be spinning your wheels."
-				(localproc_0 101 54 83) ; "Wild Willy says..."I think Officer Pitman is waiting in the hall. He can drive you over to the park.""
-				(localproc_0 101 55 83) ; "Good luck, boys!"
+				(willy setLoop: 3 setCel: 0)
+				(localproc_000c 101 44 83)
+				(localproc_000c 101 45 83)
+				(localproc_000c 101 46 83)
+				(localproc_000c 101 47 83)
+				(localproc_000c 101 48 83)
+				(localproc_000c 101 49 83)
+				(localproc_000c 101 50 83)
+				(localproc_000c 101 51 83)
+				(localproc_000c 101 52 83)
+				(localproc_000c 101 53 83)
+				(localproc_000c 101 54 83)
+				(localproc_000c 101 55 83)
 				(= local4 1)
 				(self cue:)
 			)
 			(7
 				(= local13 0)
-				(local0 setLoop: -1 setCel: -1)
-				(gEgo setPri: -1 setLoop: -1 setCel: -1 illegalBits: $e000)
-				(global112 setPri: -1 setLoop: 2 setCel: -1 illegalBits: $c000)
+				(willy setLoop: -1 setCel: -1)
+				(ego setPri: -1 setLoop: -1 setCel: -1 illegalBits: -8192)
+				(keith
+					setPri: -1
+					setLoop: 2
+					setCel: -1
+					illegalBits: -16384
+				)
 				(HandsOn)
-				(local0 setMotion: MoveTo 265 146 self)
+				(willy setMotion: MoveTo 265 146 self)
 			)
-			(8
-				(local0 stopUpd:)
-			)
+			(8 (willy stopUpd:))
 		)
 	)
 )
 
 (instance tryAgain of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(1
 				(= local13 1)
 				(HandsOff)
-				(global112 stopUpd:)
-				(localproc_0 101 56) ; "Keith says, "Did you forget something, Sonny? I'll wait here for you.""
+				(keith stopUpd:)
+				(localproc_000c 101 56)
 				(self cue:)
 			)
 			(2
-				(gEgo
+				(ego
 					setPri: 9
 					illegalBits: 0
 					setMotion: MoveTo 180 138 self
 				)
 			)
-			(3
-				(self cue:)
-			)
+			(3 (self cue:))
 			(4
-				(local0 setLoop: 1)
-				(if (gEgo has: 30) ; walkie_talkie
-					(localproc_0 101 57) ; "The Lieutenant says "What's up, Bonds...did you forget something?""
+				(willy setLoop: 1)
+				(if (ego has: 30)
+					(localproc_000c 101 57)
 				else
-					(localproc_0 101 58 83) ; "Wild Willy says, "Oh, yeah, Bonds! Forgot the radios, didn't you? Go ahead and grab 'em. I've got some map work to do.""
+					(localproc_000c 101 58 83)
 				)
-				(gEgo illegalBits: $c000 setLoop: -1 setCel: -1 setPri: -1)
+				(ego
+					illegalBits: -16384
+					setLoop: -1
+					setCel: -1
+					setPri: -1
+				)
 				(HandsOn)
 				(= local10 0)
 				(= local13 0)
-				(= local11 1)
+				(= gotRadios 1)
 				(= local15 20)
 			)
-			(5
-				(local0 setLoop: 0)
-			)
+			(5 (willy setLoop: 0))
 		)
 	)
 )
 
 (instance theDoor of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(1
 				(HandsOff)
 				(= local13 1)
-				(if local11
-					(gEgo
+				(if gotRadios
+					(ego
 						setPri: 9
 						illegalBits: 0
 						setMotion: MoveTo 109 136 self
 					)
 				else
-					(gEgo setPri: 9 illegalBits: 0 setMotion: MoveTo 109 136)
-					(global112
+					(ego setPri: 9 illegalBits: 0 setMotion: MoveTo 109 136)
+					(keith
 						setPri: 9
 						setLoop: -1
 						illegalBits: 0
@@ -731,17 +649,22 @@
 				)
 			)
 			(2
-				(gEgo setPri: -1 setLoop: -1 setCel: -1 illegalBits: $c000)
+				(ego
+					setPri: -1
+					setLoop: -1
+					setCel: -1
+					illegalBits: -16384
+				)
 				(= local13 0)
 				(HandsOn)
-				(if (not local11)
-					(global112
-						illegalBits: $c000
-						setMotion: Follow gEgo 20
+				(if (not gotRadios)
+					(keith
+						illegalBits: -16384
+						setMotion: Follow ego 20
 						ignoreActors: 0
 					)
 				else
-					(global112 startUpd:)
+					(keith startUpd:)
 				)
 			)
 		)
@@ -750,28 +673,36 @@
 
 (instance toTheParkScript of Script
 	(properties)
-
+	
 	(method (changeState newState &tmp temp0)
 		(switch (= state newState)
 			(0
-				(gCast eachElementDo: #dispose)
-				(gCurRoom drawPic: 104 7)
+				(cast eachElementDo: #dispose)
+				(curRoom drawPic: 104 7)
 				(= cycles 2)
 			)
 			(1
-				(Display 101 59 dsFONT 0 dsWIDTH 290 dsCOORD 15 43 dsCOLOR 15) ; "You and Keith are driven to 'Burt Park' by Jarvis Pitman, a twenty-year veteran who looks ten years younger than his real age. He regales you with stories of his escapades as a young patrolman. By the time you reach the park, you are beginning to wish he had retired last year. Sure enough, Officer Pitman climbs out of the patrol car and heads into the park with you, talking all the way."
-				(repeat
-					(= temp0 (Event new: evMOUSEKEYBOARD))
-					(breakif (& (temp0 type:) $0005))
+				(Display
+					101
+					59
+					dsFONT
+					0
+					dsWIDTH
+					290
+					dsCOORD
+					15
+					43
+					dsCOLOR
+					15
+				)
+				(while
+				(not (& ((= temp0 (Event new: 5)) type?) $0005))
 					(temp0 dispose:)
 				)
 				(temp0 dispose:)
 				(self cue:)
 			)
-			(2
-				(gCurRoom newRoom: 78)
-			)
+			(2 (curRoom newRoom: 78))
 		)
 	)
 )
-

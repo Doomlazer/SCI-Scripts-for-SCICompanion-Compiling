@@ -1,9 +1,10 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 19)
-(include sci.sh)
+(include system.sh)
+(include game.sh)
+(include keys.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use Motion)
 (use Game)
 (use User)
@@ -15,114 +16,123 @@
 )
 
 (local
-	local0
-	local1
-	local2
-	local3
-	local4
+	marshall
+	revolver
+	door1
+	door2
+	door3
 	[local5 4]
-	local9
+	flood
 	local10
-	local11
+	sonnyInStallNum
 	local12
 	local13
 	local14
 	local15
-	local16
+	marshallBlocked
 	local17
-	local18
-	local19
+	tolietLid
+	tank
 	local20
 )
-
-(procedure (localproc_0)
+(procedure (LocPrint)
 	(Print &rest #at -1 15)
 )
 
-(instance rm19 of Rm
+(instance rm19 of Room
 	(properties
 		picture 19
-		style 0
+		style HWIPE
 	)
-
+	
+	(method (init)
+		(super init:)
+		(= gunFireState 2)
+		(= gunNotNeeded 1)
+		(Load VIEW 1)
+		(Load VIEW 0)
+		(Load VIEW 256)
+		(Load VIEW 80)
+		(Load PICTURE 35)
+		(ego
+			posn: 269 140
+			view: (if gunDrawn 7 else 1)
+			setStep: 3 2
+			init:
+			illegalBits: -24576
+			setMotion: MoveTo 0 140
+		)
+		(self setScript: rm19Script)
+		(self setLocales: 153)
+	)
+	
 	(method (dispose)
 		(stallScript dispose:)
 		(floodScript dispose:)
 		(marshallScript dispose:)
 		(super dispose:)
 	)
-
-	(method (init)
-		(super init:)
-		(= global212 2)
-		(= global211 1)
-		(Load rsVIEW 1)
-		(Load rsVIEW 0)
-		(Load rsVIEW 256)
-		(Load rsVIEW 80)
-		(Load rsPIC 35)
-		(gEgo
-			posn: 269 140
-			view: (if global204 7 else 1)
-			setStep: 3 2
-			init:
-			illegalBits: $a000
-			setMotion: MoveTo 0 140
-		)
-		(self setScript: rm19Script)
-		(self setLocales: 153)
-	)
 )
 
 (instance rm19Script of Script
 	(properties)
-
+	
 	(method (doit)
 		(if (> local12 0)
 			(-- local12)
 		)
-		(cond
-			((> (gEgo x:) 270)
-				(gCurRoom newRoom: 16)
+		(cond 
+			((> (ego x?) 270)
+				(curRoom newRoom: 16)
 			)
-			((<= (gEgo y:) 126)
-				(if (!= (mod (gEgo view:) 2) 0)
-					(gEgo view: (- (gEgo view:) 1))
+			((<= (ego y?) 126)
+				(if (!= (mod (ego view?) 2) 0)
+					(ego view: (- (ego view?) 1))
 				)
 			)
-			((!= (mod (gEgo view:) 2) 1)
-				(gEgo view: (+ (gEgo view:) 1))
+			((!= (mod (ego view?) 2) 1) (ego view: (+ (ego view?) 1)))
+		)
+		(if
+			(and
+				local13
+				local15
+				(not (ego inRect: 174 115 225 138))
 			)
-		)
-		(if (and local13 local15 (not (gEgo inRect: 174 115 225 138)))
 			(= local15 0)
-			(localproc_0 19 0) ; "You left the water running in the sink."
+			(LocPrint 19 0)
 		)
-		(if (and local13 (gEgo inRect: 174 115 225 138))
+		(if
+			(and
+				local13
+				(ego inRect: 174 115 225 138)
+			)
 			(= local15 1)
 		)
 		(super doit:)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(SL enable:)
+				(StatusLine enable:)
 				(HandsOn)
 				(User prevDir: 7)
-				(if (and (== global100 13) (not local10) (not (IsFlag 150)))
-					((= local0 (Act new:))
+				(if
+					(and
+						(== gamePhase 13)
+						(not local10)
+						(not (Btst fMarshallLeftBathroom))
+					)
+					((= marshall (Actor new:))
 						view: 21
-						posn:
-							(if (IsFlag 151) 192 else 138)
-							(if (IsFlag 151) 119 else 120)
+						posn: (if (Btst fMarshallAtSink) 192 else 138) (if (Btst fMarshallAtSink) 119 else 120)
 						init:
 						illegalBits: 0
 						setCycle: Walk
 						setScript: marshallScript
 					)
 				)
-				((= local9 (Prop new:))
+				((= flood (Prop new:))
 					view: 80
 					loop: 3
 					cel: 0
@@ -134,7 +144,7 @@
 					stopUpd:
 					setScript: floodScript
 				)
-				((= local2 (Prop new:))
+				((= door1 (Prop new:))
 					view: 80
 					loop: 0
 					cel: 0
@@ -144,7 +154,7 @@
 					init:
 					stopUpd:
 				)
-				((= local3 (Prop new:))
+				((= door2 (Prop new:))
 					view: 80
 					loop: 1
 					cel: 0
@@ -154,7 +164,7 @@
 					init:
 					stopUpd:
 				)
-				((= local4 (Prop new:))
+				((= door3 (Prop new:))
 					view: 80
 					loop: 2
 					cel: 0
@@ -174,7 +184,7 @@
 					addToPic:
 				)
 				(if local10
-					(switch local11
+					(switch sonnyInStallNum
 						(1
 							(self changeState: 1)
 						)
@@ -189,304 +199,319 @@
 			)
 			(1
 				(HandsOff)
-				(local2 startUpd: setCycle: End self)
-				(= local11 1)
+				(door1
+					startUpd:
+					setCycle: EndLoop self
+				)
+				(= sonnyInStallNum 1)
 			)
 			(2
-				(gEgo ignoreActors: illegalBits: 0)
+				(ego ignoreActors: illegalBits: 0)
 				(if local10
 					(= local10 0)
-					(= local11 0)
-					(gEgo setMotion: MoveTo 110 143 self)
+					(= sonnyInStallNum 0)
+					(ego setMotion: MoveTo 110 143 self)
 				else
-					(gEgo setMotion: MoveTo 64 143 self)
+					(ego setMotion: MoveTo 64 143 self)
 				)
 			)
 			(3
-				(gEgo ignoreActors: 0 illegalBits: $a000)
-				(local2 ignoreActors: setCycle: Beg self)
+				(ego ignoreActors: 0 illegalBits: -24576)
+				(door1 ignoreActors: setCycle: BegLoop self)
 			)
 			(4
 				(HandsOn)
-				(local2 stopUpd:)
+				(door1 stopUpd:)
 			)
 			(5
 				(HandsOff)
-				(local3 startUpd: setCycle: End self)
-				(= local11 2)
+				(door2 startUpd: setCycle: EndLoop self)
+				(= sonnyInStallNum 2)
 			)
 			(6
-				(gEgo ignoreActors: illegalBits: 0)
+				(ego ignoreActors: illegalBits: 0)
 				(if local10
-					(= local11 0)
+					(= sonnyInStallNum 0)
 					(= local10 0)
-					(gEgo setMotion: MoveTo 125 131 self)
+					(ego setMotion: MoveTo 125 131 self)
 				else
-					(gEgo setMotion: MoveTo 86 131 self)
+					(ego setMotion: MoveTo 86 131 self)
 				)
 			)
 			(7
-				(gEgo ignoreActors: 0 illegalBits: $a000)
-				(local3 ignoreActors: setCycle: Beg self)
+				(ego ignoreActors: 0 illegalBits: -24576)
+				(door2 ignoreActors: setCycle: BegLoop self)
 			)
 			(8
 				(HandsOn)
-				(local3 stopUpd:)
+				(door2 stopUpd:)
 			)
 			(9
-				(local4 startUpd: setCycle: End self)
+				(door3 startUpd: setCycle: EndLoop self)
 				(HandsOff)
-				(= local11 3)
+				(= sonnyInStallNum 3)
 			)
 			(10
-				(gEgo ignoreActors: illegalBits: 0)
+				(ego ignoreActors: illegalBits: 0)
 				(if local10
-					(= local11 0)
+					(= sonnyInStallNum 0)
 					(= local10 0)
-					(gEgo setMotion: MoveTo 135 120 self)
+					(ego setMotion: MoveTo 135 120 self)
 				else
-					(gEgo setMotion: MoveTo 108 120 self)
+					(ego setMotion: MoveTo 108 120 self)
 				)
 			)
 			(11
-				(gEgo ignoreActors: 0 illegalBits: $a000)
-				(local4 ignoreActors: setCycle: Beg self)
+				(ego ignoreActors: 0 illegalBits: cWHITE) ;-24576
+				(door3 ignoreActors: setCycle: BegLoop self)
 			)
 			(12
 				(HandsOn)
-				(local4 stopUpd:)
+				(door3 stopUpd:)
 			)
 			(13
-				(switch local11
+				(switch sonnyInStallNum
 					(2
-						(if (and (IsItemAt 31) (>= global100 6) (< global100 8)) ; jailer_s_revolver
-							(localproc_0 19 1) ; "Whoosh-clink-ssss clink-sshh-glugg."
+						(if
+						(and (InRoom 31) (>= gamePhase 6) (< gamePhase 8))
+							(LocPrint 19 1)
 							(floodScript changeState: 1)
 							(= global128 1)
 						else
-							(localproc_0 19 2) ; "Whooooooooosssssshhhhh...... gurgle, gurgle."
+							(LocPrint 19 2)
 						)
 					)
-					(0
-						(localproc_0 19 3) ; "Your arms aren't nearly long enough."
-					)
-					(else
-						(localproc_0 19 2) ; "Whooooooooosssssshhhhh...... gurgle, gurgle."
-					)
+					(0 (LocPrint 19 3))
+					(else  (LocPrint 19 2))
 				)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(switch (event type:)
-			(evKEYBOARD
+		(switch (event type?)
+			(keyDown
 				(if
 					(and
-						local11
+						sonnyInStallNum
 						(or
-							(== (event message:) KEY_F6)
-							(== (event message:) KEY_F8)
-							(== (event message:) KEY_F10)
+							(== (event message?) KEY_F6)
+							(== (event message?) KEY_F8)
+							(== (event message?) KEY_F10)
 						)
 					)
 					(event claimed: 1)
-					(Print 19 4) ; "You can't do that now."
+					(Print 19 4)
 				)
 			)
-			(evSAID
-				(cond
+			(saidEvent
+				(cond 
 					(
 						(or
 							(Said 'open[/booth,stall,door]')
-							(and (not local11) (Said 'enter[/booth,stall]'))
 							(and
-								local11
+								(not sonnyInStallNum)
+								(Said 'enter[/booth,stall]')
+							)
+							(and
+								sonnyInStallNum
 								(or
 									(Said 'exit[/booth,stall]')
 									(Said 'get<out')
 								)
 							)
 						)
-						(cond
-							((and (not local11) global204)
-								(Print 19 5) ; "Put away your gun first."
+						(cond 
+							(
+								(and
+									(not sonnyInStallNum)
+									gunDrawn
+								)
+								(Print 19 5)
 							)
-							((gEgo inRect: 117 116 140 126)
+							((ego inRect: 117 116 140 126)
 								(self changeState: 9)
 							)
-							((gEgo inRect: 104 126 130 136)
+							((ego inRect: 104 126 130 136)
 								(self changeState: 5)
 							)
-							((gEgo inRect: 86 136 118 149)
+							((ego inRect: 86 136 118 149)
 								(self changeState: 1)
 							)
-							((== local11 1)
+							((== sonnyInStallNum 1)
 								(= local10 1)
 								(self changeState: 1)
 							)
-							((== local11 2)
+							((== sonnyInStallNum 2)
 								(= local10 1)
 								(self changeState: 5)
 							)
-							((== local11 3)
+							((== sonnyInStallNum 3)
 								(= local10 1)
 								(self changeState: 9)
 							)
 							(else
-								(localproc_0 19 6) ; "You aren't close enough."
+								(LocPrint 19 6)
 							)
 						)
 					)
 					((Said 'look>')
-						(cond
+						(cond 
 							((Said '/dirt')
-								(localproc_0 19 7) ; "The ground is outside. In the new, modern Lytton Airport, they've put in floors."
+								(LocPrint 19 7)
 							)
 							((Said '/draw')
-								(if local11
-									(localproc_0 19 8) ; "If this was an "R" rated program like "Leisure Suit Larry", we might show it to you, but....!"
+								(if sonnyInStallNum
+									(LocPrint 19 8)
 								else
-									(localproc_0 19 9) ; "There are no bathroom drawings out here."
+									(LocPrint 19 9)
 								)
 							)
 							((Said '/wall')
-								(if local11
-									(localproc_0 19 10) ; "The stall is furnished with a stool for your sitting pleasure and toilet paper for your comfort."
-									(localproc_0 19 11) ; "There seems to be some graffiti scrawled on the wall of the stall... You can just barely read it."
+								(if sonnyInStallNum
+									(LocPrint 19 10)
+									(LocPrint 19 11)
 								else
-									(localproc_0 19 12) ; "On the walls, you see a paper towel dispenser, an electric hand dryer, a mirror, and a vent mounted above the stalls."
+									(LocPrint 19 12)
 								)
 							)
 							((Said '/water')
-								(if local11
-									(localproc_0 19 13) ; "The toilet water is unappetizing."
+								(if sonnyInStallNum
+									(LocPrint 19 13)
 								else
-									(localproc_0 19 14) ; "Find some, first."
+									(LocPrint 19 14)
 								)
 							)
 							((Said '/vent,fan')
-								(localproc_0 19 15) ; "This vent is equipped with an electric fan, designed to remove offensive odors."
+								(LocPrint 19 15)
 							)
 							((Said '/drain')
-								(if (== (floodScript state:) 2)
-									(localproc_0 19 16) ; "It appears to be doing its job well."
+								(if (== (floodScript state?) 2)
+									(LocPrint 19 16)
 								else
-									(localproc_0 19 17) ; "You look in the drain and see nothing important."
+									(LocPrint 19 17)
 								)
 							)
-							((Said '/man,gentleman,marshal')
-								(if (gCast contains: local0)
-									(localproc_0 19 18) ; "He appears to be a rather tall gentleman."
+							((Said '/dude,gentleman,marshal')
+								(if (cast contains: marshall)
+									(LocPrint 19 18)
 								else
-									(localproc_0 19 19) ; "Huh?"
+									(LocPrint 19 19)
 								)
 							)
 							((Said '<below/basin')
-								(localproc_0 19 20) ; "There is a cabinet which hides the pipes."
+								(LocPrint 19 20)
 							)
 							((Said '/cabinet')
-								(localproc_0 19 21) ; "It's mostly for decoration."
+								(LocPrint 19 21)
 							)
 							((Said '/outlet')
-								(localproc_0 19 22) ; "They're hidden."
+								(LocPrint 19 22)
 							)
 							((Said '/door')
-								(localproc_0 19 23) ; "The stall doors are uniformly uninteresting."
+								(LocPrint 19 23)
 							)
 							((Said '/basin')
-								(if local11
-									(localproc_0 19 24) ; "You'll have to leave the stall to get a good look at it."
+								(if sonnyInStallNum
+									(LocPrint 19 24)
 								else
-									(localproc_0 19 25) ; "It's handy for washing the hands. The soap dispensers are empty, however."
+									(LocPrint 19 25)
 								)
 							)
 							((Said '/bracket<soap')
-								(localproc_0 19 26) ; "Empty."
+								(LocPrint 19 26)
 							)
 							(
 								(or
 									(Said '/bracket,machine[<towel]')
 									(Said '/bracket,machine<towel<newspaper')
 								)
-								(if local11
-									(localproc_0 19 24) ; "You'll have to leave the stall to get a good look at it."
+								(if sonnyInStallNum
+									(LocPrint 19 24)
 								else
-									(localproc_0 19 27) ; "It's shiny, and it DOES have paper towels in it."
+									(LocPrint 19 27)
 								)
 							)
 							((Said '/dryer')
-								(if local11
-									(localproc_0 19 24) ; "You'll have to leave the stall to get a good look at it."
+								(if sonnyInStallNum
+									(LocPrint 19 24)
 								else
-									(localproc_0 19 28) ; "It's shiny. You wonder who invented the concept."
+									(LocPrint 19 28)
 								)
 							)
-							((or (Said '<up') (Said '/ceiling,light'))
-								(localproc_0 19 29) ; "You look up and see the usual bathroom ceiling with flourescent lighting fixtures."
+							(
+								(or
+									(Said '<up')
+									(Said '/ceiling,light')
+								)
+								(LocPrint 19 29)
 							)
-							((or (Said '<down') (Said '/floor,tile'))
-								(if local11
-									(localproc_0 19 30) ; "You see a toilet mounted to the tile floor."
+							(
+								(or
+									(Said '<down')
+									(Said '/floor,tile')
+								)
+								(if sonnyInStallNum
+									(LocPrint 19 30)
 								else
-									(localproc_0 19 31) ; "You see a clean tile floor with a water drain in the middle."
+									(LocPrint 19 31)
 								)
 							)
 							((Said '/9mm')
-								(if (gEgo has: 31) ; jailer_s_revolver
-									(localproc_0 19 32) ; "It's a 4" Smith and Wesson .38 caliber K-38 revolver, Serial# 5557763."
+								(if (ego has: 31)
+									(LocPrint 19 32)
 								else
 									(event claimed: 0)
 								)
 							)
 							((Said '/mirror')
-								(cond
-									(local11
-										(localproc_0 19 24) ; "You'll have to leave the stall to get a good look at it."
+								(cond 
+									(sonnyInStallNum
+										(LocPrint 19 24)
 									)
-									((< (gEgo y:) 135)
-										(if (== (gEgo loop:) 0)
-											(localproc_0 19 33) ; "Quit being so vain."
+									((< (ego y?) 135)
+										(if (== (ego loop?) 0)
+											(LocPrint 19 33)
 										else
-											(localproc_0 19 34) ; "You'll have to turn around to see the mirror."
+											(LocPrint 19 34)
 										)
 									)
 									(else
-										(localproc_0 19 35) ; "You're not close enough."
+										(LocPrint 19 35)
 									)
 								)
 							)
 							((Said '/booth,stall')
-								(if local11
-									(localproc_0 19 10) ; "The stall is furnished with a stool for your sitting pleasure and toilet paper for your comfort."
-									(localproc_0 19 11) ; "There seems to be some graffiti scrawled on the wall of the stall... You can just barely read it."
+								(if sonnyInStallNum
+									(LocPrint 19 10)
+									(LocPrint 19 11)
 								else
-									(localproc_0 19 36) ; "You can't see much from the outside. Better open one first."
+									(LocPrint 19 36)
 								)
 							)
 							((Said '/crapper,crapper,tank')
-								(if local11
-									(gCurRoom setScript: stallScript)
+								(if sonnyInStallNum
+									(curRoom setScript: stallScript)
 								else
-									(localproc_0 19 37) ; "The toilets are in the stalls, and you're not."
+									(LocPrint 19 37)
 								)
 							)
 							((Said '[<at,around][/chamber,bathroom,bathroom]')
-								(if local11
-									(localproc_0 19 10) ; "The stall is furnished with a stool for your sitting pleasure and toilet paper for your comfort."
-									(localproc_0 19 11) ; "There seems to be some graffiti scrawled on the wall of the stall... You can just barely read it."
-									(gCurRoom setScript: stallScript)
+								(if sonnyInStallNum
+									(LocPrint 19 10)
+									(LocPrint 19 11)
+									(curRoom setScript: stallScript)
 								else
-									(localproc_0 19 38) ; "You look around the public rest room but the only unusual thing you notice is that it's cleaner than most. Good old Lytton!"
+									(LocPrint 19 38)
 								)
 							)
 						)
 					)
 					((Said 'open,unlock/cabinet')
-						(localproc_0 19 39) ; "It's locked, you don't have the key, and you don't need anything out of the cabinet."
+						(LocPrint 19 39)
 					)
 					((Said 'smell/odor')
-						(localproc_0 19 40) ; "There aren't any. The fan works."
+						(LocPrint 19 40)
 					)
 					(
 						(or
@@ -494,320 +519,343 @@
 							(Said 'open/tank,crapper')
 							(Said 'frisk/tank')
 						)
-						(if local11
-							(= [local5 local11] 1)
-							(gCurRoom setScript: stallScript)
+						(if sonnyInStallNum
+							(= [local5 sonnyInStallNum] 1)
+							(curRoom setScript: stallScript)
 						else
-							(localproc_0 19 35) ; "You're not close enough."
+							(LocPrint 19 35)
 						)
 					)
 					((Said 'taste,drink,drink[/water]')
-						(localproc_0 19 41) ; "Lytton is a wonderful place, but its not known for its fabulous-tasting water."
+						(LocPrint 19 41)
 					)
-					((or (Said 'read/graffiti,wall') (Said 'look/graffiti'))
-						(if local11
+					(
+						(or
+							(Said 'read/graffiti,wall')
+							(Said 'look/graffiti')
+						)
+						(if sonnyInStallNum
 							(switch (Random 0 5)
 								(0
-									(localproc_0 19 42) ; "Here I sit all broken-hearted... Came to........(you can't make out the rest)."
+									(LocPrint 19 42)
 								)
 								(1
-									(localproc_0 19 43) ; "Nostalgia just isn't what it used to be."
+									(LocPrint 19 43)
 								)
 								(2
-									(localproc_0 19 44) ; "For a good time, call 683-4463....ask for Larry."
+									(LocPrint 19 44)
 								)
 								(3
-									(localproc_0 19 45) ; "There's a fairly good anatomical drawing here, but it appears to be upside-down."
+									(LocPrint 19 45)
 								)
 								(4
-									(localproc_0 19 46) ; "Where the hell is Coarsegold, CA???"
+									(LocPrint 19 46)
 								)
 								(5
-									(localproc_0 19 47) ; "As I was walking down the stair I met a man who wasn't there. He wasn't there again today... I sure do wish he'd GO AWAY!"
+									(LocPrint 19 47)
 								)
 							)
 						else
-							(localproc_0 19 48) ; "What? Where?"
+							(LocPrint 19 48)
 						)
 					)
 					((Said 'write')
-						(localproc_0 19 49) ; "Defacing public property isn't part of your job description."
+						(LocPrint 19 49)
 					)
-					((or (Said 'shit') (Said 'get/shit'))
-						(if local11
+					(
+						(or
+							(Said 'crap')
+							(Said 'get/crap')
+						)
+						(if sonnyInStallNum
 							(switch (Random 0 2)
 								(0
-									(localproc_0 19 50) ; "You hum a familiar tune..."Plop, plop, whiz, whiz....oh, what a relief it is.""
+									(LocPrint 19 50)
 								)
 								(1
-									(localproc_0 19 51) ; "During this time of relief, you think to yourself... "Gee, wish I had something to read.""
+									(LocPrint 19 51)
 								)
 								(2
-									(localproc_0 19 52) ; "As you occupy the stall you think, "It must have been the prunes.""
+									(LocPrint 19 52)
 								)
 							)
 						else
-							(localproc_0 19 53) ; "On the floor? Better go into a stall first."
+							(LocPrint 19 53)
 						)
 					)
-					((or (Said 'leak') (Said 'get/leak'))
-						(if local11
+					(
+						(or
+							(Said 'leak')
+							(Said 'get/leak')
+						)
+						(if sonnyInStallNum
 							(switch (Random 0 3)
 								(0
-									(localproc_0 19 54) ; "Whew!" you sigh, "I need to quit drinking so much coffee."
+									(LocPrint 19 54)
 								)
 								(1
-									(localproc_0 19 55) ; "You take time out for a natural body function."
+									(LocPrint 19 55)
 								)
 								(2
-									(localproc_0 19 56) ; "You rid yourself of enough coffee to float an aircraft carrier."
+									(LocPrint 19 56)
 								)
 								(3
-									(localproc_0 19 57) ; "As you eliminate the day's coffee, you think..."I wonder where the "black" in my black coffee goes?""
+									(LocPrint 19 57)
 								)
 							)
 						else
-							(localproc_0 19 53) ; "On the floor? Better go into a stall first."
+							(LocPrint 19 53)
 						)
 					)
 					((Said 'flush[/crapper]')
 						(self changeState: 13)
 					)
-					((or (Said 'wipe/ass') (Said 'use/newspaper[<crapper]'))
-						(if local11
-							(localproc_0 19 58) ; "Of course!"
+					(
+						(or
+							(Said 'wipe/ass')
+							(Said 'use/newspaper[<crapper]')
+						)
+						(if sonnyInStallNum
+							(LocPrint 19 58)
 						else
-							(localproc_0 19 59) ; "You should be in one of the stalls to do that."
+							(LocPrint 19 59)
 						)
 					)
 					((Said 'sat')
-						(if local11
-							(localproc_0 19 60) ; "Now's no time to relax, Sonny."
+						(if sonnyInStallNum
+							(LocPrint 19 60)
 						else
-							(localproc_0 19 61) ; "There's no place to sit, unless you go into one of the toilet stalls."
+							(LocPrint 19 61)
 						)
 					)
 					((Said 'frisk,check[<out]/stall,booth')
-						(if local11
-							(localproc_0 19 62) ; "You look all around the toilet and the stall, but you find nothing out of the ordinary."
+						(if sonnyInStallNum
+							(LocPrint 19 62)
 						else
-							(localproc_0 19 63) ; "Go ahead and enter one of the stalls."
+							(LocPrint 19 63)
 						)
 					)
 					((Said 'frisk,check[<out]/crapper,tank')
-						(if local11
-							(gCurRoom setScript: stallScript)
+						(if sonnyInStallNum
+							(curRoom setScript: stallScript)
 						else
-							(localproc_0 19 63) ; "Go ahead and enter one of the stalls."
+							(LocPrint 19 63)
 						)
 					)
 					((Said 'frisk,check[<out]')
-						(localproc_0 19 64) ; "You search high and low, but so far you've found nothing."
+						(LocPrint 19 64)
 					)
-					((Said 'talk/man,gentleman,marshal')
-						(if (gCast contains: local0)
-							(localproc_0 19 65) ; "He doesn't seem to hear you. He's humming under his breath..."Leeeavinn'...on a jet plane...""
+					((Said 'chat/dude,gentleman,marshal')
+						(if (cast contains: marshall)
+							(LocPrint 19 65)
 						else
-							(localproc_0 19 66) ; "Talking to yourself again?"
+							(LocPrint 19 66)
 						)
 					)
-					((Said 'show/mugshot,shot,painting')
-						(if (gCast contains: local0)
-							(localproc_0 19 67) ; "Listen, I've got a flight to catch, so if you'll excuse me....."
+					((Said 'display/mugshot,shot,painting')
+						(if (cast contains: marshall)
+							(LocPrint 19 67)
 						else
-							(localproc_0 19 68) ; "There's nobody here."
+							(LocPrint 19 68)
 						)
 					)
 					((Said 'get,use/towel,bracket')
-						(if (gEgo inRect: 133 116 178 122)
-							(localproc_0 19 69) ; "You grab a paper towel and use it."
+						(if (ego inRect: 133 116 178 122)
+							(LocPrint 19 69)
 						else
-							(localproc_0 19 70) ; "The paper towel dispenser is over on the far wall."
+							(LocPrint 19 70)
 						)
 					)
 					((Said 'press/button')
-						(if (gEgo inRect: 155 116 182 122)
+						(if (ego inRect: 155 116 182 122)
 							(if (> local12 0)
-								(localproc_0 19 71) ; "The dryer is already on."
+								(LocPrint 19 71)
 							else
-								(localproc_0 19 72) ; "You turn on the electric hand dryer."
+								(LocPrint 19 72)
 								(= local12 80)
 							)
 						else
-							(localproc_0 19 19) ; "Huh?"
+							(LocPrint 19 19)
 						)
 					)
-					(
-						(Said
-							'use,go/crapper,bathroom,bathroom,(chamber<rest,bath)'
-						)
-						(if local11
+					((Said 'use,go/crapper,bathroom,bathroom,(chamber<rest,bath)')
+						(if sonnyInStallNum
 							(switch (Random 0 3)
 								(0
-									(localproc_0 19 54) ; "Whew!" you sigh, "I need to quit drinking so much coffee."
+									(LocPrint 19 54)
 								)
 								(1
-									(localproc_0 19 55) ; "You take time out for a natural body function."
+									(LocPrint 19 55)
 								)
 								(2
-									(localproc_0 19 56) ; "You rid yourself of enough coffee to float an aircraft carrier."
+									(LocPrint 19 56)
 								)
 								(3
-									(localproc_0 19 57) ; "As you eliminate the day's coffee, you think..."I wonder where the "black" in my black coffee goes?""
+									(LocPrint 19 57)
 								)
 							)
 						else
-							(localproc_0 19 73) ; "If you really have to go, use one of the stalls."
+							(LocPrint 19 73)
 						)
 					)
-					((or (Said 'activate,start,use>') (Said 'turn<on>'))
-						(cond
+					(
+						(or
+							(Said 'activate,begin,use>')
+							(Said 'turn<on>')
+						)
+						(cond 
 							((Said '/dryer')
-								(if (gEgo inRect: 155 116 182 122)
+								(if (ego inRect: 155 116 182 122)
 									(if (> local12 0)
-										(localproc_0 19 74) ; "It is already on."
+										(LocPrint 19 74)
 									else
-										(localproc_0 19 72) ; "You turn on the electric hand dryer."
+										(LocPrint 19 72)
 										(= local12 80)
 									)
 								else
-									(localproc_0 19 3) ; "Your arms aren't nearly long enough."
+									(LocPrint 19 3)
 								)
 							)
 							((Said '/basin,faucet,water')
-								(if (gEgo inRect: 174 115 225 138)
+								(if (ego inRect: 174 115 225 138)
 									(if local13
-										(localproc_0 19 74) ; "It is already on."
+										(LocPrint 19 74)
 									else
-										(localproc_0 19 75) ; "You turn on the sink water."
+										(LocPrint 19 75)
 										(= local13 1)
 									)
 								else
-									(localproc_0 19 3) ; "Your arms aren't nearly long enough."
+									(LocPrint 19 3)
 								)
 							)
 							((Said '/fan')
 								(switch (Random 0 2)
 									(0
-										(localproc_0 19 3) ; "Your arms aren't nearly long enough."
+										(LocPrint 19 3)
 									)
 									(1
-										(localproc_0 19 76) ; "It stays on all the time."
+										(LocPrint 19 76)
 									)
 									(2
-										(localproc_0 19 74) ; "It is already on."
+										(LocPrint 19 74)
 									)
 								)
 							)
 						)
 					)
-					((or (Said 'deactivate,stop>') (Said 'turn,close<off>'))
-						(cond
+					(
+						(or
+							(Said 'deactivate,cease>')
+							(Said 'turn,close<off>')
+						)
+						(cond 
 							((Said '/dryer')
-								(if (gEgo inRect: 155 116 182 122)
+								(if (ego inRect: 155 116 182 122)
 									(if (> local12 0)
-										(localproc_0 19 77) ; "It's on a timer and will shut off by itself."
+										(LocPrint 19 77)
 										(= local12 80)
 									else
-										(localproc_0 19 78) ; "It is already off."
+										(LocPrint 19 78)
 									)
 								else
-									(localproc_0 19 3) ; "Your arms aren't nearly long enough."
+									(LocPrint 19 3)
 								)
 							)
 							((Said '/faucet,basin,water')
-								(if (gEgo inRect: 174 115 225 138)
+								(if (ego inRect: 174 115 225 138)
 									(if local13
-										(localproc_0 19 79) ; "You turn the water off."
+										(LocPrint 19 79)
 										(= local13 0)
 									else
-										(localproc_0 19 78) ; "It is already off."
+										(LocPrint 19 78)
 									)
 								else
-									(localproc_0 19 3) ; "Your arms aren't nearly long enough."
+									(LocPrint 19 3)
 								)
 							)
 							((Said '/fan')
 								(if (== (Random 0 2) 1)
-									(localproc_0 19 3) ; "Your arms aren't nearly long enough."
+									(LocPrint 19 3)
 								else
-									(localproc_0 19 76) ; "It stays on all the time."
+									(LocPrint 19 76)
 								)
 							)
 						)
 					)
 					((Said 'dry>')
-						(cond
+						(cond 
 							((Said '/9mm,revolver')
-								(if (gEgo inRect: 133 116 178 122)
-									(if (gEgo has: 31) ; jailer_s_revolver
-										(cond
-											((gEgo inRect: 155 116 182 122)
+								(if (ego inRect: 133 116 178 122)
+									(if (ego has: iJailerRevolver)
+										(cond 
+											((ego inRect: 155 116 182 122)
 												(if (> local12 0)
 													(if local17
-														(localproc_0 19 80) ; "You've already dried the gun."
+														(LocPrint 19 80)
 													else
-														(SetScore 2 107)
+														(SolvePuzzle 2 107)
 														(= local17 1)
-														(localproc_0 19 81) ; "You use the warm air from the electric hand dryer to dry off the gun."
+														(LocPrint 19 81)
 													)
 												else
-													(localproc_0 19 82) ; "The hand dryer is not turned on."
+													(LocPrint 19 82)
 												)
 											)
-											(local17
-												(localproc_0 19 80) ; "You've already dried the gun."
-											)
+											(local17 (LocPrint 19 80))
 											(else
 												(= local17 1)
-												(localproc_0 19 83) ; "You rip off a paper towel, and wipe the gun dry."
-												(localproc_0 19 84) ; "You also wipe off any possible fingerprints."
+												(LocPrint 19 83)
+												(LocPrint 19 84)
 											)
 										)
 									else
-										(localproc_0 19 85) ; "You don't have a gun that needs drying."
+										(LocPrint 19 85)
 									)
 								else
-									(localproc_0 19 3) ; "Your arms aren't nearly long enough."
+									(LocPrint 19 3)
 								)
 							)
 							((Said '/hand')
-								(cond
-									((gEgo inRect: 133 116 178 122)
-										(if (or (gEgo has: 31) local14) ; jailer_s_revolver
+								(cond 
+									((ego inRect: 133 116 178 122)
+										(if
+											(or
+												(ego has: iJailerRevolver)
+												local14
+											)
 											(= local14 0)
 											(if local12
-												(localproc_0 19 86) ; "The warm air feels good on your hands."
+												(LocPrint 19 86)
 											else
-												(localproc_0 19 87) ; "In spite of your good upbringing, you wipe your hands on your pants. Shame on you."
+												(LocPrint 19 87)
 											)
 										else
-											(localproc_0 19 88) ; "Your hands are already dry."
+											(LocPrint 19 88)
 										)
 									)
-									((or (gEgo has: 31) local14) ; jailer_s_revolver
-										(localproc_0 19 87) ; "In spite of your good upbringing, you wipe your hands on your pants. Shame on you."
-									)
+									(
+										(or
+											(ego has: 31) local14)
+											(LocPrint 19 87)
+										)
 									(else
-										(localproc_0 19 88) ; "Your hands are already dry."
+										(LocPrint 19 88)
 									)
 								)
 							)
 						)
 					)
 					((Said 'bath>')
-						(cond
+						(cond 
 							((Said '/hand')
-								(if (gEgo inRect: 174 115 225 138)
+								(if (ego inRect: 174 115 225 138)
 									(= local14 1)
-									(localproc_0 19 89) ; "That's a GOOD boy! It's not worth any points, but at least you're clean."
+									(LocPrint 19 89)
 								else
-									(localproc_0 19 3) ; "Your arms aren't nearly long enough."
+									(LocPrint 19 3)
 								)
 							)
-							((Said '/9mm,revolver')
-								(localproc_0 19 90) ; "That is one STUPID idea!"
-							)
+							((Said '/9mm,revolver') (LocPrint 19 90))
 						)
 					)
 				)
@@ -818,21 +866,21 @@
 
 (instance stallScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(HandsOff)
-				(gCurRoom drawPic: 35)
-				(gCast eachElementDo: #dispose)
+				(curRoom drawPic: 35)
+				(cast eachElementDo: #dispose)
 				(if
 					(and
-						(IsItemAt 31) ; jailer_s_revolver
-						(== local11 2)
-						(>= global100 6)
-						(< global100 8)
+						(InRoom iJailerRevolver)
+						(== sonnyInStallNum 2)
+						(>= gamePhase 6)
+						(< gamePhase 8)
 					)
-					((= local1 (Act new:))
+					((= revolver (Actor new:))
 						view: 256
 						setLoop: 2
 						setCel: 0
@@ -844,7 +892,7 @@
 						stopUpd:
 					)
 				)
-				((= local19 (View new:))
+				((= tank (View new:))
 					view: 256
 					loop: 0
 					cel: 0
@@ -853,7 +901,7 @@
 					init:
 					stopUpd:
 				)
-				((= local18 (View new:))
+				((= tolietLid (View new:))
 					view: 256
 					loop: 1
 					cel: 0
@@ -862,10 +910,10 @@
 					init:
 					stopUpd:
 				)
-				(if [local5 local11]
-					(local18 posn: -100 0)
+				(if [local5 sonnyInStallNum]
+					(tolietLid posn: -100 0)
 				)
-				((= local9 (Prop new:))
+				((= flood (Prop new:))
 					view: 256
 					loop: 3
 					cel: 0
@@ -879,94 +927,94 @@
 			)
 			(2
 				(HandsOff)
-				(local1 setMotion: MoveTo 167 60 self)
+				(revolver setMotion: MoveTo 167 60 self)
 			)
 			(3
-				(SetScore 4)
-				(local19 posn: 155 137)
-				(gEgo get: 31) ; jailer_s_revolver
-				(local1 dispose:)
-				(local9 dispose:)
-				(localproc_0 19 91 83) ; "The revolver is pretty wet, and so is your hand."
+				(SolvePuzzle 4)
+				(tank posn: 155 137)
+				(ego get: 31)
+				(revolver dispose:)
+				(flood dispose:)
+				(LocPrint 19 91 83)
 				(HandsOn)
 				(self cue:)
 			)
 			(4
-				(if (!= (gContinuousMusic state:) 3)
-					(gContinuousMusic number: 29 loop: -1 play:)
+				(if (!= (cSound state?) 3)
+					(cSound number: 29 loop: -1 play:)
 				)
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(switch (event type:)
-			(evKEYBOARD
+		(switch (event type?)
+			(keyDown
 				(if
 					(or
-						(== (event message:) KEY_F6)
-						(== (event message:) KEY_F8)
-						(== (event message:) $3a00)
+						(== (event message?) KEY_F6)
+						(== (event message?) KEY_F8)
+						(== (event message?) KEY_F10) ;14848
 					)
-					(proc0_10) ; "You can't do that now."
+					(CantDo)
 				)
 			)
-			(evSAID
-				(cond
+			(saidEvent
+				(cond 
 					(
 						(or
 							(Said 'move,remove,hoist,open/cover,lid,lid')
 							(Said 'open[/tank,crapper]')
 							(Said 'frisk/tank')
 						)
-						(if (== [local5 local11] 0)
-							(local18 posn: -100 0)
-							(= [local5 local11] 1)
+						(if (== [local5 sonnyInStallNum] 0)
+							(tolietLid posn: -100 0)
+							(= [local5 sonnyInStallNum] 1)
 						else
-							(localproc_0 19 92) ; "The lid is already off."
+							(LocPrint 19 92)
 						)
 					)
-					((Said 'replace,close,drop>')
-						(cond
+					((Said 'replace,close,deposit>')
+						(cond 
 							((Said '/lid,cover,lid')
-								(if (== [local5 local11] 1)
-									(= [local5 local11] 0)
-									(local18 posn: 154 75)
-									(local19 posn: 155 137)
+								(if (== [local5 sonnyInStallNum] 1)
+									(= [local5 sonnyInStallNum] 0)
+									(tolietLid posn: 154 75)
+									(tank posn: 155 137)
 								else
-									(localproc_0 19 93) ; "The lid is already on."
+									(LocPrint 19 93)
 								)
 							)
 							((Said '/9mm')
-								(localproc_0 19 94) ; "It's material evidence. You need to book it at the station, not put it back!"
+								(LocPrint 19 94)
 							)
 							((Said '/hand/water,tank')
-								(localproc_0 19 95) ; "It's mighty icky in there."
+								(LocPrint 19 95)
 							)
 						)
 					)
 					((Said 'hoist,get,remove/9mm,revolver')
-						(cond
-							((gEgo has: 31) ; jailer_s_revolver
-								(localproc_0 19 96) ; "You already have it."
+						(cond 
+							((ego has: iJailerRevolver)
+								(LocPrint 19 96)
 							)
 							(
 								(and
-									(== local11 2)
-									(gCast contains: local1)
-									(== [local5 local11] 1)
+									(== sonnyInStallNum 2)
+									(cast contains: revolver)
+									(== [local5 sonnyInStallNum] 1)
 								)
-								(if (== (local19 y:) 0)
-									(localproc_0 19 97 25 3) ; "You roll up your sleeve, and carefully lift the revolver."
-									(SetFlag 49)
+								(if (== (tank y?) 0)
+									(LocPrint 19 97 25 3)
+									(Bset fGotToiletGun)
 									(= global128 0)
 									(stallScript changeState: 2)
 								else
-									(localproc_0 19 98) ; "You don't see a gun."
+									(LocPrint 19 98)
 								)
 							)
 							(else
-								(localproc_0 19 99) ; "You don't see a weapon here."
+								(LocPrint 19 99)
 							)
 						)
 					)
@@ -976,172 +1024,193 @@
 							(Said 'get<out')
 							(Said 'open/door')
 						)
-						(gCurRoom drawPic: (gCurRoom picture:))
-						(gCast eachElementDo: #dispose)
-						(gEgo init: loop: 0)
+						(curRoom drawPic: (curRoom picture?))
+						(cast eachElementDo: #dispose)
+						(ego init: loop: 0)
 						(= local10 1)
 						(HandsOn)
-						(gCurRoom setScript: rm19Script)
-						(cond
-							((== local11 1)
+						(curRoom setScript: rm19Script)
+						(cond 
+							((== sonnyInStallNum 1)
 								(= local10 1)
 								(rm19Script changeState: 1)
 							)
-							((== local11 2)
+							((== sonnyInStallNum 2)
 								(= local10 1)
 								(rm19Script changeState: 5)
 							)
-							((== local11 3)
+							((== sonnyInStallNum 3)
 								(= local10 1)
 								(rm19Script changeState: 9)
 							)
 						)
 					)
-					((or (Said 'flush[/crapper]') (Said 'use,press/handle'))
+					(
+						(or
+							(Said 'flush[/crapper]')
+							(Said 'use,press/handle')
+						)
 						(rm19Script changeState: 13)
 					)
-					((or (Said 'use/newspaper[<crapper]') (Said 'wipe/ass'))
-						(localproc_0 19 58) ; "Of course!"
+					(
+						(or
+							(Said 'use/newspaper[<crapper]')
+							(Said 'wipe/ass')
+						)
+						(LocPrint 19 58)
 					)
-					((or (Said 'read/graffiti,wall') (Said 'look/graffiti'))
+					(
+						(or
+							(Said 'read/graffiti,wall')
+							(Said 'look/graffiti')
+						)
 						(switch (Random 0 5)
 							(0
-								(localproc_0 19 42) ; "Here I sit all broken-hearted... Came to........(you can't make out the rest)."
+								(LocPrint 19 42)
 							)
 							(1
-								(localproc_0 19 43) ; "Nostalgia just isn't what it used to be."
+								(LocPrint 19 43)
 							)
 							(2
-								(localproc_0 19 44) ; "For a good time, call 683-4463....ask for Larry."
+								(LocPrint 19 44)
 							)
 							(3
-								(localproc_0 19 45) ; "There's a fairly good anatomical drawing here, but it appears to be upside-down."
+								(LocPrint 19 45)
 							)
 							(4
-								(localproc_0 19 46) ; "Where the hell is Coarsegold, CA???"
+								(LocPrint 19 46)
 							)
 							(5
-								(localproc_0 19 47) ; "As I was walking down the stair I met a man who wasn't there. He wasn't there again today... I sure do wish he'd GO AWAY!"
+								(LocPrint 19 47)
 							)
 						)
 					)
 					((Said 'write')
-						(localproc_0 19 49) ; "Defacing public property isn't part of your job description."
+						(LocPrint 19 49)
 					)
-					((or (Said 'shit') (Said 'get/shit'))
+					(
+						(or
+							(Said 'crap')
+							(Said 'get/crap')
+						)
 						(switch (Random 0 2)
 							(0
-								(localproc_0 19 50) ; "You hum a familiar tune..."Plop, plop, whiz, whiz....oh, what a relief it is.""
+								(LocPrint 19 50)
 							)
 							(1
-								(localproc_0 19 51) ; "During this time of relief, you think to yourself... "Gee, wish I had something to read.""
+								(LocPrint 19 51)
 							)
 							(2
-								(localproc_0 19 52) ; "As you occupy the stall you think, "It must have been the prunes.""
+								(LocPrint 19 52)
 							)
 						)
 					)
-					((or (Said 'leak') (Said 'get/leak') (Said 'use/crapper'))
+					(
+						(or
+							(Said 'leak')
+							(Said 'get/leak')
+							(Said 'use/crapper')
+						)
 						(switch (Random 0 3)
 							(0
-								(localproc_0 19 54) ; "Whew!" you sigh, "I need to quit drinking so much coffee."
+								(LocPrint 19 54)
 							)
 							(1
-								(localproc_0 19 55) ; "You take time out for a natural body function."
+								(LocPrint 19 55)
 							)
 							(2
-								(localproc_0 19 56) ; "You rid yourself of enough coffee to float an aircraft carrier."
+								(LocPrint 19 56)
 							)
 							(3
-								(localproc_0 19 57) ; "As you eliminate the day's coffee, you think..."I wonder where the "black" in my black coffee goes?""
+								(LocPrint 19 57)
 							)
 						)
 					)
 					((Said 'taste,drink,drink[/water]')
-						(localproc_0 19 100) ; "You've GOT to be kidding!"
+						(LocPrint 19 100)
 					)
 					((Said 'sat')
-						(localproc_0 19 60) ; "Now's no time to relax, Sonny."
+						(LocPrint 19 60)
 					)
 					((Said 'frisk/crapper,stall,booth')
-						(localproc_0 19 62) ; "You look all around the toilet and the stall, but you find nothing out of the ordinary."
+						(LocPrint 19 62)
 					)
 					((Said 'look>')
-						(cond
+						(cond 
 							(
 								(or
 									(Said '[<in,in]/crapper,tank,water')
 									(Said '<in,in[/crapper,tank,water]')
 								)
-								(if [local5 local11]
-									(local19 posn: -100 0)
+								(if [local5 sonnyInStallNum]
+									(tank posn: -100 0)
 									(if
 										(and
-											(not (gEgo has: 31)) ; jailer_s_revolver
-											(gCast contains: local1)
-											(== local11 2)
+											(not (ego has: iJailerRevolver))
+											(cast contains: revolver)
+											(== sonnyInStallNum 2)
 										)
-										(localproc_0 19 101 83) ; "You see what looks like a police revolver hidden in the bottom of the toilet tank."
+										(LocPrint 19 101 83)
 									else
-										(localproc_0 19 102 83) ; "Full of water."
+										(LocPrint 19 102 83)
 									)
 								else
-									(localproc_0 19 103) ; "Remove the lid first."
+									(LocPrint 19 103)
 								)
 								(if
 									(and
 										global128
-										(== local11 2)
-										(not (gCast contains: local1))
+										(== sonnyInStallNum 2)
+										(not (cast contains: revolver))
 									)
-									(localproc_0 19 104) ; "The toilet is overflowing. It's not a pretty sight!"
+									(LocPrint 19 104)
 								)
 							)
 							((Said '/handle')
-								(localproc_0 19 105) ; "It's used to flush the toilet."
+								(LocPrint 19 105)
 							)
 							((Said '[<at,down][/floor,tile]')
-								(localproc_0 19 30) ; "You see a toilet mounted to the tile floor."
+								(LocPrint 19 30)
 							)
 							((Said '/9mm')
-								(cond
-									((gEgo has: 31) ; jailer_s_revolver
-										(localproc_0 19 106) ; "It's a 4" Smith and Wesson .38 caliber K-38, Serial# 5557763"
+								(cond 
+									((ego has: 31)
+										(LocPrint 19 106)
 									)
 									(
 										(and
-											(== (local19 y:) 0)
-											(gCast contains: 31)
+											(== (tank y?) 0)
+											(cast contains: iJailerRevolver)
 										)
-										(localproc_0 19 101) ; "You see what looks like a police revolver hidden in the bottom of the toilet tank."
+										(LocPrint 19 101)
 									)
 									(else
-										(localproc_0 19 107) ; "You can't see it."
+										(LocPrint 19 107)
 									)
 								)
 							)
 							((Said '/basin')
-								(localproc_0 19 24) ; "You'll have to leave the stall to get a good look at it."
+								(LocPrint 19 24)
 							)
 							((Said '/mirror')
-								(localproc_0 19 24) ; "You'll have to leave the stall to get a good look at it."
+								(LocPrint 19 24)
 							)
 							((Said '[<at,around][/booth,stall,wall]')
-								(localproc_0 19 10) ; "The stall is furnished with a stool for your sitting pleasure and toilet paper for your comfort."
-								(localproc_0 19 11) ; "There seems to be some graffiti scrawled on the wall of the stall... You can just barely read it."
+								(LocPrint 19 10)
+								(LocPrint 19 11)
 							)
 							(
 								(or
 									(Said '/bracket,machine[<towel]')
 									(Said '/bracket,machine<towel<newspaper')
 								)
-								(localproc_0 19 24) ; "You'll have to leave the stall to get a good look at it."
+								(LocPrint 19 24)
 							)
 							((Said '/dryer')
-								(localproc_0 19 24) ; "You'll have to leave the stall to get a good look at it."
+								(LocPrint 19 24)
 							)
 							((Said '/newspaper[<crapper]')
-								(localproc_0 19 108) ; "Just your ordinary, white, thin, scratchy toilet paper."
+								(LocPrint 19 108)
 							)
 						)
 					)
@@ -1153,7 +1222,7 @@
 
 (instance floodScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -1162,10 +1231,10 @@
 				)
 			)
 			(1
-				(local9 setCycle: End self)
+				(flood setCycle: EndLoop self)
 			)
 			(2
-				(local9 loop: 4 setCycle: Fwd)
+				(flood loop: 4 setCycle: Forward)
 			)
 		)
 	)
@@ -1173,44 +1242,60 @@
 
 (instance marshallScript of Script
 	(properties)
-
+	
 	(method (init)
 		(super init:)
-		(= global212 3)
+		(= gunFireState 3)
 	)
-
+	
 	(method (doit)
-		(if (and (<= (local0 distanceTo: gEgo) 10) (not local16))
-			(= local16 1)
-			(localproc_0 19 109) ; "Excuse me, please. You're in my way."
-			(gEgo setMotion: MoveTo (- (gEgo x:) 25) (gEgo y:))
+		(if
+			(and
+				(<= (marshall distanceTo: ego) 10)
+				(not marshallBlocked)
+			)
+			(= marshallBlocked 1)
+			(LocPrint 19 109)
+			(ego setMotion: MoveTo (- (ego x?) 25) (ego y?))
 		)
-		(if (and (> (local0 distanceTo: gEgo) 10) local16)
-			(= local16 0)
+		(if
+			(and
+				(> (marshall distanceTo: ego) 10)
+				marshallBlocked
+			)
+			(= marshallBlocked 0)
 		)
 		(super doit:)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(SetFlag 151)
-				(local0 startUpd: setMotion: MoveTo 192 119 self)
+				(Bset fMarshallAtSink)
+				(marshall
+					startUpd:
+					setMotion: MoveTo 192 119 self
+				)
 			)
 			(1
 				(= cycles 60)
 			)
 			(2
-				(local0 setLoop: 2 setMotion: MoveTo 200 139 self)
+				(marshall
+					setLoop: 2
+					setMotion: MoveTo 200 139 self
+				)
 			)
 			(3
-				(local0 setLoop: 0 setMotion: MoveTo 286 140 self)
+				(marshall
+					setLoop: 0
+					setMotion: MoveTo 286 140 self
+				)
 			)
 			(4
-				(SetFlag 150)
-				(local0 dispose:)
+				(Bset fMarshallLeftBathroom)
+				(marshall dispose:)
 			)
 		)
 	)
 )
-

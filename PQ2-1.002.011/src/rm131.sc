@@ -1,9 +1,8 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 131)
 (include sci.sh)
 (use Main)
-(use Interface)
+(use Intrface)
 (use AutoDoor)
 (use Sound)
 (use Motion)
@@ -16,11 +15,10 @@
 )
 
 (local
-	local0
-	local1
-	[local2 5]
+	door
+	bains
+	[sewage 5]
 )
-
 (instance bainsShot of Sound
 	(properties
 		number 41
@@ -28,21 +26,16 @@
 	)
 )
 
-(instance rm131 of Rm
+(instance rm131 of Room
 	(properties
 		picture 76
-		style 0
+		style $0000
 	)
-
-	(method (dispose)
-		(DisposeScript 301)
-		(super dispose:)
-	)
-
+	
 	(method (init)
-		(self setRegions: 205) ; sewer
+		(self setRegions: 205)
 		(super init:)
-		((= local0 (AutoDoor new:))
+		((= door (AutoDoor new:))
 			doorControl: 4096
 			entranceTo: 133
 			facingLoop: 3
@@ -53,92 +46,92 @@
 			stopUpd:
 			init:
 		)
-		(gEgo
-			view: (if (not global204) 0 else 6)
+		(ego
+			view: (if (not gunDrawn) 0 else 6)
 			x:
-				(switch gPrevRoomNum
-					(130 10)
-					(133 180)
-					(132 310)
-				)
+			(switch prevRoomNum
+				(130 10)
+				(133 180)
+				(132 310)
+			)
 			y:
-				(cond
-					((== gPrevRoomNum 133) 85)
-					((<= (gEgo y:) 115) 100)
+				(cond 
+					((== prevRoomNum 133) 85)
+					((<= (ego y?) 115) 100)
 					(else 140)
 				)
 			init:
 		)
 		(HandsOn)
-		((= [local2 0] (Prop new:))
+		((= [sewage 0] (Prop new:))
 			view: 99
 			loop: 0
 			cel: 1
 			posn: 319 131
 			setPri: 1
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 2
 			ignoreActors: 1
 			init:
 		)
-		((= [local2 1] (Prop new:))
+		((= [sewage 1] (Prop new:))
 			view: 99
 			loop: 0
 			cel: 2
 			posn: 237 130
 			setPri: 1
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 2
 			ignoreActors: 1
 			init:
 		)
-		((= [local2 2] (Prop new:))
+		((= [sewage 2] (Prop new:))
 			view: 99
 			loop: 0
 			cel: 1
 			posn: 120 131
 			setPri: 1
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 2
 			ignoreActors: 1
 			init:
 		)
-		((= [local2 3] (Prop new:))
+		((= [sewage 3] (Prop new:))
 			view: 99
 			loop: 0
 			cel: 2
 			posn: 133 173
 			setPri: 1
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 2
 			ignoreActors: 1
 			init:
 		)
-		((= [local2 4] (Prop new:))
+		((= [sewage 4] (Prop new:))
 			view: 99
 			loop: 0
 			cel: 0
 			posn: 192 125
 			setPri: 1
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 2
 			ignoreActors: 1
 			init:
 		)
-		(if (< global110 60)
-			([local2 0] stopUpd:)
-			([local2 2] stopUpd:)
+		(if (< howFast 60)
+			([sewage 0] stopUpd:)
+			([sewage 2] stopUpd:)
 		)
-		(if (< global110 30)
-			([local2 1] stopUpd:)
-			([local2 3] stopUpd:)
-			([local2 4] stopUpd:)
+		(if (< howFast 30)
+			([sewage 1] stopUpd:)
+			([sewage 3] stopUpd:)
+			([sewage 4] stopUpd:)
 		)
-		(gLightObj posn: 167 54 ignoreActors: 1 init: stopUpd:)
-		(if global203
+		(sewerLight posn: 167 54 ignoreActors: 1 init: stopUpd:)
+		(if untiedMarie
 			(Load rsVIEW 13)
 			(Load rsVIEW 15)
-			((= local1 (Act new:))
+			((= bains (Actor new:))
 				view: 13
 				posn: 110 100
 				loop: 0
@@ -149,41 +142,33 @@
 			)
 		)
 	)
-
+	
 	(method (doit)
-		(cond
-			(global139 0)
-			((<= (gEgo x:) 5)
-				(gCurRoom newRoom: 130)
-			)
-			((>= (gEgo x:) 315)
-				(gCurRoom newRoom: 132)
-			)
-			((== (local0 doorState:) 2)
-				(gEgo heading: 0 setMotion: MoveTo 180 10)
-				(gCurRoom newRoom: 133)
+		(cond 
+			(sewerCutscene 0)
+			((<= (ego x?) 5) (curRoom newRoom: 130))
+			((>= (ego x?) 315) (curRoom newRoom: 132))
+			((== (door doorState?) 2)
+				(ego heading: 0 setMotion: MoveTo 180 10)
+				(curRoom newRoom: 133)
 			)
 		)
 		(super doit:)
 	)
-
+	
+	(method (dispose)
+		(DisposeScript 301)
+		(super dispose:)
+	)
+	
 	(method (handleEvent event)
-		(switch (event type:)
+		(switch (event type?)
 			(evSAID
-				(cond
-					((Said '[<around][/(!*,chamber,sewer)]')
-						(Print 131 0) ; "You have entered the City of Steelton's underground sewer complex. The dampness and subdued light gives you an eerie feeling..."
-						(Print 131 1) ; "There is a door here leading to ???"
-					)
-					((Said 'look/door')
-						(Print 131 2) ; "You wonder what's behind it?"
-					)
-					((Said 'open/door')
-						(Print 131 3) ; "Just walk up to it."
-					)
-					((Said '*/door')
-						(Print 131 4) ; "You don't need to."
-					)
+				(cond 
+					((Said '[<around][/(!*,chamber,sewer)]') (Print 131 0) (Print 131 1))
+					((Said 'look/door') (Print 131 2))
+					((Said 'open/door') (Print 131 3))
+					((Said '*/door') (Print 131 4))
 				)
 			)
 		)
@@ -192,30 +177,27 @@
 
 (instance bainsKillsScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(local1 setMotion: MoveTo 130 100 self)
+				(bains setMotion: MoveTo 130 100 self)
 				(HandsOff)
 			)
 			(1
-				(local1 view: 15 loop: 0 cel: 0 setCycle: End self)
+				(bains view: 15 loop: 0 cel: 0 setCycle: EndLoop self)
 				(bainsShot play:)
 			)
 			(2
-				(gEgo
+				(ego
 					view: 297
 					illegalBits: 0
 					x: 184
 					loop: 3
-					setCycle: End self
+					setCycle: EndLoop self
 				)
 			)
-			(3
-				(EgoDead 131 5) ; "Unfortunately, Bains was waiting for you."
-			)
+			(3 (EgoDead 131 5))
 		)
 	)
 )
-

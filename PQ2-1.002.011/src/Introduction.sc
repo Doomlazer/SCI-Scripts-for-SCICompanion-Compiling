@@ -1,7 +1,6 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 200)
-(include sci.sh)
+(include game.sh) (include menu.sh)
 (use Main)
 (use Sound)
 (use Motion)
@@ -9,41 +8,39 @@
 (use Actor)
 (use System)
 
+
 (public
 	Introduction 0
 )
 
 (local
-	[local0 10]
-	[local10 10]
-	local20
-	local21
+	[policeText 10]
+	[questText 10]
+	numILeft
+	numIRight
 	local22
 	local23
 	local24
 	local25
-	local26
-	local27
+	farX
+	farY
 	local28
 )
-
-(procedure (localproc_0 &tmp temp0 temp1)
-	(= temp1
+(procedure (DoDisplay &tmp evt saveBits)
+	(= saveBits
 		(Display &rest
-			101 alCENTER ;dsALIGN
-			dsCOORD 10 10
-			dsWIDTH 300
-			dsCOLOR 15
-			dsSAVEPIXELS
+			101 teJustCenter	;101 should be p_mode
+			p_at 10 10
+			p_width 300
+			p_color vWHITE
+			p_save
 		)
 	)
-	(repeat
-		(= temp0 (Event new: evMOUSEKEYBOARD))
-		(breakif (& (temp0 type:) $0005))
-		(temp0 dispose:)
+	(while (not (& ((= evt (Event new: (| keyDown mouseDown))) type?) (| keyDown mouseDown)))
+		(evt dispose:)
 	)
-	(temp0 dispose:)
-	(Display 200 10 dsRESTOREPIXELS temp1)
+	(evt dispose:)
+	(Display 200 10 p_restore saveBits)
 )
 
 (instance introMusic of Sound
@@ -52,74 +49,82 @@
 	)
 )
 
-(instance Introduction of Rm
+(instance Introduction of Room
 	(properties
-		style 0
+		style HSHUTTER
 	)
-
-	(method (dispose)
-		(gSounds eachElementDo: #dispose)
-		(super dispose:)
-	)
-
+	
 	(method (init)
 		(HandsOff)
 		(super init:)
-		(Load rsVIEW 900)
-		(Load rsVIEW 901)
-		(Load rsVIEW 902)
-		(Load rsPIC 46)
-		(Load rsSOUND 1)
-		(Load rsVIEW 310)
-		(Load rsVIEW 924)
-		(Load rsVIEW 925)
-		(Load rsPIC 47)
-		(Load rsPIC 885)
-		(Load rsPIC 48)
-		(Load rsVIEW 311)
-		(Load rsVIEW 903)
-		(Load rsVIEW 904)
-		(Load rsVIEW 209)
-		(Load rsVIEW 292)
-		(Load rsSOUND 1)
-		(gCurRoom drawPic: 0 0)
-		(gCurRoom setScript: IntroScript)
+		(= speed 6)	;added to fix speed bug
+		(Load VIEW 900)
+		(Load VIEW 901)
+		(Load VIEW 902)
+		(Load PICTURE 46)
+		(Load SOUND 1)
+		(Load VIEW 310)
+		(Load VIEW 924)
+		(Load VIEW 925)
+		(Load PICTURE 47)
+		(Load PICTURE 885)
+		(Load PICTURE 48)
+		(Load VIEW 311)
+		(Load VIEW 903)
+		(Load VIEW 904)
+		(Load VIEW 209)
+		(Load VIEW 292)
+		(Load SOUND 1)
+		(curRoom drawPic: 0 HSHUTTER)
+		(curRoom setScript: IntroScript)
 	)
-
+	
+	(method (dispose)
+		;(sounds eachElementDo: #dispose) causes 'Memory Fragmented.'
+		(super dispose:)
+	)
+	
 	(method (handleEvent event)
 		(super handleEvent: event)
-		(if (== (event type:) evKEYBOARD)
-			(event claimed: 1)
-			(if (== (event message:) KEY_F2)
-				(if (GetMenu 1282 113)
-					(DoSound sndSET_SOUND 0)
-					(SetMenu 1282 113 0 110 {Turn on})
+		(if (== (event type?) keyDown)
+			(event claimed: TRUE)
+			(if (== (event message?) `#2)
+				(if (GetMenu soundI p_value)
+					(DoSound SoundOn FALSE)
+					(SetMenu soundI
+						p_value FALSE
+						p_text {Turn on}
+					)
 				else
-					(DoSound sndSET_SOUND 1)
-					(SetMenu 1282 113 1 110 {Turn off})
+					(DoSound SoundOn TRUE)
+					(SetMenu soundI
+						p_value TRUE
+						p_text {Turn off}
+					)
 				)
 			)
 			(if
 				(or
-					(== (event message:) KEY_RETURN)
-					(and (>= (event message:) KEY_SPACE) (<= (event message:) $0060)) ; `
+					(== (event message?) ENTER)
+					(and
+						(>= (event message?) SPACEBAR)
+						(<= (event message?) 96)
+					)
 				)
-				(event claimed: 1)
-				(gCurRoom newRoom: 701)
+				(event claimed: TRUE)
+				(curRoom newRoom: 701)
 			)
 		)
 	)
 )
 
 (instance IntroScript of Script
-	(properties)
-
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(introMusic play:)
-				(if (< global110 30)
-					((= [local10 9] (View new:))
+				(if (< howFast 30)
+					((= [questText 9] (View new:))
 						view: 901
 						loop: 0
 						posn: 160 112
@@ -129,7 +134,7 @@
 						stopUpd:
 						addToPic:
 					)
-					((= [local0 9] (View new:))
+					((= [policeText 9] (View new:))
 						view: 900
 						loop: 0
 						posn: 160 63
@@ -141,7 +146,7 @@
 					)
 					(self changeState: 24)
 				else
-					((= [local0 9] (View new:))
+					((= [policeText 9] (View new:))
 						view: 900
 						loop: 0
 						posn: 160 63
@@ -154,7 +159,7 @@
 				)
 			)
 			(1
-				((= [local0 0] (Prop new:))
+				((= [policeText 0] (Prop new:))
 					view: 900
 					loop: 9
 					cel: 2
@@ -162,11 +167,11 @@
 					setPri: 1
 					init:
 					ignoreActors:
-					setCycle: Beg self
+					setCycle: BegLoop self
 				)
 			)
 			(2
-				((= [local0 1] (View new:))
+				((= [policeText 1] (View new:))
 					view: 900
 					loop: 8
 					posn: 160 34
@@ -177,7 +182,7 @@
 				(= cycles 1)
 			)
 			(3
-				((= [local0 2] (View new:))
+				((= [policeText 2] (View new:))
 					view: 900
 					loop: 7
 					posn: 160 40
@@ -188,7 +193,7 @@
 				(= cycles 1)
 			)
 			(4
-				((= [local0 3] (View new:))
+				((= [policeText 3] (View new:))
 					view: 900
 					loop: 6
 					posn: 160 50
@@ -199,8 +204,8 @@
 				(= cycles 1)
 			)
 			(5
-				([local0 0] dispose:)
-				((= [local0 4] (View new:))
+				([policeText 0] dispose:)
+				((= [policeText 4] (View new:))
 					view: 900
 					loop: 5
 					posn: 160 64
@@ -211,8 +216,8 @@
 				(= cycles 1)
 			)
 			(6
-				([local0 1] dispose:)
-				((= [local0 5] (View new:))
+				([policeText 1] dispose:)
+				((= [policeText 5] (View new:))
 					view: 900
 					loop: 4
 					posn: 160 74
@@ -223,8 +228,8 @@
 				(= cycles 1)
 			)
 			(7
-				([local0 2] dispose:)
-				((= [local0 6] (View new:))
+				([policeText 2] dispose:)
+				((= [policeText 6] (View new:))
 					view: 900
 					loop: 3
 					posn: 160 80
@@ -235,8 +240,8 @@
 				(= cycles 1)
 			)
 			(8
-				([local0 3] dispose:)
-				((= [local0 7] (View new:))
+				([policeText 3] dispose:)
+				((= [policeText 7] (View new:))
 					view: 900
 					loop: 2
 					posn: 160 78
@@ -247,8 +252,8 @@
 				(= cycles 1)
 			)
 			(9
-				([local0 4] dispose:)
-				((= [local0 8] (View new:))
+				([policeText 4] dispose:)
+				((= [policeText 8] (View new:))
 					view: 900
 					loop: 1
 					posn: 160 70
@@ -259,13 +264,13 @@
 				(= cycles 1)
 			)
 			(10
-				([local0 5] dispose:)
-				([local0 9] setPri: 10 addToPic:)
+				([policeText 5] dispose:)
+				([policeText 9] setPri: 10 addToPic:)
 				(= cycles 1)
 			)
 			(11
-				([local0 6] dispose:)
-				((= [local10 0] (Prop new:))
+				([policeText 6] dispose:)
+				((= [questText 0] (Prop new:))
 					view: 901
 					loop: 9
 					cel: 2
@@ -273,12 +278,12 @@
 					setPri: 1
 					init:
 					ignoreActors:
-					setCycle: Beg self
+					setCycle: BegLoop self
 				)
 			)
 			(12
-				([local0 7] dispose:)
-				((= [local10 1] (View new:))
+				([policeText 7] dispose:)
+				((= [questText 1] (View new:))
 					view: 901
 					loop: 8
 					posn: 160 174
@@ -289,8 +294,8 @@
 				(= cycles 1)
 			)
 			(13
-				([local0 8] dispose:)
-				((= [local10 2] (View new:))
+				([policeText 8] dispose:)
+				((= [questText 2] (View new:))
 					view: 901
 					loop: 7
 					posn: 160 165
@@ -301,7 +306,7 @@
 				(= cycles 1)
 			)
 			(14
-				((= [local10 3] (View new:))
+				((= [questText 3] (View new:))
 					view: 901
 					loop: 6
 					posn: 160 158
@@ -312,8 +317,8 @@
 				(= cycles 1)
 			)
 			(15
-				([local10 0] dispose:)
-				((= [local10 4] (View new:))
+				([questText 0] dispose:)
+				((= [questText 4] (View new:))
 					view: 901
 					loop: 5
 					posn: 160 152
@@ -324,8 +329,8 @@
 				(= cycles 1)
 			)
 			(16
-				([local10 1] dispose:)
-				((= [local10 5] (View new:))
+				([questText 1] dispose:)
+				((= [questText 5] (View new:))
 					view: 901
 					loop: 4
 					posn: 160 144
@@ -336,8 +341,8 @@
 				(= cycles 1)
 			)
 			(17
-				([local10 2] dispose:)
-				((= [local10 6] (View new:))
+				([questText 2] dispose:)
+				((= [questText 6] (View new:))
 					view: 901
 					loop: 3
 					posn: 160 134
@@ -348,8 +353,8 @@
 				(= cycles 1)
 			)
 			(18
-				([local10 3] dispose:)
-				((= [local10 7] (View new:))
+				([questText 3] dispose:)
+				((= [questText 7] (View new:))
 					view: 901
 					loop: 2
 					posn: 160 126
@@ -360,8 +365,8 @@
 				(= cycles 1)
 			)
 			(19
-				([local10 4] dispose:)
-				((= [local10 8] (View new:))
+				([questText 4] dispose:)
+				((= [questText 8] (View new:))
 					view: 901
 					loop: 1
 					posn: 160 120
@@ -372,8 +377,8 @@
 				(= cycles 1)
 			)
 			(20
-				([local10 5] dispose:)
-				((= [local10 9] (View new:))
+				([questText 5] dispose:)
+				((= [questText 9] (View new:))
 					view: 901
 					loop: 0
 					posn: 160 112
@@ -386,23 +391,23 @@
 				(= cycles 1)
 			)
 			(21
-				([local10 6] dispose:)
+				([questText 6] dispose:)
 				(= cycles 1)
 			)
 			(22
-				([local10 7] dispose:)
+				([questText 7] dispose:)
 				(= cycles 1)
 			)
 			(23
-				([local10 8] dispose:)
+				([questText 8] dispose:)
 				(= cycles 1)
 			)
 			(24
-				((= local20 (Act new:))
+				((= numILeft (Actor new:))
 					view: 902
 					loop: 1
 					cel: 0
-					posn: (if (< global110 30) 120 else 0) 178
+					posn: (if (< howFast 30) 120 else 0) 178
 					setPri: 15
 					init:
 					setStep: 8
@@ -410,11 +415,11 @@
 					setCycle: 0
 					setMotion: MoveTo 144 178
 				)
-				((= local21 (Act new:))
+				((= numIRight (Actor new:))
 					view: 902
 					loop: 0
 					cel: 0
-					posn: (if (< global110 30) 200 else 320) 178
+					posn: (if (< howFast 30) 200 else 320) 178
 					setPri: 15
 					init:
 					setStep: 8
@@ -424,84 +429,76 @@
 				)
 			)
 			(25
-				(local20 setStep: 2 setMotion: MoveTo 140 178)
-				(local21 setStep: 2 setMotion: MoveTo 180 178 self)
+				(numILeft setStep: 2 setMotion: MoveTo 140 178)
+				(numIRight setStep: 2 setMotion: MoveTo 180 178 self)
 			)
 			(26
-				(local20 setMotion: MoveTo 143 178 setStep: 1)
-				(local21 setMotion: MoveTo 177 178 setStep: 1)
+				(numILeft setMotion: MoveTo 143 178 setStep: 1)
+				(numIRight setMotion: MoveTo 177 178 setStep: 1)
 				(= seconds 3)
 			)
 			(27
-				(local20 dispose:)
-				(local21 dispose:)
-				(gCurRoom setScript: jimScript)
+				(numILeft dispose:)
+				(numIRight dispose:)
+				(curRoom setScript: jimScript)
 			)
 		)
 	)
 )
 
-(instance streetLight of Prop
-	(properties)
-)
+(instance streetLight of Prop)
 
-(instance redLight1 of Prop
-	(properties)
-)
+(instance redLight1 of Prop)
 
-(instance redLight2 of Prop
-	(properties)
-)
+(instance redLight2 of Prop)
 
-;;;(instance blueLight1 of Prop ; UNUSED
-;;;	(properties)
-;;;)
-;;;
-;;;(instance blueLight2 of Prop ; UNUSED
-;;;	(properties)
-;;;)
+;(instance blueLight1 of Prop)
 
-(instance building of Act
-	(properties)
-)
+;(instance blueLight2 of Prop)
 
-(instance farBuildings of Act
-	(properties)
-)
+(instance building of Actor)
 
-(instance jim1 of View
-	(properties)
-)
+(instance farBuildings of Actor)
 
-(instance jim2 of View
-	(properties)
-)
+(instance jim1 of View)
 
-(instance jim3 of View
-	(properties)
-)
+(instance jim2 of View)
 
-(instance jimb1 of View
-	(properties)
-)
+(instance jim3 of View)
 
-(instance jimb2 of View
-	(properties)
-)
+(instance jimb1 of View)
+
+(instance jimb2 of View)
 
 (instance jimScript of Script
-	(properties)
-
 	(method (init)
 		(runNext init: 16)
-		(gCurRoom drawPic: 46)
+		(curRoom drawPic: 46)
 		(= local23 0)
 		(= local24 0)
-		(= local26 337)
-		(= local27 76)
-		(streetLight view: 310 loop: 2 posn: 298 122 setPri: 15 init:)
-		(redLight1 view: 310 loop: 1 posn: 276 149 setPri: 12 init:)
-		(redLight2 view: 310 loop: 1 posn: 293 149 setPri: 12 init:)
+		(= farX 337)
+		(= farY 76)
+		(streetLight
+			view: 310
+			loop: 2
+			posn: 298 122
+			setPri: 15
+			init:
+		)
+		(redLight1
+			view: 310
+			loop: 1
+			posn: 276 149
+			setPri: 12
+			init:
+		)
+		(redLight2
+			view: 310
+			loop: 1
+			posn: 293 149
+			setPri: 12
+			init:
+		)
 		(building
 			view: 310
 			setLoop: 3
@@ -517,7 +514,7 @@
 			view: 310
 			setLoop: 4
 			setCel: 0
-			posn: local26 local27
+			posn: farX farY
 			setPri: 0
 			init:
 		)
@@ -572,28 +569,26 @@
 		(RedrawCast)
 		(super init:)
 	)
-
+	
 	(method (doit)
-		(if (== local23 0)
-			(self changeState: 0)
-		)
+		(if (== local23 0) (self changeState: 0))
 		(runNext doit:)
-		(if (runNext state:)
+		(if (runNext state?)
 			(runNext state: 0)
-			(gCast eachElementDo: #dispose)
-			(gCurRoom setScript: everyoneElseScript)
+			(cast eachElementDo: #dispose)
+			(curRoom setScript: everyoneElseScript)
 		)
-		(cond
+		(cond 
 			((and (== local24 3) (= local25 0))
-				(-= local26 1)
-				(farBuildings posn: local26 local27)
+				(-= farX 1)
+				(farBuildings posn: farX farY)
 				(= local24 0)
 				(+= local25 1)
 			)
 			((and (== local24 3) (= local25 10))
-				(-= local26 1)
-				(+= local27 1)
-				(farBuildings posn: local26 local27)
+				(-= farX 1)
+				(+= farY 1)
+				(farBuildings posn: farX farY)
 				(= local24 0)
 				(= local25 0)
 			)
@@ -601,27 +596,47 @@
 				(+= local24 1)
 			)
 		)
-		(if (and (== (building x:) 250) (== (building y:) 105))
+		(if (and (== (building x?) 250) (== (building y?) 105))
 			(self changeState: 1)
 		)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(streetLight setCycle: Fwd)
-				(redLight1 setCycle: Fwd)
-				(redLight2 setCycle: Fwd)
-				(Display 200 0 dsCOORD 10 115) ; "Name: Jim Walls"
-				(Display 200 1 dsCOORD 10 125) ; "Weight: 200 lbs"
-				(Display 200 2 dsCOORD 10 135) ; "Height: 5'10""
-				(Display 200 3 dsCOORD 10 145) ; "Hair: Light Brown"
-				(Display 200 4 dsCOORD 10 155) ; "Eyes: Green"
-				(Display 200 5 dsCOORD 10 165) ; "Wanted: For excessive verbosity"
-				(Display 200 6 dsCOORD 150 115) ; "Alias: B.B.Walls"
-				(Display 200 7 dsCOORD 150 125) ; "MO: Author and"
-				(Display 200 8 dsCOORD 175 135) ; "designer of"
-				(Display 200 9 dsCOORD 175 145) ; "Police Quest II"
+				(streetLight setCycle: Forward)
+				(redLight1 setCycle: Forward)
+				(redLight2 setCycle: Forward)
+				(Display 200 0
+					p_at 10 115
+				)
+				(Display 200 1
+					p_at 10 125
+				)
+				(Display 200 2
+					p_at 10 135
+				)
+				(Display 200 3
+					p_at 10 145
+				)
+				(Display 200 4
+					p_at 10 155
+				)
+				(Display 200 5
+					p_at 10 165
+				)
+				(Display 200 6
+					p_at 150 115
+				)
+				(Display 200 7
+					p_at 150 125
+				)
+				(Display 200 8
+					p_at 175 135
+				)
+				(Display 200 9
+					p_at 175 145
+				)
 				(= local23 1)
 			)
 			(1
@@ -631,135 +646,71 @@
 	)
 )
 
-(instance bainsRunning of Act
-	(properties)
-)
+(instance bainsRunning of Actor)
 
-(instance bainsShadow of Act
-	(properties)
-)
+(instance bainsShadow of Actor)
 
-(instance sonnyRunning of Act
-	(properties)
-)
+(instance sonnyRunning of Actor)
 
-(instance sonnyShadow of Act
-	(properties)
-)
+(instance sonnyShadow of Actor)
 
-(instance legs of Prop
-	(properties)
-)
+(instance legs of Prop)
 
-(instance weeds of Act
-	(properties)
-)
+(instance weeds of Actor)
 
-(instance weeds2 of Act
-	(properties)
-)
+(instance weeds2 of Actor)
 
-(instance bubbles of Act
-	(properties)
-)
+(instance bubbles of Actor)
 
-(instance executive of View
-	(properties)
-)
+(instance executive of View)
 
-(instance producer of View
-	(properties)
-)
+(instance producer of View)
 
-(instance ken of View
-	(properties)
-)
+(instance ken of View)
 
-(instance programming of View
-	(properties)
-)
+(instance programming of View)
 
-(instance art of View
-	(properties)
-)
+(instance art of View)
 
-(instance animation of View
-	(properties)
-)
+(instance animation of View)
 
-(instance project of View
-	(properties)
-)
+(instance project of View)
 
-(instance coordinator of View
-	(properties)
-)
+(instance coordinator of View)
 
-(instance system of View
-	(properties)
-)
+(instance system of View)
 
-(instance development of View
-	(properties)
-)
+(instance development of View)
 
-(instance music of View
-	(properties)
-)
+(instance music of View)
 
-(instance heitman of View
-	(properties)
-)
+(instance heitman of View)
 
-(instance jeff of View
-	(properties)
-)
+(instance jeff of View)
 
-(instance pablo of View
-	(properties)
-)
+(instance pablo of View)
 
-(instance stuart of View
-	(properties)
-)
+(instance stuart of View)
 
-(instance crowe of View
-	(properties)
-)
+(instance crowe of View)
 
-(instance jerry of View
-	(properties)
-)
+(instance jerry of View)
 
-(instance fischbach of View
-	(properties)
-)
+(instance fischbach of View)
 
-(instance mickie of View
-	(properties)
-)
+(instance mickie of View)
 
-(instance dave of View
-	(properties)
-)
+(instance dave of View)
 
-(instance vu of View
-	(properties)
-)
+(instance vu of View)
 
-(instance cheri of View
-	(properties)
-)
+(instance cheri of View)
 
-(instance chris of View
-	(properties)
-)
+(instance chris of View)
 
 (instance everyoneElseScript of Script
-	(properties)
-
 	(method (init)
-		(gCurRoom drawPic: 47)
+		(curRoom drawPic: 47)
 		(bainsRunning
 			view: 209
 			setLoop: 1
@@ -775,7 +726,7 @@
 			setCycle: Walk
 			setStep: 11 1
 			init:
-			ignoreActors: 1
+			ignoreActors: TRUE
 			setPri: 1
 		)
 		(sonnyRunning
@@ -792,7 +743,7 @@
 			posn: -40 135
 			setCycle: Walk
 			setStep: 8 1
-			ignoreActors: 1
+			ignoreActors: TRUE
 			setPri: 1
 			init:
 		)
@@ -803,7 +754,7 @@
 			setPri: 0
 			init:
 			cycleSpeed: 1
-			setCycle: Fwd
+			setCycle: Forward
 		)
 		(weeds
 			view: 311
@@ -811,7 +762,7 @@
 			posn: 10 130
 			setPri: 2
 			init:
-			setCycle: Fwd
+			setCycle: Forward
 			cycleSpeed: 1
 			setStep: 4 1
 			setMotion: MoveTo 300 130 weed1Script
@@ -822,7 +773,7 @@
 			posn: 150 140
 			setPri: 2
 			init:
-			setCycle: Fwd
+			setCycle: Forward
 			setStep: 4 1
 			setMotion: MoveTo 300 140 weed2Script
 		)
@@ -833,13 +784,13 @@
 			setPri: 1
 			setStep: 4 5
 			init:
-			setCycle: Fwd
+			setCycle: Forward
 			setMotion: MoveTo 160 0 bubbleScript
 		)
 		(super init:)
 		(self changeState: 0)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -880,7 +831,7 @@
 					view: 903
 					setLoop: 3
 					setCel: 1
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 15
 					init:
 					posn: 158 64
@@ -890,7 +841,7 @@
 					view: 903
 					setLoop: 3
 					setCel: 0
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 15
 					posn: 153 82
 					init:
@@ -900,7 +851,7 @@
 					view: 904
 					setLoop: 0
 					setCel: 0
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 15
 					init:
 					posn: 157 97
@@ -910,7 +861,7 @@
 					view: 904
 					setLoop: 0
 					setCel: 1
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 15
 					init:
 					posn: 158 115
@@ -920,7 +871,7 @@
 					view: 904
 					setLoop: 0
 					setCel: 2
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 15
 					init:
 					posn: 158 131
@@ -930,7 +881,7 @@
 					view: 904
 					setLoop: 0
 					setCel: 3
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 15
 					init:
 					posn: 159 148
@@ -949,7 +900,7 @@
 					view: 903
 					setLoop: 4
 					setCel: 0
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 15
 					init:
 					posn: 156 86
@@ -959,7 +910,7 @@
 					view: 903
 					setLoop: 4
 					setCel: 1
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 15
 					init:
 					posn: 157 104
@@ -969,7 +920,7 @@
 					view: 904
 					setLoop: 1
 					setCel: 0
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 15
 					init:
 					posn: 155 121
@@ -985,7 +936,7 @@
 				(weeds dispose:)
 				(weeds2 dispose:)
 				(bubbles dispose:)
-				(gCurRoom drawPic: 885)
+				(curRoom drawPic: 885)
 				(programming
 					view: 903
 					setLoop: 0
@@ -993,14 +944,14 @@
 					setPri: 15
 					init:
 					posn: 97 20
-					ignoreActors: 1
+					ignoreActors: TRUE
 					stopUpd:
 				)
 				(dave
 					view: 904
 					setLoop: 2
 					setCel: 2
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 3
 					init:
 					posn: 97 38
@@ -1010,7 +961,7 @@
 					view: 904
 					setLoop: 1
 					setCel: 2
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 3
 					init:
 					posn: 97 54
@@ -1020,7 +971,7 @@
 					view: 904
 					setLoop: 1
 					setCel: 1
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 3
 					init:
 					posn: 97 71
@@ -1030,7 +981,7 @@
 					view: 904
 					setLoop: 2
 					setCel: 1
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 3
 					init:
 					posn: 97 88
@@ -1040,7 +991,7 @@
 					view: 904
 					setLoop: 2
 					setCel: 0
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 3
 					init:
 					posn: 97 105
@@ -1050,7 +1001,7 @@
 					view: 904
 					setLoop: 5
 					setCel: 0
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 3
 					init:
 					posn: 97 121
@@ -1073,7 +1024,7 @@
 					view: 903
 					setLoop: 1
 					setCel: 0
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 15
 					init:
 					posn: 38 50
@@ -1083,7 +1034,7 @@
 					view: 903
 					setLoop: 1
 					setCel: 1
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 15
 					init:
 					posn: 121 50
@@ -1093,7 +1044,7 @@
 					view: 904
 					setLoop: 3
 					setCel: 1
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 3
 					init:
 					posn: 96 70
@@ -1111,7 +1062,7 @@
 					view: 903
 					setLoop: 2
 					setCel: 0
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 15
 					init:
 					posn: 97 50
@@ -1121,7 +1072,7 @@
 					view: 904
 					setLoop: 4
 					setCel: 0
-					ignoreActors: 1
+					ignoreActors: TRUE
 					setPri: 15
 					init:
 					posn: 97 70
@@ -1132,21 +1083,19 @@
 			(7
 				(music dispose:)
 				(chris dispose:)
-				(gCurRoom drawPic: 48)
+				(curRoom drawPic: 48)
 				(= cycles 10)
 			)
 			(8
-				(localproc_0 200 11) ; "One Year has passed since Detective Sonny Bonds successfully brought Jessie Bains (The Death Angel) to justice. Bains' world of rampant drugs and open violence, the world he controlled so well, has been silenced. As the memory of this animal slowly fades, the city of Lytton once again lives in the peace and serenity of its past."
-				(localproc_0 200 12) ; "Officer Sonny Bonds has been promoted to the position of Homicide Detective. The day begins with Detective Bonds arriving for another routine work day, or so it seems..."
-				(gCurRoom newRoom: 701)
+				(DoDisplay 200 11)
+				(DoDisplay 200 12)
+				(curRoom newRoom: 701)
 			)
 		)
 	)
 )
 
 (instance bainsScript of Script
-	(properties)
-
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -1154,14 +1103,20 @@
 				(bainsShadow init: setMotion: MoveTo 162 135)
 			)
 			(1
-				(bainsShadow cel: (bainsShadow cel:) setMotion: MoveTo 235 135)
-				(bainsRunning setLoop: 0 cel: (bainsRunning cel:))
+				(bainsShadow
+					cel: (bainsShadow cel?)
+					setMotion: MoveTo 235 135
+				)
+				(bainsRunning setLoop: 0 cel: (bainsRunning cel?))
 				(bainsRunning setMotion: MoveTo 245 140 self)
 				(sonnyScript changeState: 0)
 			)
 			(2
-				(bainsShadow cel: (bainsShadow cel:) setMotion: MoveTo 330 135)
-				(bainsRunning setLoop: 1 cel: (bainsRunning cel:))
+				(bainsShadow
+					cel: (bainsShadow cel?)
+					setMotion: MoveTo 330 135
+				)
+				(bainsRunning setLoop: 1 cel: (bainsRunning cel?))
 				(bainsRunning setMotion: MoveTo 340 140 self)
 			)
 			(3
@@ -1173,8 +1128,6 @@
 )
 
 (instance sonnyScript of Script
-	(properties)
-
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -1182,14 +1135,20 @@
 				(sonnyShadow setMotion: MoveTo 162 135)
 			)
 			(1
-				(sonnyShadow cel: (sonnyShadow cel:) setMotion: MoveTo 230 135)
+				(sonnyShadow
+					cel: (sonnyShadow cel?)
+					setMotion: MoveTo 230 135
+				)
 				(sonnyRunning setMotion: MoveTo 240 140 self)
-				(sonnyRunning setLoop: 0 cel: (sonnyRunning cel:))
+				(sonnyRunning setLoop: 0 cel: (sonnyRunning cel?))
 			)
 			(2
-				(sonnyShadow cel: (sonnyShadow cel:) setMotion: MoveTo 330 135)
+				(sonnyShadow
+					cel: (sonnyShadow cel?)
+					setMotion: MoveTo 330 135
+				)
 				(sonnyRunning setMotion: MoveTo 340 140 self)
-				(sonnyRunning setLoop: 1 cel: (sonnyRunning cel:))
+				(sonnyRunning setLoop: 1 cel: (sonnyRunning cel?))
 			)
 			(3
 				(sonnyRunning dispose:)
@@ -1200,8 +1159,6 @@
 )
 
 (instance bubbleScript of Script
-	(properties)
-
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -1215,8 +1172,6 @@
 )
 
 (instance weed1Script of Script
-	(properties)
-
 	(method (changeState newState)
 		(switch (= state newState)
 			(1
@@ -1230,8 +1185,6 @@
 )
 
 (instance weed2Script of Script
-	(properties)
-
 	(method (changeState newState)
 		(switch (= state newState)
 			(3
@@ -1245,11 +1198,8 @@
 )
 
 (instance runNext of Script
-	(properties)
-
-	(method (init param1)
+	(method (init numSeconds)
 		(= state 0)
-		(= seconds param1)
+		(= seconds numSeconds)
 	)
 )
-

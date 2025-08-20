@@ -1,10 +1,10 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
-;;; Decompiled by sluicebox
 (script# 61)
-(include sci.sh)
+(include system.sh)
+(include game.sh)
 (use Main)
-(use Interface)
-(use Avoid)
+(use Intrface)
+(use Avoider)
 (use Motion)
 (use Game)
 (use User)
@@ -14,9 +14,8 @@
 (public
 	rm61 0
 )
-
 (synonyms
-	(woman her shelly witness woman jogger)
+	(broad her shelly witness broad jogger)
 )
 
 (local
@@ -33,55 +32,38 @@
 	local10
 	local11
 )
-
-(procedure (localproc_0)
+(procedure (LocPrint)
 	(Print &rest #at -1 18)
 )
 
-(procedure (localproc_1)
+(procedure (LocPrintBottom)
 	(Print &rest #at -1 156)
 )
 
-(procedure (localproc_2)
-	(switch global131
-		(13
-			(if (not (gEgo inRect: 144 188 166 197))
-				(Print 61 115) ; "You're not close enough to your car's door."
-			else
-				(if (and (== global100 5) (not global183))
-					(gEgo setMotion: MoveTo 125 188)
-					(return (Print 61 116)) ; "Hey, Sonny!" Keith shouts, "We can't leave yet. We haven't checked everything out."
-				)
-				(cond
-					(global133
-						(Print 61 117) ; "Your car door is locked"
-						(return 0)
+(procedure (EnterCar)
+	(return
+		(switch currentCar
+			(13
+				(if (not (ego inRect: 144 188 166 197))
+					(Print 61 115)
+				else
+					(if (and (== gamePhase 5) (not shotAtBainsInCove))
+						(ego setMotion: MoveTo 125 188)
+						(return (Print 61 116))
 					)
-					(global135
-						(Print 61 118) ; "Close the trunk first."
-						(return 0)
-					)
-					((gEgo has: 10) ; field_kit
-						(Print 61 119) ; "You should put your field kit in the trunk first."
-						(return 0)
-					)
-					(else
-						(carScript changeState: 7)
-						(return 1)
+					(cond 
+						(workCarLocked (Print 61 117) (return 0))
+						(workCarTrunkOpened (Print 61 118) (return 0))
+						((ego has: iFieldKit) (Print 61 119) (return 0))
+						(else (carScript changeState: 7) (return 1))
 					)
 				)
 			)
-		)
-		(33
-			(cond
-				((not (gEgo inRect: 144 188 166 197))
-					(Print 61 115) ; "You're not close enough to your car's door."
-				)
-				((== global136 1)
-					(Print 61 117) ; "Your car door is locked"
-				)
-				(else
-					(carScript changeState: 7)
+			(33
+				(cond 
+					((not (ego inRect: 144 188 166 197)) (Print 61 115))
+					((== personalCarLocked 1) (Print 61 117))
+					(else (carScript changeState: 7))
 				)
 			)
 		)
@@ -96,15 +78,15 @@
 	(properties)
 )
 
-(instance gelepsi of Act
+(instance gelepsi of Actor
 	(properties)
 )
 
-(instance barbie of Act
+(instance barbie of Actor
 	(properties)
 )
 
-(instance ourCar of Act
+(instance ourCar of Actor
 	(properties)
 )
 
@@ -124,7 +106,7 @@
 	(properties)
 )
 
-(instance ourCarBlock of Blk
+(instance ourCarBlock of Block
 	(properties
 		top 194
 		left 107
@@ -133,7 +115,7 @@
 	)
 )
 
-(instance bwCarBlock of Blk
+(instance bwCarBlock of Block
 	(properties
 		top 164
 		left 105
@@ -142,7 +124,7 @@
 	)
 )
 
-(instance vanBlock of Blk
+(instance vanBlock of Block
 	(properties
 		top 164
 		bottom 178
@@ -150,41 +132,41 @@
 	)
 )
 
-(instance rm61 of Rm
+(instance rm61 of Room
 	(properties
 		picture 61
-		style 6
+		style IRISIN
 	)
-
-	(method (dispose)
-		(carScript dispose:)
-		(stopScript dispose:)
-		(gelepsiScript dispose:)
-		(barbieScript dispose:)
-		(keithScript dispose:)
-		(super dispose:)
-	)
-
+	
 	(method (init)
-		(Load rsVIEW 0)
-		(Load rsVIEW 20)
-		(Load rsVIEW 253)
-		(Load rsVIEW 54)
-		(Load rsVIEW 51)
+		(Load VIEW 20)
+		(Load VIEW 253)
+		(Load VIEW 54)
+		(Load VIEW 51)
 		(super init:)
-		(= global211 (!= global100 5))
-		(if (== global100 5)
-			(= global212 3)
+		(= gunNotNeeded (!= gamePhase phaseCOVE))
+		(if (== gamePhase phaseCOVE)
+			(= gunFireState gunPROHIBITED)
 		)
-		(= local0 (not (= local3 (== gPrevRoomNum 60))))
-		(= local1 (if (== global130 gCurRoomNum) local0))
-		(if (>= 6 global100 5)
-			(= global138 0)
-			(= global158 0)
+		(= local0 (not (= local3 (== prevRoomNum 60))))
+		(= local1
+			(if (== roomCarParked curRoomNum)
+				local0
+			else
+				0
+			)
+		)
+		(if
+			(and
+				(>= 6 gamePhase)
+				(>= gamePhase phaseCOVE)
+			)
+			(= isOnDuty 0)
+			(= captainWarningTimer 0)
 			(= global159 0)
 		)
-		(if (== global189 3)
-			(= global189 1)
+		(if (== diverState 3)
+			(= diverState 1)
 		)
 		(= local11 20)
 		(if local3
@@ -192,57 +174,100 @@
 			(= local4 global111)
 		else
 			(HandsOff)
-			(cond
+			(cond 
 				(local1
-					(if (and (== global111 3) (IsFlag 20))
+					(if
+						(and
+							(== global111 3)
+							(Btst 20)
+						)
 						(= local4 4)
-						(= global211 1)
-						(ClearFlag 20)
+						(= gunNotNeeded 1)
+						(Bclr 20)
 					else
 						(= local4 global111)
 					)
-					(= global186 0)
+					(= bainsInCoveTimer 0)
 				)
-				((< global100 5)
+				((< gamePhase phaseCOVE)
 					(= local4 0)
 				)
-				((== global100 5)
-					(cond
-						((> 90 global158 1)
+				((== gamePhase phaseCOVE)
+					(cond 
+						(
+							(and
+								(> 90 captainWarningTimer)
+								(> captainWarningTimer 1)
+							)
 							(= local4 2)
-							(= global158 0)
+							(= captainWarningTimer 0)
 						)
-						((IsFlag 20)
+						((Btst 20)
 							(= local4 4)
-							(ClearFlag 20)
-							(= global186 0)
+							(Bclr 20)
+							(= bainsInCoveTimer 0)
 						)
 						(else
 							(= local4 3)
-							(= global158 0)
+							(= captainWarningTimer 0)
 						)
 					)
 				)
-				((>= global100 6)
+				((>= gamePhase 6)
 					(= local4 1)
 				)
 			)
 			(= global111 local4)
 		)
-		(if global183
-			(= global188 0)
+		(if shotAtBainsInCove
+			(= bainsInCoveState 0)
 		)
-		(self setLocales: 155)
-		(grass1 view: 253 loop: 0 cel: 3 posn: 213 132 stopUpd: addToPic:)
-		(grass2 view: 253 loop: 0 cel: 2 posn: 231 75 stopUpd: addToPic:)
-		(grass3 view: 253 loop: 0 cel: 1 posn: 153 76 stopUpd: addToPic:)
-		(grass4 view: 253 loop: 0 cel: 3 posn: 67 114 stopUpd: addToPic:)
-		(if (== gPrevRoomNum 60)
-			(gEgo observeBlocks: ourCarBlock)
+		(self setLocales: regCove)
+		(grass1
+			view: 253
+			loop: 0
+			cel: 3
+			posn: 213 132
+			stopUpd:
+			addToPic:
+		)
+		(grass2
+			view: 253
+			loop: 0
+			cel: 2
+			posn: 231 75
+			stopUpd:
+			addToPic:
+		)
+		(grass3
+			view: 253
+			loop: 0
+			cel: 1
+			posn: 153 76
+			stopUpd:
+			addToPic:
+		)
+		(grass4
+			view: 253
+			loop: 0
+			cel: 3
+			posn: 67 114
+			stopUpd:
+			addToPic:
+		)
+		(if (== prevRoomNum 60)
+			(ego observeBlocks: ourCarBlock)
 		)
 		(if (>= local4 3)
-			(gEgo observeBlocks: bwCarBlock)
-			((View new:) view: 54 loop: 1 cel: 3 posn: 159 175 init: addToPic:)
+			(ego observeBlocks: bwCarBlock)
+			((View new:)
+				view: 54
+				loop: 1
+				cel: 3
+				posn: 159 175
+				init:
+				addToPic:
+			)
 			(gelepsi
 				view: 48
 				loop: 2
@@ -253,23 +278,30 @@
 				illegalBits: 0
 				setScript: gelepsiScript
 			)
-			(if (!= global189 0)
+			(if (!= diverState 0)
 				(= global185 1)
 			)
-			(if (and (not global185) (not global187))
+			(if
+				(and
+					(not global185)
+					(not global187)
+				)
 				(barbie
 					view: 11
 					loop: 2
 					posn: 219 136
 					init:
 					setCycle: Walk
-					setAvoider: (Avoid new:)
-					setMotion: Follow gEgo 500
+					setAvoider: (Avoider new:)
+					setMotion: Follow ego 500
 					illegalBits: 0
 					setScript: barbieScript
 				)
-				(if (< global110 30)
-					(barbie setMotion: 0 stopUpd:)
+				(if (< howFast 30)
+					(barbie
+						setMotion: 0
+						stopUpd:
+					)
 				)
 			)
 		)
@@ -277,7 +309,7 @@
 			view: 54
 			setStep: 1
 			setLoop: 1
-			setCel: (if (== global131 13) 1 else 5)
+			setCel: (if (== currentCar 13) 1 else 5)
 			setCycle: 0
 			setMotion: 0
 			posn: (if (and (not local3) (not local1)) 150 else 164) 205
@@ -285,21 +317,47 @@
 			setPri: 15
 			ignoreActors:
 		)
-		(= local2 (and (gCast contains: gelepsi) (== gPrevRoomNum 13)))
-		(if (and (>= local4 3) (>= global189 5))
-			((View new:) view: 154 loop: 0 cel: 0 posn: -20 181 init: addToPic:)
-			(gEgo observeBlocks: vanBlock)
+		(= local2
+			(if (cast contains: gelepsi)
+				(== prevRoomNum 13)
+			else
+				0
+			)
+		)
+		(if
+			(and
+				(>= local4 3)
+				(>= diverState 5)
+			)
+			((View new:) ;coroner's van
+				view: 154
+				loop: 0
+				cel: 0
+				posn: -20 181
+				init:
+				addToPic:
+			)
+			(ego observeBlocks: vanBlock)
 		)
 		(self setScript: rm61Script)
+	)
+	
+	(method (dispose)
+		(carScript dispose:)
+		(stopScript dispose:)
+		(gelepsiScript dispose:)
+		(barbieScript dispose:)
+		(keithScript dispose:)
+		(super dispose:)
 	)
 )
 
 (instance rm61Script of Script
 	(properties)
-
+	
 	(method (doit)
 		(if local2
-			(if (< (gEgo distanceTo: gelepsi) 50)
+			(if (< (ego distanceTo: gelepsi) 50)
 				(gelepsi setLoop: 1)
 			else
 				(gelepsi setLoop: -1)
@@ -308,63 +366,83 @@
 		(if (> local11 1)
 			(-- local11)
 		)
-		(cond
-			((and (== global132 local0 1) (not (gCast contains: ourCar)))
+		(cond 
+			(
+				(and
+					(== global132 local0)
+					(== local0 1)
+					(not (cast contains: ourCar))
+				)
 				(= global132 0)
 				(carScript changeState: 0)
 			)
-			((== (gEgo edgeHit:) EDGE_LEFT)
+			((== (ego edgeHit?) 4)
 				(= global205 0)
-				(gCurRoom newRoom: 60)
+				(curRoom newRoom: 60)
 			)
-			((== global132 (not local0) 1)
-				(= global132 0)
-				(localproc_2)
-			)
+			(
+				(and
+					(== global132 (not local0))
+					(== (not local0) 1))
+					(= global132 0)
+					(EnterCar)
+				)
 		)
-		(cond
-			((and (> (gEgo y:) 205) (not local0))
+		(cond 
+			(
+				(and
+					(> (ego y?) 205)
+					(not local0)
+				)
 				(switch (Random 0 2)
 					(0
-						(Print 61 0) ; "It's a long walk to anywhere, Sonny."
+						(Print 61 0)
 					)
 					(1
-						(Print 61 1) ; "Even the squirrels around here know not to go into the street."
+						(Print 61 1)
 					)
 					(2
-						(Print 61 2) ; "A bag lady across the street gives you a dirty look, then hurries on her way."
+						(Print 61 2)
 					)
 				)
-				(gEgo setMotion: MoveTo (gEgo x:) 176)
+				(ego setMotion: MoveTo (ego x?) 176)
 			)
-			((and (== (gEgo edgeHit:) EDGE_RIGHT) (== local11 1))
-				(gEgo x: 340)
+			(
+				(and
+					(== (ego edgeHit?) 2)
+					(== local11 1)
+				)
+				(ego x: 340)
 				(if local6
-					(Print 61 3) ; "She said upriver, not downriver."
+					(Print 61 3)
 				else
 					(switch (Random 0 2)
 						(0
-							(Print 61 4) ; "There's nothing back this way except a smelly old swamp."
+							(Print 61 4)
 						)
 						(1
-							(Print 61 5) ; "The fishing's better over here, Sonny. Come back!"
+							(Print 61 5)
 						)
 						(2
-							(Print 61 6) ; "Judging from the stench, you think you may have discovered a toxic waste dump."
+							(Print 61 6)
 						)
 					)
 				)
 				(= local11 50)
 			)
 		)
-		(if (< (gEgo y:) 72)
-			(gEgo y: 72)
+		(if (< (ego y?) 72)
+			(ego y: 72)
 		)
-		(if (and (== global189 3) (not (gEgo inRect: 0 148 34 182)))
-			(Print 61 7) ; "There's the diving team, Sonny," Keith points out. "You go ahead. We'll stand by the radio in case they spot Bains."
-			(= global189 5)
-			(gEgo observeBlocks: vanBlock)
-			((Act new:)
+		(if
+			(and
+				(== diverState 3)
+				(not (ego inRect: 0 148 34 182))
+			)
+			(Print 61 7)
+			(= diverState 5)
+			(ego observeBlocks: vanBlock)
+			((Actor new:)
 				view: 154
 				loop: 0
 				cel: 0
@@ -375,14 +453,14 @@
 		)
 		(super doit:)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(gEgo
+				(ego
 					view: 0
-					posn: 28 (gEgo y:)
-					illegalBits: $8000
+					posn: 28 (ego y?)
+					illegalBits: cWHITE;-32768
 					ignoreActors: 0
 					setPri: -1
 					setLoop: -1
@@ -390,27 +468,31 @@
 					setMotion: 0
 				)
 				(if local3
-					(gEgo setMotion: MoveTo 50 (gEgo y:))
+					(ego setMotion: MoveTo 50 (ego y?))
 				else
-					(gEgo posn: 200 240)
+					(ego posn: 200 240)
 				)
-				(if (== global131 13)
-					((= global112 (Act new:))
+				(if (== currentCar carWork)
+					((= keith (Actor new:))
 						view: 20
 						cel: 0
 						posn: -100 400
-						setAvoider: (Avoid new:)
+						setAvoider: (Avoider new:)
 						setScript: keithScript
 						init:
 					)
 				)
-				(if (and (== global131 13) local3)
-					(global112
-						cel: 0
-						posn: 6 (+ (gEgo y:) 5)
-						setMotion: Follow gEgo 30
+				(if
+					(and
+						(== currentCar carWork)
+						local3
 					)
-					(if global135
+					(keith
+						cel: 0
+						posn: 6 (+ (ego y?) 5)
+						setMotion: Follow ego 30
+					)
+					(if workCarTrunkOpened
 						(unTrunk
 							view: 51
 							loop: 5
@@ -425,10 +507,23 @@
 					(and
 						(>= local4 3)
 						(not local0)
-						(or global187 (!= global189 0))
+						(or
+							global187
+							(!= diverState 0)
+						)
 					)
-					(global112 posn: 157 158 loop: 1 cel: 0 stopUpd:)
-					(gelepsi posn: 133 162 loop: 0 cel: 4 stopUpd:)
+					(keith
+						posn: 157 158
+						loop: 1
+						cel: 0
+						stopUpd:
+					)
+					(gelepsi
+						posn: 133 162
+						loop: 0
+						cel: 4
+						stopUpd:
+					)
 				)
 				(if (not local3)
 					(stopScript init:)
@@ -436,9 +531,9 @@
 				else
 					(ourCar addToPic:)
 				)
-				(cond
-					((!= global130 gCurRoomNum)
-						(= global130 gCurRoomNum)
+				(cond 
+					((!= roomCarParked curRoomNum)
+						(= roomCarParked curRoomNum)
 					)
 					((== local0 1)
 						(= global132 1)
@@ -447,446 +542,463 @@
 			)
 		)
 	)
-
+	
 	(method (handleEvent event)
-		(switch (event type:)
-			(evSAID
-				(cond
-					((Said 'show/badge')
-						(Print 61 8) ; "You flash your badge, impressing no one."
+		(switch (event type?)
+			(saidEvent
+				(cond 
+					((Said 'display/badge')
+						(Print 61 8)
 					)
 					((Said 'look<through/fence,hole')
-						(if (gEgo inRect: 169 125 320 200)
-							(Print 61 9) ; "Through the hole in the fence, you see a swampy area."
+						(if (ego inRect: 169 125 320 200)
+							(Print 61 9)
 						else
-							(Print 61 10) ; "You're too far away to see any details."
+							(Print 61 10)
 						)
 					)
 					((Said 'look/fence')
-						(if (gEgo inRect: 169 125 320 200)
-							(Print 61 11) ; "The weathered old fence has been here for some time. Many kids have carved their initials in it. Yours are there, somewhere."
+						(if (ego inRect: 169 125 320 200)
+							(Print 61 11)
 						else
-							(Print 61 10) ; "You're too far away to see any details."
+							(Print 61 10)
 						)
 					)
 					((Said 'read,look/fence,initials')
-						(Print 61 12) ; "You read: "J.S. + D.C." "B.H. + J.C." "B.F. + S.C." "C.C. + R.L." "J.W. + D.W.""
+						(Print 61 12)
 					)
 					((Said 'look>')
-						(cond
+						(cond 
 							((Said '/briefcase')
-								(Print 61 13) ; "You don't need to use your field kit here."
+								(Print 61 13)
 							)
 							((Said '/auto')
-								(if (gEgo inRect: 72 142 360 240)
+								(if (ego inRect: 72 142 360 240)
 									(switch (Random 0 2)
 										(0
-											(Print 61 14) ; "You notice that the car has four tires."
+											(Print 61 14)
 										)
 										(1
-											(Print 61 15) ; "Hmmm," you think to yourself, "that car needs to be washed."
+											(Print 61 15)
 										)
 										(2
-											(Print 61 16) ; "Looking at the car, you remember that it's time to change your oil."
+											(Print 61 16)
 										)
 									)
 								else
-									(Print 61 10) ; "You're too far away to see any details."
+									(Print 61 10)
 								)
 							)
 							((Said '/van,bus')
-								(if (and (> global189 2) (>= global111 3))
-									(Print 61 17) ; "This is a 'Special Forces' van, used just for unusual circumstances."
+								(if
+									(and
+										(> diverState 2)
+										(>= global111 3)
+									)
+									(Print 61 17)
 								else
-									(Print 61 18) ; "That's nowhere to be seen."
+									(Print 61 18)
 								)
 							)
 							((Said '/trunk<tree')
-								(Print 61 19) ; "The tree's trunk holds up the rest of the tree."
+								(Print 61 19)
 							)
 							((Said '/trunk')
-								(if (== global131 13)
+								(if (== currentCar carWork)
 									(if
 										(and
-											(gEgo inRect: 93 193 129 208)
-											(gCast contains: unTrunk)
+											(ego inRect: 93 193 129 208)
+											(cast contains: unTrunk)
 										)
-										(gInventory
-											carrying:
-												{The car's trunk contains }
+										(inventory
+											carrying: {The car's trunk contains_}
 											empty: {The car's trunk is empty.}
 											showSelf: 13
 										)
 									else
-										(Print 61 20) ; "You're not close enough to an open trunk."
+										(Print 61 20)
 									)
 								else
-									(Print 61 21) ; "Your car's "hatch-back" hasn't worked since its warranty expired."
+									(Print 61 21)
 								)
 							)
 							((Said '<below/board,plank,wood')
-								(if (gEgo inRect: 110 130 190 160)
-									(Print 61 22) ; "Dead grass and bugs; believe me - those are the only things under there."
+								(if (ego inRect: 110 130 190 160)
+									(Print 61 22)
 								else
-									(Print 61 23) ; "You're too far away to move it."
+									(Print 61 23)
 								)
 							)
 							((Said '<below/rock')
-								(if (gEgo inRect: 0 110 120 160)
-									(Print 61 22) ; "Dead grass and bugs; believe me - those are the only things under there."
+								(if (ego inRect: 0 110 120 160)
+									(Print 61 22)
 								else
-									(Print 61 23) ; "You're too far away to move it."
+									(Print 61 23)
 								)
 							)
 							((Said '<below/bush')
-								(Print 61 24) ; "You don't see anything but dirt under there."
+								(Print 61 24)
 							)
 							((Said '/rock')
-								(if (gEgo inRect: 12 88 132 120)
-									(Print 61 25) ; "They appear to be igneous rocks. Very grey, too."
+								(if (ego inRect: 12 88 132 120)
+									(Print 61 25)
 								else
-									(Print 61 10) ; "You're too far away to see any details."
+									(Print 61 10)
 								)
 							)
 							((Said '/board,plank,wood')
-								(if (gEgo inRect: 120 145 196 170)
-									(Print 61 26) ; "The board is in a severe state of decay."
+								(if (ego inRect: 120 145 196 170)
+									(Print 61 26)
 								else
-									(Print 61 10) ; "You're too far away to see any details."
+									(Print 61 10)
 								)
 							)
-							((or (Said '/phone') (Said '/booth[<phone]'))
-								(if (gEgo inRect: 208 102 273 138)
-									(Print 61 27) ; "This telephone is for the convenience of the public. From the looks of it, it has been well used and abused."
+							(
+								(or
+									(Said '/phone')
+									(Said '/booth[<phone]')
+								)
+								(if (ego inRect: 208 102 273 138)
+									(Print 61 27)
 								else
-									(Print 61 10) ; "You're too far away to see any details."
+									(Print 61 10)
 								)
 							)
-							((Said '/shit,waste,garbage')
-								(if (== (gEgo edgeHit:) EDGE_RIGHT)
-									(Print 61 28) ; "It's not a pretty sight. The garbage-filled swamp should be cleaned up."
+							((Said '/crap,waste,garbage')
+								(if (== (ego edgeHit?) 2)
+									(Print 61 28)
 								else
-									(Print 61 29) ; "You can't see much of the swamp from here."
+									(Print 61 29)
 								)
 							)
 							((Said '/cop,gelepsi,cop')
-								(if (gCast contains: gelepsi)
-									(Print 61 30) ; "Officer Mario Gelepsi is a large, handsome man with a friendly smile... when he's not angry."
+								(if (cast contains: gelepsi)
+									(Print 61 30)
 								else
-									(Print 61 31) ; "There are no uniformed officers in the area."
+									(Print 61 31)
 								)
 							)
-							((Said '/woman')
-								(if (gCast contains: barbie)
-									(Print 61 32) ; "The young jogger is actually shaking with fear."
+							((Said '/broad')
+								(if (cast contains: barbie)
+									(Print 61 32)
 								else
-									(Print 61 33) ; "She's not anywhere in sight."
+									(Print 61 33)
 								)
 							)
-							((Said '[<at,around][/(!*,cove,area)]')
-								(Print 61 34) ; "This is Cotton Cove. It brings back many memories of your youth."
+							((Said '[<at,around][/(noword,cove,area)]')
+								(Print 61 34)
 								(event claimed: 1)
 							)
 						)
 					)
-					((Said 'smell/garbage,shit,waste')
-						(Print 61 35) ; "Yes, you can smell the swamp."
+					((Said 'smell/garbage,crap,waste')
+						(Print 61 35)
 					)
-					((Said 'drop,place,replace/briefcase')
-						(if (gEgo inRect: 93 193 129 208)
-							(if global135
-								(if (gEgo has: 10) ; field_kit
-									(Print 61 36) ; "You place your field kit inside the trunk."
-									(PutItem 10 13) ; field_kit
-									(= global240 0)
-									(if (IsObject gFKit)
-										(gFKit dispose:)
+					((Said 'deposit,place,replace/briefcase')
+						(if (ego inRect: 93 193 129 208)
+							(if workCarTrunkOpened
+								(if (ego has: iFieldKit)
+									(Print 61 36)
+									(PutInRoom iFieldKit 13)
+									(= fieldKitOpen 0)
+									(if (IsObject theFieldKit)
+										(theFieldKit dispose:)
 									)
 								else
-									(Print 61 37) ; "You don't have the field kit."
+									(Print 61 37)
 								)
 							else
-								(Print 61 38) ; "Open the trunk first."
+								(Print 61 38)
 							)
 						else
-							(Print 61 39) ; "You're not close enough to your car's trunk."
+							(Print 61 39)
 						)
 					)
 					((Said 'remove,get/briefcase')
-						(if (gEgo inRect: 93 193 129 208)
-							(if global135
-								(if (== ((gInventory at: 10) owner:) 13) ; field_kit
-									(Print 61 40) ; "You take your field kit from the trunk."
-									(gEgo get: 10) ; field_kit
+						(if (ego inRect: 93 193 129 208)
+							(if workCarTrunkOpened
+								(if (== ((inventory at: iFieldKit) owner?) 13)
+									(Print 61 40)
+									(ego get: iFieldKit)
 								else
-									(Print 61 41) ; "The field kit is not in the trunk."
+									(Print 61 41)
 								)
 							else
-								(Print 61 38) ; "Open the trunk first."
+								(Print 61 38)
 							)
 						else
-							(Print 61 39) ; "You're not close enough to your car's trunk."
+							(Print 61 39)
 						)
 					)
-					((Said 'yes')
-						(Print 61 42) ; "How about that?"
+					((Said 'affirmative')
+						(Print 61 42)
 					)
 					((Said 'no')
-						(Print 61 43) ; "It's no help being negative."
+						(Print 61 43)
 					)
 					(
 						(or
 							(Said 'use,dial/phone')
-							(Said 'drop/dime,cash[/phone]')
+							(Said 'deposit/dime,cash[/phone]')
 						)
-						(if (gEgo inRect: 240 122 246 126)
+						(if (ego inRect: 240 122 246 126)
 							(HandsOff)
-							(Print 61 44 #at 120 50 #time 5) ; "You find two dimes in the phone's change box and deposit them into the phone."
-							(Print 61 45 #at 120 50 #time 8) ; "A strange clicking sound is followed by a low buzz. You suspect something is wrong."
-							(Print 61 46 #at 120 50 #time 8) ; ""Puleeez deposit twenty cents, sir," the operator whines."
+							(Print 61 44 #at 120 50 #time 5)
+							(Print 61 45 #at 120 50 #time 8)
+							(Print 61 46 #at 120 50 #time 8)
 							(HandsOn)
 						else
-							(Print 61 47) ; "To reach out and touch someone, you must first be close enough to reach out and touch the phone."
+							(Print 61 47)
 						)
 					)
 					(
 						(Said
 							'enter,walk,go,crawl[<through]/hole,fence[/hole,fence]'
 						)
-						(Print 61 48) ; "You can't get through."
+						(Print 61 48)
 					)
 					((Said 'hoist,move,get/board,plank,wood')
-						(if (gEgo inRect: 120 145 196 170)
-							(Print 61 22) ; "Dead grass and bugs; believe me - those are the only things under there."
+						(if (ego inRect: 120 145 196 170)
+							(Print 61 22)
 						else
-							(Print 61 23) ; "You're too far away to move it."
+							(Print 61 23)
 						)
 					)
-					((or (Said 'enter/auto') (Said 'open/door') (Said 'get<in'))
-						(localproc_2)
+					(
+						(or
+							(Said 'enter/auto')
+							(Said 'open/door')
+							(Said 'get<in')
+						)
+						(EnterCar)
 					)
 					((Said 'exit/auto')
 						(= global132 1)
 					)
 					((Said 'unlock/door')
-						(if (gEgo inRect: 144 188 166 197)
-							(cond
-								((and (== global131 13) (gEgo has: 3)) ; unmarked_car_keys
-									(if (== global133 1)
-										(= global133 0)
-										(Print 61 49) ; "OK. It's unlocked."
+						(if (ego inRect: 144 188 166 197)
+							(cond 
+								(
+									(and
+										(== currentCar 13)
+										(ego has: iUnmarkedCarKeys)
+									)
+									(if (== workCarLocked 1)
+										(= workCarLocked 0)
+										(Print 61 49)
 									else
-										(Print 61 50) ; "The door is already unlocked."
+										(Print 61 50)
 									)
 								)
-								((== global131 13)
-									(Print 61 51) ; "You need a key to unlock this door."
+								((== currentCar carWork)
+									(Print 61 51)
 								)
 							)
-							(cond
-								((and (== global131 33) (gEgo has: 2)) ; key_ring
-									(if (== global136 1)
-										(= global136 0)
-										(Print 61 49) ; "OK. It's unlocked."
+							(cond 
+								(
+									(and
+										(== currentCar carPersonal)
+										(ego has: iKeyRing)
+									)
+									(if (== personalCarLocked 1)
+										(= personalCarLocked 0)
+										(Print 61 49)
 									else
-										(Print 61 50) ; "The door is already unlocked."
+										(Print 61 50)
 									)
 								)
-								((== global131 33)
-									(Print 61 51) ; "You need a key to unlock this door."
+								((== currentCar carPersonal)
+									(Print 61 51)
 								)
 							)
 						else
-							(proc0_7) ; "You're not close enough."
+							(NotClose)
 						)
 					)
 					((Said 'lock/door')
-						(if (gEgo inRect: 144 188 166 197)
-							(if (== global131 13)
-								(if (== global133 0)
-									(= global133 1)
-									(Print 61 52) ; "OK. It's locked."
+						(if (ego inRect: 144 188 166 197)
+							(if (== currentCar carWork)
+								(if (== workCarLocked 0)
+									(= workCarLocked 1)
+									(Print 61 52)
 								else
-									(Print 61 53) ; "The door is already locked."
+									(Print 61 53)
 								)
 							)
-							(if (== global131 33)
-								(if (== global136 0)
-									(= global136 1)
-									(Print 61 52) ; "OK. It's locked."
+							(if (== currentCar carPersonal)
+								(if (== personalCarLocked 0)
+									(= personalCarLocked 1)
+									(Print 61 52)
 								else
-									(Print 61 53) ; "The door is already locked."
+									(Print 61 53)
 								)
 							)
 						else
-							(proc0_7) ; "You're not close enough."
+							(NotClose)
 						)
 					)
 					((Said 'open,unlock/trunk')
-						(if (== global131 13)
-							(if (gEgo inRect: 93 193 129 208)
-								(cond
-									(global135
-										(Print 61 54) ; "It's already open."
+						(if (== currentCar carWork)
+							(if (ego inRect: 93 193 129 208)
+								(cond 
+									(workCarTrunkOpened
+										(Print 61 54)
 									)
-									((gEgo has: 3) ; unmarked_car_keys
+									((ego has: iUnmarkedCarKeys)
 										(carScript changeState: 13)
 									)
 									(else
-										(Print 61 55) ; "You need a key to open this trunk."
+										(Print 61 55)
 									)
 								)
 							else
-								(proc0_7) ; "You're not close enough."
+								(NotClose)
 							)
 						else
-							(Print 61 21) ; "Your car's "hatch-back" hasn't worked since its warranty expired."
+							(Print 61 21)
 						)
 					)
 					((Said 'close,lock/trunk')
-						(if (== global131 13)
-							(if (gEgo inRect: 93 193 129 208)
-								(if global135
+						(if (== currentCar carWork)
+							(if (ego inRect: 93 193 129 208)
+								(if workCarTrunkOpened
 									(carScript changeState: 15)
-									(= global135 0)
+									(= workCarTrunkOpened 0)
 								else
-									(Print 61 56) ; "It's already closed."
+									(Print 61 56)
 								)
 							else
-								(proc0_7) ; "You're not close enough."
+								(NotClose)
 							)
 						else
-							(Print 61 21) ; "Your car's "hatch-back" hasn't worked since its warranty expired."
+							(Print 61 21)
 						)
 					)
-					((Said 'calm,calm[/woman]')
-						(if (gCast contains: barbie)
-							(Print 61 57) ; "You try to calm the witness, but she's just too excited."
+					((Said 'calm,calm[/broad]')
+						(if (cast contains: barbie)
+							(Print 61 57)
 						else
-							(Print 61 58) ; "She's no where around."
+							(Print 61 58)
 						)
 					)
 					((Said 'call/coroner')
-						(cond
-							((not (gCast contains: gelepsi))
-								(Print 61 59) ; "There is no reason to call the coroner."
+						(cond 
+							((not (cast contains: gelepsi))
+								(Print 61 59)
 							)
-							((and global184 (not (IsFlag 54)))
-								(Print 61 60) ; ""Ok'a, Sonny, I'lla call the coroner for you," responds officer Gelepsi."
-								(SetScore 3 54)
+							(
+								(and
+									removedBodyFromRiver
+									(not (Btst fCalledCoroner))
+								)
+								(Print 61 60)
+								(SolvePuzzle 3 fCalledCoroner)
 							)
-							((< (gEgo distanceTo: gelepsi) 35)
-								(Print 61 61) ; "I like talkin', Sonny," grunts Officer Gelepsi, "but shouldn't you be getting on with the investigation?"
+							((< (ego distanceTo: gelepsi) 35)
+								(Print 61 61)
 							)
 							(else
-								(Print 61 62) ; "Officer Gelepsi is a little hard of hearing. Better get closer."
+								(Print 61 62)
 							)
 						)
 					)
-					((Said 'talk>')
-						(cond
+					((Said 'chat>')
+						(cond 
 							((Said '/cop,gelepsi,cop')
-								(if (gCast contains: gelepsi)
-									(if (< (gEgo distanceTo: gelepsi) 25)
-										(if (== global131 13)
-											(cond
-												(
-													(<
-														(global112
-															distanceTo: gelepsi
-														)
-														30
-													)
-													(if global183
-														(Print 61 63) ; "Officer Gelepsi and Keith are busy discussing the details of the shoot-out."
+								(if (cast contains: gelepsi)
+									(if (< (ego distanceTo: gelepsi) 25)
+										(if (== currentCar carWork)
+											(cond 
+												((< (keith distanceTo: gelepsi) 30)
+													(if shotAtBainsInCove
+														(Print 61 63)
 													else
-														(Print 61 64) ; "Officer Gelepsi is busy talking to Keith. Listening, you hear some good gossip, but nothing relating to the task at hand."
-													)
+														(Print 61 64))
 												)
 												(
 													(and
-														global184
-														(not (IsFlag 54))
+														removedBodyFromRiver
+														(not (Btst fCalledCoroner))
 													)
-													(Print 61 60) ; ""Ok'a, Sonny, I'lla call the coroner for you," responds officer Gelepsi."
-													(SetScore 3 54)
+													(Print 61 60)
+													(SolvePuzzle 3 fCalledCoroner)
 												)
 												(else
-													(Print 61 61) ; "I like talkin', Sonny," grunts Officer Gelepsi, "but shouldn't you be getting on with the investigation?"
+													(Print 61 61)
 												)
 											)
 										else
-											(Print 61 65) ; ""Hey, Sonny, where's your partner? And what are you doing driving your personal car?" Officer Gelepsi asks."
+											(Print 61 65)
 										)
 									else
-										(Print 61 62) ; "Officer Gelepsi is a little hard of hearing. Better get closer."
+										(Print 61 62)
 									)
 								else
-									(Print 61 31) ; "There are no uniformed officers in the area."
+									(Print 61 31)
 								)
 							)
 							((Said '/friend')
-								(if (gCast contains: global112)
-									(if (< (gEgo distanceTo: global112) 45)
-										(Print 61 66) ; "Keith says "I'm with ya, Sonny.""
+								(if (cast contains: keith)
+									(if (< (ego distanceTo: keith) 45)
+										(Print 61 66)
 									else
-										(Print 61 67) ; "Get closer."
+										(Print 61 67)
 									)
 								else
-									(Print 61 68) ; "Keith is not here."
+									(Print 61 68)
 								)
 							)
-							((Said '/woman')
+							((Said '/broad')
 								(if
 									(and
-										(gCast contains: barbie)
-										(< (gEgo distanceTo: barbie) 38)
+										(cast contains: barbie)
+										(< (ego distanceTo: barbie) 38)
 									)
 									(if local5
-										(localproc_1 61 69) ; "(You could talk all day, but she's a witness - so ASK her something!)"
+										(LocPrintBottom 61 69)
 									else
 										(= local5 1)
-										(Print 61 70) ; "Oh, Officer! It was terrible. There was... oh... BLOOD and... and... drag marks to the river!"
+										(Print 61 70)
 									)
 								else
-									(Print 61 71) ; "She can't hear you."
+									(Print 61 71)
 								)
 							)
 							(else
-								(Print 61 72) ; "Who are you talking to?"
+								(Print 61 72)
 								(event claimed: 1)
 							)
 						)
 					)
 					((Said 'close/door[<booth]')
-						(Print 61 73) ; "The phone booth's door is broken and can't be closed."
+						(Print 61 73)
 					)
 					((Said '/briefcase')
-						(Print 61 13) ; "You don't need to use your field kit here."
+						(Print 61 13)
 					)
-					((gCast contains: barbie)
-						(cond
+					((cast contains: barbie)
+						(cond 
 							((Said '[say]/hello')
-								(if (> (gEgo distanceTo: barbie) 38)
-									(Print 61 74) ; "You can't seem to attract her attention from this distance."
+								(if (> (ego distanceTo: barbie) 38)
+									(Print 61 74)
 								else
 									(barbieScript changeState: 1)
 								)
 							)
-							((Said 'feel,fuck,kiss,eat/woman')
-								(if (> (gEgo distanceTo: barbie) 38)
-									(Print 61 74) ; "You can't seem to attract her attention from this distance."
+							((Said 'feel,fuck,kiss,eat/broad')
+								(if (> (ego distanceTo: barbie) 38)
+									(Print 61 74)
 								else
 									(barbieScript changeState: 4)
 								)
 							)
 							((Said 'interrogate,ask>')
-								(cond
-									((> (gEgo distanceTo: barbie) 38)
+								(cond 
+									((> (ego distanceTo: barbie) 38)
 										(event claimed: 1)
-										(Print 61 75) ; "You're too far away for her to hear you."
+										(Print 61 75)
 									)
-									((Said '/badge,license[<woman]')
+									((Said '/badge,license[<broad]')
 										(barbieScript changeState: 3)
 									)
 									(
@@ -895,38 +1007,38 @@
 											(Said '/date')
 											(Said '//date')
 										)
-										(Print 61 76) ; "You're kinda cute, but I don't date cops."
+										(Print 61 76)
 									)
-									((Said '/name[<woman]')
+									((Said '/name[<broad]')
 										(barbieScript changeState: 2)
 									)
-									((Said '/address[<woman]')
+									((Said '/address[<broad]')
 										(barbieScript changeState: 3)
 									)
 									(
 										(or
 											(Said '/blood,mark,clue,location')
-											(Said '/woman')
+											(Said '/broad')
 											(Said '<where')
 										)
 										(if local6
-											(Print 61 77) ; ""I've told you all I know, Officer," she stammers."
+											(Print 61 77)
 										else
 											(= local6 1)
-											(SetScore 2)
+											(SolvePuzzle 2)
 											(barbieScript changeState: 5)
-											(localproc_0 61 78) ; "The girl tells you the location..."Just walk upriver about a hundred yards or so. It's right next to the water!""
+											(LocPrint 61 78)
 										)
 									)
 									(else
-										(Print 61 79) ; ""I saw blood... and drag marks..." she cries."
+										(Print 61 79)
 										(event claimed: 1)
 									)
 								)
 							)
-							((Said 'show[/clue,(print<feet),blood,me]')
-								(if (> (gEgo distanceTo: barbie) 28)
-									(Print 61 74) ; "You can't seem to attract her attention from this distance."
+							((Said 'display[/clue,(print<feet),blood,i]')
+								(if (> (ego distanceTo: barbie) 28)
+									(Print 61 74)
 								else
 									(barbieScript changeState: 6)
 								)
@@ -934,7 +1046,7 @@
 						)
 					)
 					((Said 'ask/')
-						(Print 61 80) ; "You listen carefully, but nobody answers you."
+						(Print 61 80)
 					)
 				)
 			)
@@ -944,12 +1056,12 @@
 
 (instance carScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
 				(HandsOff)
-				(gEgo
+				(ego
 					setStep: 1 2
 					posn: 157 202
 					setPri: 14
@@ -959,14 +1071,8 @@
 					illegalBits: 0
 					setMotion: MoveTo 155 185 self
 				)
-				(if (== global131 13)
-					(global112
-						posn: 167 206
-						loop: 0
-						cel: 0
-						setPri: 15
-						startUpd:
-					)
+				(if (== currentCar 13)
+					(keith posn: 167 206 loop: 0 cel: 0 setPri: 15 startUpd:)
 					(carDoor
 						view: 51
 						loop: 3
@@ -974,31 +1080,31 @@
 						posn: 182 197
 						setPri: 15
 						init:
-						setCycle: End
+						setCycle: EndLoop
 					)
 				)
 			)
 			(1
 				(= local0 0)
-				(if (== global131 13)
-					(= global133 0)
+				(if (== currentCar 13)
+					(= workCarLocked 0)
 				else
-					(= global136 0)
+					(= personalCarLocked 0)
 				)
-				(gEgo
+				(ego
 					setStep: 3 2
 					setCycle: Walk
 					setLoop: -1
 					setPri: -1
 					ignoreActors: 0
-					illegalBits: $c000
+					illegalBits: -16384
 				)
 				(if (>= local4 3)
-					(gEgo observeBlocks: ourCarBlock bwCarBlock)
+					(ego observeBlocks: ourCarBlock bwCarBlock)
 				else
-					(gEgo observeBlocks: ourCarBlock)
+					(ego observeBlocks: ourCarBlock)
 				)
-				(if (== global131 13)
+				(if (== currentCar carWork)
 					(self cue:)
 				else
 					(HandsOn)
@@ -1006,48 +1112,55 @@
 			)
 			(2
 				(carDoor dispose:)
-				(global112 setMotion: MoveTo 98 198 self)
+				(keith setMotion: MoveTo 98 198 self)
 			)
 			(3
-				(global112 setPri: -1 setMotion: MoveTo 92 185 self)
+				(keith setPri: -1 setMotion: MoveTo 92 185 self)
 				(HandsOn)
 			)
 			(4
-				(global112 loop: 2 cel: 0 setMotion: MoveTo 88 154 self)
+				(keith
+					loop: 2
+					cel: 0
+					setMotion: MoveTo 88 154 self
+				)
 				(switch local4
 					(1
-						(Print 61 81 #draw) ; "What are we doing back here, Sonny?"
+						(Print 61 81 #draw)
 					)
 					(2
-						(Print 61 82 #at -1 60 #draw) ; "Keith looks at you accusingly; "We're too late, Sonny! I told you we should've come here right away. Captain Fletcher is gonna chew us out now!""
+						(Print 61 82 #at -1 60 #draw)
 					)
 					(0
-						(Print 61 83 #at -1 60 #draw) ; "What are we doing here?" Keith asks. "Are we going to meet someone?"
+						(Print 61 83 #at -1 60 #draw)
 					)
 				)
 			)
 			(5
-				(global112 setMotion: MoveTo 124 148 self)
+				(keith setMotion: MoveTo 124 148 self)
 			)
 			(6
-				(global112 stopUpd:)
+				(keith stopUpd:)
 			)
 			(7
 				(HandsOff)
-				(gEgo stopUpd: ignoreBlocks: ourCarBlock)
-				(if (== global131 13)
-					(if global186
-						(Print 61 84) ; "Keith says..."I don't think we can catch him Sonny! He's probably long gone.""
+				(ego stopUpd: ignoreBlocks: ourCarBlock)
+				(if (== currentCar carWork)
+					(if bainsInCoveTimer
+						(Print 61 84)
 					else
-						(Print 61 85) ; "Keith yells: "Wait up, Sonny! What's the rush, anyway?""
+						(Print 61 85)
 					)
-					(global112 ignoreActors: illegalBits: 0)
-					(cond
-						((< (global112 y:) 168)
-							(global112 setMotion: MoveTo 90 150 self)
+					(keith
+						ignoreActors:
+						illegalBits: 0
+					)
+					(cond 
+						((< (keith y?) 168)
+							(keith setMotion: MoveTo 90 150 self)
 						)
-						((< (global112 y:) 196)
-							(global112 setMotion: MoveTo 82 196 self)
+						((< (keith y?) 196)
+							(keith setMotion: MoveTo 82 196 self)
 						)
 						(else
 							(self cue:)
@@ -1058,7 +1171,7 @@
 				)
 			)
 			(8
-				(global112
+				(keith
 					ignoreActors:
 					illegalBits: 0
 					setPri: 15
@@ -1066,20 +1179,20 @@
 				)
 			)
 			(9
-				(if (gCast contains: gelepsi)
-					(cond
-						(global186
-							(Print 61 86) ; "Keith tells Officer Gelepsi..."Mario, stand by and secure this area until we return!.""
+				(if (cast contains: gelepsi)
+					(cond 
+						(bainsInCoveTimer
+							(Print 61 86)
 						)
-						(global184
-							(Print 61 87) ; "I'lla stick 'round here an'a clean things up," Mario tells you. "See you'a later."
+						(removedBodyFromRiver
+							(Print 61 87)
 						)
 						(else
-							(Print 61 87) ; "I'lla stick 'round here an'a clean things up," Mario tells you. "See you'a later."
+							(Print 61 87)
 						)
 					)
 				)
-				(global112 setMotion: MoveTo 170 207 self)
+				(keith setMotion: MoveTo 170 207 self)
 			)
 			(10
 				(carDoor
@@ -1089,11 +1202,11 @@
 					posn: 182 197
 					setPri: 15
 					init:
-					setCycle: End self
+					setCycle: EndLoop self
 				)
 			)
 			(11
-				(gEgo
+				(ego
 					ignoreActors: 1
 					illegalBits: 0
 					setPri: 14
@@ -1104,10 +1217,10 @@
 				)
 			)
 			(12
-				(gCurRoom newRoom: global131)
+				(curRoom newRoom: currentCar)
 			)
 			(13
-				(= global135 1)
+				(= workCarTrunkOpened 1)
 				(unTrunk
 					view: 51
 					loop: 5
@@ -1115,7 +1228,7 @@
 					posn: 126 209
 					setPri: 15
 					init:
-					setCycle: End self
+					setCycle: EndLoop self
 				)
 			)
 			(14
@@ -1129,7 +1242,7 @@
 					posn: 126 209
 					setPri: 1
 					startUpd:
-					setCycle: CT 0 -1 self
+					setCycle: CycleTo 0 -1 self
 				)
 			)
 			(16
@@ -1141,13 +1254,13 @@
 
 (instance stopScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(gEgo stopUpd:)
-				(if (== global131 13)
-					(global112 stopUpd:)
+				(ego stopUpd:)
+				(if (== currentCar carWork)
+					(keith stopUpd:)
 				)
 			)
 			(1
@@ -1161,15 +1274,11 @@
 
 (instance gelepsiScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
-				(if local3
-					(self cue:)
-				else
-					(= seconds 3)
-				)
+				(if local3 (self cue:) else (= seconds 3))
 			)
 			(1
 				(if local3
@@ -1179,57 +1288,46 @@
 				)
 			)
 			(2
-				(if (< global110 30)
-					(gelepsi setMotion: 0 stopUpd:)
-				)
+				(if (< howFast 30) (gelepsi setMotion: 0 stopUpd:))
 				(if local3
-					(if (and global183 (not (IsFlag 30)))
-						(SetFlag 30)
-						(if (gCast contains: barbie)
+					(if (and shotAtBainsInCove (not (Btst 30)))
+						(Bset 30)
+						(if (cast contains: barbie)
 							(barbieScript changeState: 7)
 						)
-						(Print 61 88) ; ""M-my gosh'a, S-S-Sonny! I heard'a the GUNSHOTS!" stammers Officer Gelepsi."
+						(Print 61 88)
 					else
-						(Print 61 89 #at 40 24) ; ""What's up, Sonny? I think'a you'a doin' fine." says Officer Gelepsi."
+						(Print 61 89 #at 40 24)
 					)
 				else
 					(gelepsi setMotion: MoveTo 150 150 self)
 				)
 			)
 			(3
-				(gEgo loop: 1)
-				(gelepsi loop: 2 setStep: 3 4 setMotion: Follow gEgo 500)
-				(if (< global110 30)
-					(gelepsi setMotion: 0 stopUpd:)
-				)
-				(cond
+				(ego loop: 1)
+				(gelepsi loop: 2 setStep: 3 4 setMotion: Follow ego 500)
+				(if (< howFast 30) (gelepsi setMotion: 0 stopUpd:))
+				(cond 
 					((== local4 3)
-						(if (IsFlag 53)
-							(Print 61 90) ; ""What'sa up, guys?" Mario asks."
+						(if (Btst 53)
+							(Print 61 90)
 						else
-							(if (IsFlag 114)
-								(++ global107)
-								(localproc_0 61 91) ; "As the car pulls up, Keith winces..."Oh no! I can see from here it's a gal... You got me again, partner. Here's your buck.""
+							(if (Btst 114)
+								(++ dollars)
+								(LocPrint 61 91)
 							else
-								(localproc_0 61 92) ; "As the car pulls up, Keith says..."Well Sonny, you should have taken the bet. I can see from here it's a gal.""
+								(LocPrint 61 92)
 							)
-							(Print 61 93 #at -1 24 #draw) ; "Hi'ya Sonny," Officer Gelepsi says, "The lady over there isa pretty shook up over what she'sa found. You'da better have a talk with her."
-							(SetFlag 53)
+							(Print 61 93 #at -1 24 #draw)
+							(Bset 53)
 							(= seconds 2)
 						)
 					)
-					((and (== local4 4) (not local1))
-						(= global186 0)
-						(localproc_0 61 94) ; "I wasa listening ona the radio, Sonny," Officer Gelepsi grunts. "Too bad you lost that cocka-de-roacha."
-					)
-					((== local4 4)
-						(localproc_0 61 95) ; "Officer Gelepsi says, "Donn'a worry, Sonny. They'lla catch that cocka-de-roacha.""
-					)
+					((and (== local4 4) (not local1)) (= bainsInCoveTimer 0) (LocPrint 61 94))
+					((== local4 4) (LocPrint 61 95))
 				)
 			)
-			(4
-				(localproc_0 61 96) ; "Officer Gelepsi continues... "I'lla stick around for awhile, just in case you need me.""
-			)
+			(4 (LocPrint 61 96))
 			(5
 				(gelepsi setMotion: MoveTo 192 149)
 			)
@@ -1239,79 +1337,66 @@
 
 (instance barbieScript of Script
 	(properties)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0 0)
 			(1
 				(if local7
-					(localproc_0 61 97) ; "Hello AGAIN! You sure are friendly."
+					(LocPrint 61 97)
 				else
-					(localproc_0 61 98) ; "Hello"
+					(LocPrint 61 98)
 					(= local7 1)
 				)
 			)
 			(2
-				(if local8
-					(localproc_0 61 99) ; "You have a short memory. Maybe you'd better write this down."
-				else
-					(= local8 1)
-				)
-				(localproc_0 61 100) ; "Shelly Wingate"
+				(if local8 (LocPrint 61 99) else (= local8 1))
+				(LocPrint 61 100)
 			)
 			(3
-				(if local9
-					(localproc_0 61 99) ; "You have a short memory. Maybe you'd better write this down."
-				else
-					(= local9 1)
-				)
-				(localproc_0 61 101) ; "108 Tenth Street"
+				(if local9 (LocPrint 61 99) else (= local9 1))
+				(LocPrint 61 101)
 			)
 			(4
 				(if local10
-					(Print 61 102) ; "All right, buster, THAT does it! I'm leaving. YOU find that stuff WITHOUT ME!"
+					(Print 61 102)
 					(self changeState: 7)
 				else
 					(= local10 1)
 					(switch (Random 1 4)
-						(1
-							(Print 61 103) ; "I've always heard such nice things about policemen. But now I see where the nick-name 'pig' comes from."
-						)
-						(2
-							(Print 61 104) ; "Why you filthy little sniveling creep!"
-						)
-						(3
-							(Print 61 105) ; "If I weren't a LADY, I'd...!"
-						)
-						(4
-							(Print 61 106) ; "Why you slimy little SQUID!"
-						)
+						(1 (Print 61 103))
+						(2 (Print 61 104))
+						(3 (Print 61 105))
+						(4 (Print 61 106))
 					)
 				)
 			)
 			(5
-				(localproc_0 61 107) ; "In an excited voice the woman says... "I was jogging along the river's edge, and...and I came across something that looked like blood...""
-				(localproc_0 61 108) ; "Continuing, she says, "I stopped to look, and right next to the blood, I saw marks that looked like something had been dragged into the river. And... and footprints -- I saw footprints!""
-				(localproc_0 61 109) ; "You attempt to interrupt, but she keeps rolling it out as she says... "I got scared when I heard the brush crack, so I ran down here and called the Police.""
-				(localproc_0 61 110) ; "The jogger says... "Officer, please go look! I hope nothing bad has happened.""
+				(LocPrint 61 107)
+				(LocPrint 61 108)
+				(LocPrint 61 109)
+				(LocPrint 61 110)
 			)
 			(6
-				(localproc_0 61 111) ; "The girl answers..."Not me! I'm not going back there!" she says, "I'll tell you where it is, but I'm not going!""
-				(localproc_0 61 78) ; "The girl tells you the location..."Just walk upriver about a hundred yards or so. It's right next to the water!""
+				(LocPrint 61 111)
+				(LocPrint 61 78)
 				(= local6 1)
 			)
 			(7
 				(HandsOff)
 				(= global185 1)
-				(barbie view: 16 setStep: 7 3 setMotion: MoveTo 105 130 self)
+				(barbie
+					view: 16
+					setStep: 7 3
+					ignoreActors: ;added to prevent lockup
+					setMotion: MoveTo 105 130 self
+				)
 			)
 			(8
 				(barbie setMotion: MoveTo 73 172 self)
 			)
 			(9
-				(if global183
-					(localproc_0 61 112) ; "The jogger, frightened by the gunfire, runs away."
-				)
+				(if shotAtBainsInCove (LocPrint 61 112))
 				(User canControl: 1)
 				(barbie setPri: 15 setMotion: MoveTo 86 198 self)
 			)
@@ -1328,43 +1413,41 @@
 
 (instance keithScript of Script
 	(properties)
-
+	
 	(method (doit)
 		(super doit:)
-		(if (and global187 (> (gEgo x:) 40))
+		(if (and global187 (> (ego x?) 40))
 			(= global187 0)
 			(self changeState: 3)
 		)
-		(cond
-			((and (== global189 0) (< (gEgo x:) 30) (!= (self state:) 1))
+		(cond 
+			(
+				(and
+					(== diverState 0)
+					(< (ego x?) 30)
+					(!= (self state?) 1)
+				)
 				(self changeState: 1)
 			)
-			((and (>= (gEgo x:) 30) (== (self state:) 1))
-				(self changeState: 2)
-			)
+			((and (>= (ego x?) 30) (== (self state?) 1)) (self changeState: 2))
 		)
 	)
-
+	
 	(method (changeState newState)
 		(switch (= state newState)
-			(0
-				(global112 setCycle: Walk)
-			)
+			(0 (keith setCycle: Walk))
 			(1
-				(global112 setMotion: Follow gEgo 50)
-				(if (and (not local1) (== gPrevRoomNum 13))
-					(Print 61 113 #draw) ; "Keith says... "I'm right behind you partner.""
+				(keith setMotion: Follow ego 50)
+				(if (and (not local1) (== prevRoomNum 13))
+					(Print 61 113 #draw)
 				)
 			)
 			(2
-				(global112 setMotion: 0 stopUpd:)
+				(keith setMotion: 0 stopUpd:)
 			)
 			(3
-				(if (< global189 3)
-					(Print 61 114) ; ""We've radioed for the diver, Sonny, and he'll be here shortly," Keith volunteers."
-				)
+				(if (< diverState 3) (Print 61 114))
 			)
 		)
 	)
 )
-
