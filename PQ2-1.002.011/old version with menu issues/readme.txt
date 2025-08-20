@@ -1,0 +1,1 @@
+This version is based entirely on a corrected version of Sluice's sci-scripts. For some reason the menus and inventory can't be opened. Can probably be fixed, but who has the time. the SDA version in the enclosing folder seems to work well. 
