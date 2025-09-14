@@ -506,8 +506,8 @@
 		(= goodPosn 0)
 		(for ((= legLen 1)) (not goodPosn) ((++ legLen))
 			(for ((= legDir 0)) (and (not goodPosn) (< legDir 8)) ((++ legDir))
-				(= x (+ xOrg (* legLen (sign (CosMult (* legDir 45) 100)))))
-				(= y (- yOrg (* legLen (sign (SinMult (* legDir 45) 100)))))
+				(= x (+ xOrg (* legLen (sign (TimesCos (* legDir 45) 100)))))
+				(= y (- yOrg (* legLen (sign (TimesSin (* legDir 45) 100)))))
 				(= goodPosn
 					(if (self canBeHere:)
 						(self onControl:)
@@ -557,11 +557,11 @@
 				MoveTo
 				(+
 					x
-					(SinMult (+ temp0 temp3 (/ (* x (- temp4 temp3)) 320)) 1000)
+					(TimesSin (+ temp0 temp3 (/ (* x (- temp4 temp3)) 320)) 1000)
 				)
 				(-
 					y
-					(CosMult (+ temp0 temp1 (/ (* y (- temp2 temp1)) 200)) 1000)
+					(TimesCos (+ temp0 temp1 (/ (* y (- temp2 temp1)) 200)) 1000)
 				)
 		)
 	)

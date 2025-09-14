@@ -614,6 +614,8 @@
 	gScoredWoreSunscreen
 	gScoredRosella
 	gReappliedSunscreen
+	; 480
+	global480 ; parachute
 )
 
 (procedure (LookAt actor1 actor2)
